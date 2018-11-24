@@ -97,5 +97,8 @@
               </div>
           </div>
        </div>
+       <footer>
+         <div class="copy">smack® 2019</div>
+       </footer>
     </body>
 </html>

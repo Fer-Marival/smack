@@ -10466,6 +10466,11 @@ a.text-dark:focus {
   }
 }
 
+body,
+html {
+  color: #aaa !important;
+}
+
 .gradient {
   background-image: linear-gradient(135deg, #7ce2f1 10%, #098fe0 100%);
   padding-bottom: 190px;
@@ -10573,6 +10578,13 @@ a.text-dark:focus {
           box-shadow: 0px 0px 114px 0px rgba(0, 0, 0, 0.08), 0px 30px 25px 0px rgba(0, 0, 0, 0.05);
   -webkit-transform: translateY(-5px);
           transform: translateY(-5px);
+}
+
+footer {
+  background-color: #0a4787;
+  color: #dadae1;
+  text-align: center;
+  padding: 2em 0;
 }
 
 .clear {
