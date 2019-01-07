@@ -18,11 +18,11 @@
 			
 			{{-- 
 
-				Dare servicio de traslado -aeropuerto-casas/casas-aeropuerto 
-				Snorkels- encluyendo tours yo llevándolos/recorriéndolos y 				acompañándolos
-				Caminatas, colomitos, las animas, palo maria, cerro del mono y 				cascadas de Mismaloya 
+				Servicio de traslado  -aeropuerto-casas/casas-aeropuerto 
+				Snorkels- encluyendo tours yo llevándolos/recorriéndolos y acompañándolos
+				Caminatas, colomitos, las animas, palo maria, cerro del mono y cascadas de Mismaloya 
 				Tours bicicletas - centro, los muertos 
-				Shuttles a donde quieran ir ya sea playas como, corrales, caryes, 				perula, Mayto, Sayulita, etc.
+				Shuttles a donde quieran ir ya sea playas como, corrales, careyes,perula, Mayto, Sayulita, etc.
 				Servicio de host- anfitrión 
 				Kayaks 
 				Paddles

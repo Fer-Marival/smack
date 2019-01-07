@@ -12,32 +12,35 @@
            </div>
        </div>
        <div class="container-fluid">
-        <h2>Check our models to get</h2>
-          <div class="row" id="products">
+        <h2>Servicios de Calidad</h2>
+          <div class="row" id="services">
               <div class="col shadow-flow">
+              	 <img src="{!!asset('img/camera.jpeg')!!}" class="img-fluid" alt="">
                   <div class="content">
-                    <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">
-                    One of three columns <br />
-                    <a href="#" class="btn rounder">See details</a>
+                    Cámaras<br />
+                    <a href="#" class="btn rounder">Ver Modelos</a>
                   </div>
               </div>
               <div class="col shadow-flow">
+              	 <img src="{!!asset('img/snorkel2.jpeg')!!}" class="img-fluid" alt="">
                 <div class="content">
-                  <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">
-                  One of three columns <br />
+                 
+                  Tours Acuaticos<br />
                   <a href="#" class="btn rounder">See details</a>
                 </div>
               </div>
               <div class="col shadow-flow">
+              	 <img src="{!!asset('img/hikings.jpeg')!!}" class="img-fluid" alt="">
                 <div class="content">
-                  <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">
-                  One of three columns <br />
+         
+                  Tours Terrestres <br />
                   <a href="#" class="btn rounder">See details</a>
                 </div>
               </div>
               <div class="col shadow-flow">
+              	<img src="{!!asset('img/transport.jpeg')!!}" class="img-fluid" alt="">
                 <div class="content">
-                    <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">One of three columns <br />
+                    Traslados <br />
                     <a href="#" class="btn rounder">See details</a>
                 </div>
               </div>
