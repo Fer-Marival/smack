@@ -17,3 +17,6 @@ Route::get('/', function () {
 Route::get('/tours-acuaticos', function () {
     return view('frontend.acuaticos');
 });
+Route::get('/tours-terrestres', function () {
+    return view('frontend.terrestres');
+});

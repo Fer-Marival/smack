@@ -23,10 +23,9 @@
               </div>
               <div class="col shadow-flow">
               	 <img src="{!!asset('img/snorkel2.jpeg')!!}" class="img-fluid" alt="">
-                <div class="content">
-                 
+                <div class="content">   
                   Tours Acuaticos<br />
-                  <a href="#" class="btn rounder">See details</a>
+                  <a href="/tours-acuaticos" class="btn rounder">See details</a>
                 </div>
               </div>
               <div class="col shadow-flow">
