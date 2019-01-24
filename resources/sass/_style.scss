@@ -42,6 +42,23 @@ body, html{
     	transform: translateY(-5px);
     }
 }
+#services{
+	max-width: 1800px;
+	width: 100%;
+	margin: 1em auto;
+	.col{
+		background-color: white;
+		margin: 10px;
+		text-align: center;
+		padding: 0;
+		border-radius: 4px;
+		.content{
+			margin-top: 10px;
+			color: #232323;
+			font-size: 14pt;
+		}
+	}
+}
 #products{
 	max-width: 1800px;
 	width: 100%;
@@ -50,6 +67,12 @@ body, html{
 		background-color: white;
 		margin: 10px;
 		text-align: center;
+		border-radius: 4px;
+		.content{
+			margin-top: 10px;
+			color: #232323;
+			font-size: 14pt;
+		}
 	}
 }
 #forget{
@@ -71,6 +94,36 @@ body, html{
 		p{
 			font-size: 14pt;
 		}
+	}
+}
+#acuatics{
+	#video{
+	  width:100%;
+	  height:65vh;
+	  .video-container{
+	  	max-width: 1400px;
+	  	position: absolute;
+	  	bottom: 50%;
+	  	width: 100%;
+	  	margin:auto;
+	  	span{
+	  		font-size: 30pt;
+	  		color:white;
+	  	}
+	  	p{
+	  		color: white;
+			font-size: 14pt;
+	  	}
+	  }
+	}
+	#video-background{
+		position: absolute;
+	  right:0;
+	  bottom:0;
+	  min-width:100%;
+	  width:100%;
+	  height:auto;
+	  top: 0;
 	}
 }
 .rounder{

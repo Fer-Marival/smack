@@ -12,5 +12,11 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('frontend.home');
+});
+Route::get('/tours-acuaticos', function () {
+    return view('frontend.acuaticos');
+});
+Route::get('/tours-terrestres', function () {
+    return view('frontend.terrestres');
 });
