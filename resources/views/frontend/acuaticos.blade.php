@@ -58,5 +58,56 @@
               </div>
           </div>
      </div>
+  <div class="tour section paddle">
+    <div class="gradient-right">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8"></div>
+          <div class="col-md-4">
+            <div class="content">
+              <div class="title">
+                Paddle Board session
+              </div>
+              <div class="description">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellat velit quia impedit obcaecati maxime soluta sint tenetur. Amet dolore velit veniam.
+                <ul>
+                  <li>Puerto Vallarta DownTown &#8594;</li>
+                  <li>La Marina &#8594;</li>
+                  <li>Mismaloya beach &#8594;</li>
+                  <li>Cerro del mono &#8594;</li>
+                  <li>Cascadas de Mismaloya &#8594;</li>
+                </ul>
+              </div> 
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>  
+  </div>
+    <div class="tour section snorkel">
+    <div class="gradient-left">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="content">
+              <div class="title">
+                Snorkel
+              </div>
+              <div class="description">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellat velit quia impedit obcaecati maxime soluta sint tenetur. Amet dolore velit veniam.
+                <ul>
+                  <li>Puerto Vallarta DownTown &#8594;</li>
+                  <li>La Marina &#8594;</li>
+                  <li>Mismaloya beach &#8594;</li>
+                  <li>Cerro del mono &#8594;</li>
+                  <li>Cascadas de Mismaloya &#8594;</li>
+                </ul>
+              </div> 
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>  
+  </div>
 
           @endsection

@@ -20,3 +20,6 @@ Route::get('/tours-acuaticos', function () {
 Route::get('/tours-terrestres', function () {
     return view('frontend.terrestres');
 });
+Route::get('/cameras', function () {
+    return view('frontend.camaras');
+});

@@ -12,12 +12,11 @@
         <link rel="stylesheet" href="{!!asset('css/app.css')!!}">
     </head>
     <body>
-    		@extends('components.header')
+    		@include('components.header')
     	  	@yield('content')
-    	  	@extends('components.footer')
+    	  	@include('components.footer')
 			
 			{{-- 
-
 				Servicio de traslado  -aeropuerto-casas/casas-aeropuerto 
 				Snorkels- encluyendo tours yo llevándolos/recorriéndolos y acompañándolos
 				Caminatas, colomitos, las animas, palo maria, cerro del mono y cascadas de Mismaloya 
