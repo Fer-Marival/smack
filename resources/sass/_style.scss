@@ -231,3 +231,14 @@ footer{
 .m4{
 	margin: 2em auto;
 }
+.complements{
+	margin: 2.5em auto;
+	.complement{
+		background-color: white;
+		text-align: center;
+		padding-bottom:25px;
+		a{
+			margin: auto;
+		}
+	}
+}
