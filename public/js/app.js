@@ -71,7 +71,7 @@
 
 
 var bind = __webpack_require__(5);
-var isBuffer = __webpack_require__(19);
+var isBuffer = __webpack_require__(21);
 
 /*global toString:true*/
 
@@ -408,7 +408,7 @@ module.exports = g;
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(0);
-var normalizeHeaderName = __webpack_require__(21);
+var normalizeHeaderName = __webpack_require__(23);
 
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -13634,12 +13634,12 @@ process.umask = function() { return 0; };
 
 
 var utils = __webpack_require__(0);
-var settle = __webpack_require__(22);
-var buildURL = __webpack_require__(24);
-var parseHeaders = __webpack_require__(25);
-var isURLSameOrigin = __webpack_require__(26);
+var settle = __webpack_require__(24);
+var buildURL = __webpack_require__(26);
+var parseHeaders = __webpack_require__(27);
+var isURLSameOrigin = __webpack_require__(28);
 var createError = __webpack_require__(8);
-var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(27);
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(29);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -13736,7 +13736,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(28);
+      var cookies = __webpack_require__(30);
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -13820,7 +13820,7 @@ module.exports = function xhrAdapter(config) {
 "use strict";
 
 
-var enhanceError = __webpack_require__(23);
+var enhanceError = __webpack_require__(25);
 
 /**
  * Create an Error with the specified message, config, error code, request and response.
@@ -13881,7 +13881,7 @@ module.exports = Cancel;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(12);
-module.exports = __webpack_require__(43);
+module.exports = __webpack_require__(45);
 
 
 /***/ }),
@@ -13896,8 +13896,9 @@ module.exports = __webpack_require__(43);
  */
 
 __webpack_require__(13);
+__webpack_require__(55);
 
-window.Vue = __webpack_require__(36);
+window.Vue = __webpack_require__(38);
 
 /**
  * The following block of code may be used to automatically register your
@@ -13907,7 +13908,7 @@ window.Vue = __webpack_require__(36);
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
 
-Vue.component('example-component', __webpack_require__(39));
+Vue.component('example-component', __webpack_require__(41));
 
 // const files = require.context('./', true, /\.vue$/i)
 
@@ -13943,6 +13944,8 @@ try {
   window.$ = window.jQuery = __webpack_require__(4);
 
   __webpack_require__(16);
+  window.sliderPro = __webpack_require__(17).default;
+  window.fancyBox = __webpack_require__(18).default;
 } catch (e) {}
 
 /**
@@ -13951,7 +13954,7 @@ try {
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-window.axios = __webpack_require__(17);
+window.axios = __webpack_require__(19);
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
@@ -35081,12 +35084,11869 @@ module.exports = function(module) {
 
 /***/ }),
 /* 17 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-module.exports = __webpack_require__(18);
+/*!
+*  - v1.5.0
+* Homepage: http://bqworks.com/slider-pro/
+* Author: bqworks
+* Author URL: http://bqworks.com/
+*/
+;(function( window, $ ) {
+
+	"use strict";
+
+	// Static methods for Slider Pro
+	$.SliderPro = {
+
+		// List of added modules
+		modules: [],
+
+		// Add a module by extending the core prototype
+		addModule: function( name, module ) {
+			this.modules.push( name );
+			$.extend( SliderPro.prototype, module );
+		}
+	};
+
+	// namespace
+	var NS = $.SliderPro.namespace = 'SliderPro';
+
+	var SliderPro = function( instance, options ) {
+
+		// Reference to the slider instance
+		this.instance = instance;
+
+		// Reference to the slider jQuery element
+		this.$slider = $( this.instance );
+
+		// Reference to the slides (sp-slides) jQuery element
+		this.$slides = null;
+
+		// Reference to the mask (sp-mask) jQuery element
+		this.$slidesMask = null;
+
+		// Reference to the slides (sp-slides-container) jQuery element
+		this.$slidesContainer = null;
+
+		// Array of SliderProSlide objects, ordered by their DOM index
+		this.slides = [];
+
+		// Array of SliderProSlide objects, ordered by their left/top position in the slider.
+		// This will be updated continuously if the slider is loopable.
+		this.slidesOrder = [];
+
+		// Holds the options passed to the slider when it was instantiated
+		this.options = options;
+
+		// Holds the final settings of the slider after merging the specified
+		// ones with the default ones.
+		this.settings = {};
+
+		// Another reference to the settings which will not be altered by breakpoints or by other means
+		this.originalSettings = {};
+
+		// Reference to the original 'gotoSlide' method
+		this.originalGotoSlide = null;
+
+		// The index of the currently selected slide (starts with 0)
+		this.selectedSlideIndex = 0;
+
+		// The index of the previously selected slide
+		this.previousSlideIndex = 0;
+
+		// Indicates the position of the slide considered to be in the middle.
+		// If there are 5 slides (0, 1, 2, 3, 4) the middle position will be 2.
+		// If there are 6 slides (0, 1, 2, 3, 4, 5) the middle position will be approximated to 2.
+		this.middleSlidePosition = 0;
+
+		// Indicates the type of supported transition (CSS3 2D, CSS3 3D or JavaScript)
+		this.supportedAnimation = null;
+
+		// Indicates the required vendor prefix for CSS (i.e., -webkit, -moz, etc.)
+		this.vendorPrefix = null;
+
+		// Indicates the name of the CSS transition's complete event (i.e., transitionend, webkitTransitionEnd, etc.)
+		this.transitionEvent = null;
+
+		// Indicates the 'left' or 'top' position, depending on the orientation of the slides
+		this.positionProperty = null;
+
+		// Indicates the 'width' or 'height', depending on the orientation of the slides
+		this.sizeProperty = null;
+
+		// Indicates if the current browser is IE
+		this.isIE = null;
+
+		// The position of the slides container
+		this.slidesPosition = 0;
+
+		// The total width/height of the slides
+		this.slidesSize = 0;
+
+		// The average width/height of a slide
+		this.averageSlideSize = 0;
+
+		// The width of the individual slide
+		this.slideWidth = 0;
+
+		// The height of the individual slide
+		this.slideHeight = 0;
+
+		// Reference to the old slide width, used to check if the width has changed
+		this.previousSlideWidth = 0;
+
+		// Reference to the old slide height, used to check if the height has changed
+		this.previousSlideHeight = 0;
+		
+		// Reference to the old window width, used to check if the window width has changed
+		this.previousWindowWidth = 0;
+		
+		// Reference to the old window height, used to check if the window height has changed
+		this.previousWindowHeight = 0;
+
+		// Property used for deferring the resizing of the slider
+		this.allowResize = true;
+
+		// Unique ID to be used for event listening
+		this.uniqueId = new Date().valueOf();
+
+		// Stores size breakpoints
+		this.breakpoints = [];
+
+		// Indicates the current size breakpoint
+		this.currentBreakpoint = -1;
+
+		// An array of shuffled indexes, based on which the slides will be shuffled
+		this.shuffledIndexes = [];
+
+		// Initialize the slider
+		this._init();
+	};
+
+	SliderPro.prototype = {
+
+		// The starting place for the slider
+		_init: function() {
+			var that = this;
+
+			this.supportedAnimation = SliderProUtils.getSupportedAnimation();
+			this.vendorPrefix = SliderProUtils.getVendorPrefix();
+			this.transitionEvent = SliderProUtils.getTransitionEvent();
+			this.isIE = SliderProUtils.checkIE();
+
+			// Remove the 'sp-no-js' when the slider's JavaScript code starts running
+			this.$slider.removeClass( 'sp-no-js' );
+
+			// Add the 'ios' class if it's an iOS device
+			if ( window.navigator.userAgent.match( /(iPad|iPhone|iPod)/g ) ) {
+				this.$slider.addClass( 'ios' );
+			}
+
+			// Check if IE (older than 11) is used and add the version number as a class to the slider since
+			// older IE versions might need CSS tweaks.
+			var rmsie = /(msie) ([\w.]+)/,
+				ieVersion = rmsie.exec( window.navigator.userAgent.toLowerCase() );
+			
+			if ( this.isIE ) {
+				this.$slider.addClass( 'ie' );
+			}
+
+			if ( ieVersion !== null ) {
+				this.$slider.addClass( 'ie' + parseInt( ieVersion[2], 10 ) );
+			}
+
+			// Set up the slides containers
+			// slider-pro > sp-slides-container > sp-mask > sp-slides > sp-slide
+			this.$slidesContainer = $( '<div class="sp-slides-container"></div>' ).appendTo( this.$slider );
+			this.$slidesMask = $( '<div class="sp-mask"></div>' ).appendTo( this.$slidesContainer );
+			this.$slides = this.$slider.find( '.sp-slides' ).appendTo( this.$slidesMask );
+			this.$slider.find( '.sp-slide' ).appendTo( this.$slides );
+			
+			var modules = $.SliderPro.modules;
+
+			// Merge the modules' default settings with the core's default settings
+			if ( typeof modules !== 'undefined' ) {
+				for ( var i = 0; i < modules.length; i++ ) {
+					var defaults = modules[ i ].substring( 0, 1 ).toLowerCase() + modules[ i ].substring( 1 ) + 'Defaults';
+
+					if ( typeof this[ defaults ] !== 'undefined' ) {
+						$.extend( this.defaults, this[ defaults ] );
+					}
+				}
+			}
+
+			// Merge the specified setting with the default ones
+			this.settings = $.extend( {}, this.defaults, this.options );
+
+			// Initialize the modules
+			if ( typeof modules !== 'undefined' ) {
+				for ( var j = 0; j < modules.length; j++ ) {
+					if ( typeof this[ 'init' + modules[ j ] ] !== 'undefined' ) {
+						this[ 'init' + modules[ j ] ]();
+					}
+				}
+			}
+
+			// Keep a reference of the original settings and use it
+			// to restore the settings when the breakpoints are used.
+			this.originalSettings = $.extend( {}, this.settings );
+
+			// Get the reference to the 'gotoSlide' method
+			this.originalGotoSlide = this.gotoSlide;
+
+			// Parse the breakpoints object and store the values into an array,
+			// sorting them in ascending order based on the specified size.
+			if ( this.settings.breakpoints !== null ) {
+				for ( var sizes in this.settings.breakpoints ) {
+					this.breakpoints.push({ size: parseInt( sizes, 10 ), properties:this.settings.breakpoints[ sizes ] });
+				}
+
+				this.breakpoints = this.breakpoints.sort(function( a, b ) {
+					return a.size >= b.size ? 1: -1;
+				});
+			}
+
+			// Set which slide should be selected initially
+			this.selectedSlideIndex = this.settings.startSlide;
+
+			// Shuffle/randomize the slides
+			if ( this.settings.shuffle === true ) {
+				var slides = this.$slides.find( '.sp-slide' ),
+					shuffledSlides = [];
+
+				// Populate the 'shuffledIndexes' with index numbers
+				slides.each(function( index ) {
+					that.shuffledIndexes.push( index );
+				});
+
+				for ( var k = this.shuffledIndexes.length - 1; k > 0; k-- ) {
+					var l = Math.floor( Math.random() * ( k + 1 ) ),
+						temp = this.shuffledIndexes[ k ];
+
+					this.shuffledIndexes[ k ] = this.shuffledIndexes[ l ];
+					this.shuffledIndexes[ l ] = temp;
+				}
+
+				// Reposition the slides based on the order of the indexes in the
+				// 'shuffledIndexes' array
+				$.each( this.shuffledIndexes, function( index, element ) {
+					shuffledSlides.push( slides[ element ] );
+				});
+				
+				// Append the sorted slides to the slider
+				this.$slides.empty().append( shuffledSlides ) ;
+			}
+			
+			// Resize the slider when the browser window resizes.
+			// Also, deffer the resizing in order to not allow multiple
+			// resizes in a 200 milliseconds interval.
+			$( window ).on( 'resize.' + this.uniqueId + '.' + NS, function() {
+			
+				// Get the current width and height of the window
+				var newWindowWidth = $( window ).width(),
+					newWindowHeight = $( window ).height();
+				
+				// If the resize is not allowed yet or if the window size hasn't changed (this needs to be verified
+				// because in IE8 and lower the resize event is triggered whenever an element from the page changes
+				// its size) return early.
+				if ( that.allowResize === false ||
+					( that.previousWindowWidth === newWindowWidth && that.previousWindowHeight === newWindowHeight ) ) {
+					return;
+				}
+				
+				// Assign the new values for the window width and height
+				that.previousWindowWidth = newWindowWidth;
+				that.previousWindowHeight = newWindowHeight;
+			
+				that.allowResize = false;
+
+				setTimeout(function() {
+					that.resize();
+					that.allowResize = true;
+				}, 200 );
+			});
+
+			// Resize the slider when the 'update' method is called.
+			this.on( 'update.' + NS, function() {
+
+				// Reset the previous slide width
+				that.previousSlideWidth = 0;
+
+				// Some updates might require a resize
+				that.resize();
+			});
+
+			this.update();
+
+			// add the 'sp-selected' class to the initially selected slide
+			this.$slides.find( '.sp-slide' ).eq( this.selectedSlideIndex ).addClass( 'sp-selected' );
+
+			// Fire the 'init' event
+			this.trigger({ type: 'init' });
+			if ( $.isFunction( this.settings.init ) ) {
+				this.settings.init.call( this, { type: 'init' });
+			}
+		},
+
+		// Update the slider by checking for setting changes and for slides
+		// that weren't initialized yet.
+		update: function() {
+			var that = this;
+
+			// Check the current slider orientation and reset CSS that might have been
+			// added for a different orientation, since the orientation can be changed
+			// at runtime.
+			if ( this.settings.orientation === 'horizontal' ) {
+				this.$slider.removeClass( 'sp-vertical' ).addClass( 'sp-horizontal' );
+				this.$slider.css({ 'height': '', 'max-height': '' });
+				this.$slides.find( '.sp-slide' ).css( 'top', '' );
+			} else if ( this.settings.orientation === 'vertical' ) {
+				this.$slider.removeClass( 'sp-horizontal' ).addClass( 'sp-vertical' );
+				this.$slides.find( '.sp-slide' ).css( 'left', '' );
+			}
+
+			if ( this.settings.rightToLeft === true ) {
+				this.$slider.addClass( 'sp-rtl' );
+			} else {
+				this.$slider.removeClass( 'sp-rtl' );
+			}
+
+			this.positionProperty = this.settings.orientation === 'horizontal' ? 'left' : 'top';
+			this.sizeProperty = this.settings.orientation === 'horizontal' ? 'width' : 'height';
+
+			// Reset the 'gotoSlide' method
+			this.gotoSlide = this.originalGotoSlide;
+
+			// Loop through the array of SliderProSlide objects and if a stored slide is found
+			// which is not in the DOM anymore, destroy that slide.
+			for ( var i = this.slides.length - 1; i >= 0; i-- ) {
+				if ( this.$slider.find( '.sp-slide[data-index="' + i + '"]' ).length === 0 ) {
+					var slide = this.slides[ i ];
+
+					slide.off( 'imagesLoaded.' + NS );
+					slide.destroy();
+					this.slides.splice( i, 1 );
+				}
+			}
+
+			this.slidesOrder.length = 0;
+
+			// Loop through the list of slides and initialize newly added slides if any,
+			// and reset the index of each slide.
+			this.$slider.find( '.sp-slide' ).each(function( index ) {
+				var $slide = $( this );
+
+				if ( typeof $slide.attr( 'data-init' ) === 'undefined' ) {
+					that._createSlide( index, $slide );
+				} else {
+					that.slides[ index ].setIndex( index );
+				}
+
+				that.slidesOrder.push( index );
+			});
+
+			// Calculate the position/index of the middle slide
+			this.middleSlidePosition = parseInt( ( that.slidesOrder.length - 1 ) / 2, 10 );
+
+			// Arrange the slides in a loop
+			if ( this.settings.loop === true ) {
+				this._updateSlidesOrder();
+			}
+
+			// Fire the 'update' event
+			this.trigger({ type: 'update' });
+			if ( $.isFunction( this.settings.update ) ) {
+				this.settings.update.call( this, { type: 'update' } );
+			}
+		},
+
+		// Create a SliderProSlide instance for the slide passed as a jQuery element
+		_createSlide: function( index, element ) {
+			var that = this,
+				slide = new SliderProSlide( $( element ), index, this.settings );
+
+			this.slides.splice( index, 0, slide );
+
+			slide.on( 'imagesLoaded.' + NS, function( event ) {
+				if ( that.settings.autoSlideSize === true ) {
+					if ( that.$slides.hasClass( 'sp-animated' ) === false ) {
+						that._resetSlidesPosition();
+					}
+
+					that._calculateSlidesSize();
+				}
+
+				if ( that.settings.autoHeight === true && event.index === that.selectedSlideIndex ) {
+					that._resizeHeightTo( slide.getSize().height);
+				}
+			});
+		},
+
+		// Arrange the slide elements in a loop inside the 'slidesOrder' array
+		_updateSlidesOrder: function() {
+			var	slicedItems,
+				i,
+
+				// Calculate the distance between the selected element and the middle position
+				distance = $.inArray( this.selectedSlideIndex, this.slidesOrder ) - this.middleSlidePosition;
+
+			// If the distance is negative it means that the selected slider is before the middle position, so
+			// slides from the end of the array will be added at the beginning, in order to shift the selected slide
+			// forward.
+			// 
+			// If the distance is positive, slides from the beginning of the array will be added at the end.
+			if ( distance < 0 ) {
+				slicedItems = this.slidesOrder.splice( distance, Math.abs( distance ) );
+
+				for ( i = slicedItems.length - 1; i >= 0; i-- ) {
+					this.slidesOrder.unshift( slicedItems[ i ] );
+				}
+			} else if ( distance > 0 ) {
+				slicedItems = this.slidesOrder.splice( 0, distance );
+
+				for ( i = 0; i <= slicedItems.length - 1; i++ ) {
+					this.slidesOrder.push( slicedItems[ i ] );
+				}
+			}
+		},
+
+		// Set the left/top position of the slides based on their position in the 'slidesOrder' array
+		_updateSlidesPosition: function() {
+			var selectedSlidePixelPosition = parseInt( this.$slides.find( '.sp-slide' ).eq( this.selectedSlideIndex ).css( this.positionProperty ), 10 ),
+				slide,
+				$slideElement,
+				slideIndex,
+				previousPosition = selectedSlidePixelPosition,
+				directionMultiplier,
+				slideSize;
+			
+			if ( this.settings.autoSlideSize === true ) {
+				if ( this.settings.rightToLeft === true && this.settings.orientation === 'horizontal' ) {
+					for ( slideIndex = this.middleSlidePosition; slideIndex >= 0; slideIndex-- ) {
+						slide = this.getSlideAt( this.slidesOrder[ slideIndex ] );
+						$slideElement = slide.$slide;
+						$slideElement.css( this.positionProperty, previousPosition );
+						previousPosition = parseInt( $slideElement.css( this.positionProperty ), 10 ) + slide.getSize()[ this.sizeProperty ] + this.settings.slideDistance;
+					}
+
+					previousPosition = selectedSlidePixelPosition;
+
+					for ( slideIndex = this.middleSlidePosition + 1; slideIndex < this.slidesOrder.length; slideIndex++ ) {
+						slide = this.getSlideAt( this.slidesOrder[ slideIndex ] );
+						$slideElement = slide.$slide;
+						$slideElement.css( this.positionProperty, previousPosition - ( slide.getSize()[ this.sizeProperty ] + this.settings.slideDistance ) );
+						previousPosition = parseInt( $slideElement.css( this.positionProperty ), 10 );
+					}
+				} else {
+					for ( slideIndex = this.middleSlidePosition - 1; slideIndex >= 0; slideIndex-- ) {
+						slide = this.getSlideAt( this.slidesOrder[ slideIndex ] );
+						$slideElement = slide.$slide;
+						$slideElement.css( this.positionProperty, previousPosition - ( slide.getSize()[ this.sizeProperty ] + this.settings.slideDistance ) );
+						previousPosition = parseInt( $slideElement.css( this.positionProperty ), 10 );
+					}
+
+					previousPosition = selectedSlidePixelPosition;
+
+					for ( slideIndex = this.middleSlidePosition; slideIndex < this.slidesOrder.length; slideIndex++ ) {
+						slide = this.getSlideAt( this.slidesOrder[ slideIndex ] );
+						$slideElement = slide.$slide;
+						$slideElement.css( this.positionProperty, previousPosition );
+						previousPosition = parseInt( $slideElement.css( this.positionProperty ), 10 ) + slide.getSize()[ this.sizeProperty ] + this.settings.slideDistance;
+					}
+				}
+			} else {
+				directionMultiplier = ( this.settings.rightToLeft === true && this.settings.orientation === 'horizontal' ) ? -1 : 1;
+				slideSize = ( this.settings.orientation === 'horizontal' ) ? this.slideWidth : this.slideHeight;
+
+				for ( slideIndex = 0; slideIndex < this.slidesOrder.length; slideIndex++ ) {
+					$slideElement = this.$slides.find( '.sp-slide' ).eq( this.slidesOrder[ slideIndex ] );
+					$slideElement.css( this.positionProperty, selectedSlidePixelPosition + directionMultiplier * ( slideIndex - this.middleSlidePosition  ) * ( slideSize + this.settings.slideDistance ) );
+				}
+			}
+		},
+
+		// Set the left/top position of the slides based on their position in the 'slidesOrder' array,
+		// and also set the position of the slides container.
+		_resetSlidesPosition: function() {
+			var previousPosition = 0,
+				slide,
+				$slideElement,
+				slideIndex,
+				selectedSlideSize,
+				directionMultiplier,
+				slideSize;
+
+			if ( this.settings.autoSlideSize === true ) {
+				if ( this.settings.rightToLeft === true && this.settings.orientation === 'horizontal' ) {
+					for ( slideIndex = 0; slideIndex < this.slidesOrder.length; slideIndex++ ) {
+						slide = this.getSlideAt( this.slidesOrder[ slideIndex ] );
+						$slideElement = slide.$slide;
+						$slideElement.css( this.positionProperty, previousPosition - ( slide.getSize()[ this.sizeProperty ] + this.settings.slideDistance ) );
+						previousPosition = parseInt( $slideElement.css( this.positionProperty ), 10 );
+					}
+				} else {
+					for ( slideIndex = 0; slideIndex < this.slidesOrder.length; slideIndex++ ) {
+						slide = this.getSlideAt( this.slidesOrder[ slideIndex ] );
+						$slideElement = slide.$slide;
+						$slideElement.css( this.positionProperty, previousPosition );
+						previousPosition = parseInt( $slideElement.css( this.positionProperty ), 10 ) + slide.getSize()[ this.sizeProperty ] + this.settings.slideDistance;
+					}
+				}
+
+				selectedSlideSize = this.getSlideAt( this.selectedSlideIndex ).getSize()[ this.sizeProperty ];
+			} else {
+				directionMultiplier = ( this.settings.rightToLeft === true && this.settings.orientation === 'horizontal' ) === true ? -1 : 1;
+				slideSize = ( this.settings.orientation === 'horizontal' ) ? this.slideWidth : this.slideHeight;
+ 
+				for ( slideIndex = 0; slideIndex < this.slidesOrder.length; slideIndex++ ) {
+					$slideElement = this.$slides.find( '.sp-slide' ).eq( this.slidesOrder[ slideIndex ] );
+					$slideElement.css( this.positionProperty, directionMultiplier * slideIndex * ( slideSize + this.settings.slideDistance ) );
+				}
+
+				selectedSlideSize = slideSize;
+			}
+
+			var selectedSlideOffset = this.settings.centerSelectedSlide === true && this.settings.visibleSize !== 'auto' ? Math.round( ( parseInt( this.$slidesMask.css( this.sizeProperty ), 10 ) - selectedSlideSize ) / 2 ) : 0,
+				newSlidesPosition = - parseInt( this.$slides.find( '.sp-slide' ).eq( this.selectedSlideIndex ).css( this.positionProperty ), 10 ) + selectedSlideOffset;
+			
+			this._moveTo( newSlidesPosition, true );
+		},
+
+		// Calculate the total size of the slides and the average size of a single slide
+		_calculateSlidesSize: function() {
+			if ( this.settings.autoSlideSize === true ) {
+				var firstSlide = this.$slides.find( '.sp-slide' ).eq( this.slidesOrder[ 0 ] ),
+					firstSlidePosition = parseInt( firstSlide.css( this.positionProperty ), 10 ),
+					lastSlide = this.$slides.find( '.sp-slide' ).eq( this.slidesOrder[ this.slidesOrder.length - 1 ] ),
+					lastSlidePosition = parseInt( lastSlide.css( this.positionProperty ), 10 ) + ( this.settings.rightToLeft === true && this.settings.orientation === 'horizontal' ? -1 : 1 ) * parseInt( lastSlide.css( this.sizeProperty ), 10 );
+				
+				this.slidesSize = Math.abs( lastSlidePosition - firstSlidePosition );
+				this.averageSlideSize = Math.round( this.slidesSize / this.slides.length );
+			} else {
+				this.slidesSize = ( ( this.settings.orientation === 'horizontal' ? this.slideWidth : this.slideHeight ) + this.settings.slideDistance ) * this.slides.length - this.settings.slideDistance;
+				this.averageSlideSize = this.settings.orientation === 'horizontal' ? this.slideWidth : this.slideHeight;
+			}
+		},
+
+		// Called when the slider needs to resize
+		resize: function() {
+			var that = this;
+
+			// Check if the current window width is bigger than the biggest breakpoint
+			// and if necessary reset the properties to the original settings.
+			// 
+			// If the window width is smaller than a certain breakpoint, apply the settings specified
+			// for that breakpoint but only after merging them with the original settings
+			// in order to make sure that only the specified settings for the breakpoint are applied
+			if ( this.settings.breakpoints !== null && this.breakpoints.length > 0 ) {
+				if ( $( window ).width() > this.breakpoints[ this.breakpoints.length - 1 ].size && this.currentBreakpoint !== -1 ) {
+					this.currentBreakpoint = -1;
+					this._setProperties( this.originalSettings, false );
+				} else {
+					for ( var i = 0, n = this.breakpoints.length; i < n; i++ ) {
+						if ( $( window ).width() <= this.breakpoints[ i ].size ) {
+							if ( this.currentBreakpoint !== this.breakpoints[ i ].size ) {
+								var eventObject = { type: 'breakpointReach', size: this.breakpoints[ i ].size, settings: this.breakpoints[ i ].properties };
+								this.trigger( eventObject );
+								if ( $.isFunction( this.settings.breakpointReach ) )
+									this.settings.breakpointReach.call( this, eventObject );
+
+								this.currentBreakpoint = this.breakpoints[ i ].size;
+								var settings = $.extend( {}, this.originalSettings, this.breakpoints[ i ].properties );
+								this._setProperties( settings, false );
+								
+								return;
+							}
+
+							break;
+						}
+					}
+				}
+			}
+
+			// Set the width of the main slider container based on whether or not the slider is responsive,
+			// full width or full size
+			if ( this.settings.responsive === true ) {
+				if ( ( this.settings.forceSize === 'fullWidth' || this.settings.forceSize === 'fullWindow' ) &&
+					( this.settings.visibleSize === 'auto' || this.settings.visibleSize !== 'auto' && this.settings.orientation === 'vertical' )
+				) {
+					this.$slider.css( 'margin', 0 );
+					this.$slider.css({ 'width': $( window ).width(), 'max-width': '', 'marginLeft': - this.$slider.offset().left });
+				} else {
+					this.$slider.css({ 'width': '100%', 'max-width': this.settings.width, 'marginLeft': '' });
+				}
+			} else {
+				this.$slider.css({ 'width': this.settings.width });
+			}
+
+			// Calculate the aspect ratio of the slider
+			if ( this.settings.aspectRatio === -1 ) {
+				this.settings.aspectRatio = this.settings.width / this.settings.height;
+			}
+			
+			// Initially set the slide width to the size of the slider.
+			// Later, this will be set to less if there are multiple visible slides.
+			this.slideWidth = this.$slider.width();
+
+			// Set the height to the same size as the browser window if the slider is set to be 'fullWindow',
+			// or calculate the height based on the width and the aspect ratio.
+			if ( this.settings.forceSize === 'fullWindow' ) {
+				this.slideHeight = $( window ).height();
+			} else {
+				this.slideHeight = isNaN( this.settings.aspectRatio ) ? this.settings.height : this.slideWidth / this.settings.aspectRatio;
+			}
+
+			// Resize the slider only if the size of the slider has changed
+			// If it hasn't, return.
+			if ( this.previousSlideWidth !== this.slideWidth ||
+				this.previousSlideHeight !== this.slideHeight ||
+				this.settings.visibleSize !== 'auto' ||
+				this.$slider.outerWidth() > this.$slider.parent().width() ||
+				this.$slider.width() !== this.$slidesMask.width()
+			) {
+				this.previousSlideWidth = this.slideWidth;
+				this.previousSlideHeight = this.slideHeight;
+			} else {
+				return;
+			}
+
+			this._resizeSlides();
+
+			// Set the initial size of the mask container to the size of an individual slide
+			this.$slidesMask.css({ 'width': this.slideWidth, 'height': this.slideHeight });
+
+			// Adjust the height if it's set to 'auto'
+			if ( this.settings.autoHeight === true ) {
+
+				// Delay the resizing of the height to allow for other resize handlers
+				// to execute first before calculating the final height of the slide
+				setTimeout( function() {
+					that._resizeHeight();
+				}, 1 );
+			} else {
+				this.$slidesMask.css( this.vendorPrefix + 'transition', '' );
+			}
+
+			// The 'visibleSize' option can be set to fixed or percentage size to make more slides
+			// visible at a time.
+			// By default it's set to 'auto'.
+			if ( this.settings.visibleSize !== 'auto' ) {
+				if ( this.settings.orientation === 'horizontal' ) {
+
+					// If the size is forced to full width or full window, the 'visibleSize' option will be
+					// ignored and the slider will become as wide as the browser window.
+					if ( this.settings.forceSize === 'fullWidth' || this.settings.forceSize === 'fullWindow' ) {
+						this.$slider.css( 'margin', 0 );
+						this.$slider.css({ 'width': $( window ).width(), 'max-width': '', 'marginLeft': - this.$slider.offset().left });
+					} else {
+						this.$slider.css({ 'width': this.settings.visibleSize, 'max-width': '100%', 'marginLeft': 0 });
+					}
+					
+					this.$slidesMask.css( 'width', this.$slider.width() );
+				} else {
+
+					// If the size is forced to full window, the 'visibleSize' option will be
+					// ignored and the slider will become as high as the browser window.
+					if ( this.settings.forceSize === 'fullWindow' ) {
+						this.$slider.css({ 'height': $( window ).height(), 'max-height': '' });
+					} else {
+						this.$slider.css({ 'height': this.settings.visibleSize, 'max-height': '100%' });
+					}
+
+					this.$slidesMask.css( 'height', this.$slider.height() );
+				}
+			}
+
+			this._resetSlidesPosition();
+			this._calculateSlidesSize();
+
+			// Fire the 'sliderResize' event
+			this.trigger({ type: 'sliderResize' });
+			if ( $.isFunction( this.settings.sliderResize ) ) {
+				this.settings.sliderResize.call( this, { type: 'sliderResize' });
+			}
+		},
+
+		// Resize each individual slide
+		_resizeSlides: function() {
+			var slideWidth = this.slideWidth,
+				slideHeight = this.slideHeight;
+
+			if ( this.settings.autoSlideSize === true ) {
+				if ( this.settings.orientation === 'horizontal' ) {
+					slideWidth = 'auto';
+				} else if ( this.settings.orientation === 'vertical' ) {
+					slideHeight = 'auto';
+				}
+			} else if ( this.settings.autoHeight === true ) {
+				slideHeight = 'auto';
+			}
+
+			// Loop through the existing slides and reset their size.
+			$.each( this.slides, function( index, element ) {
+				element.setSize( slideWidth, slideHeight );
+			});
+		},
+
+		// Resize the height of the slider to the height of the selected slide.
+		// It's used when the 'autoHeight' option is set to 'true'.
+		_resizeHeight: function() {
+			var that = this,
+				selectedSlide = this.getSlideAt( this.selectedSlideIndex );
+
+			this._resizeHeightTo( selectedSlide.getSize().height );
+		},
+
+		// Open the slide at the specified index
+		gotoSlide: function( index ) {
+			if ( index === this.selectedSlideIndex || typeof this.slides[ index ] === 'undefined' ) {
+				return;
+			}
+
+			var that = this;
+
+			this.previousSlideIndex = this.selectedSlideIndex;
+			this.selectedSlideIndex = index;
+
+			// Re-assign the 'sp-selected' class to the currently selected slide
+			this.$slides.find( '.sp-selected' ).removeClass( 'sp-selected' );
+			this.$slides.find( '.sp-slide' ).eq( this.selectedSlideIndex ).addClass( 'sp-selected' );
+
+			// If the slider is loopable reorder the slides to have the selected slide in the middle
+			// and update the slides' position.
+			if ( this.settings.loop === true ) {
+				this._updateSlidesOrder();
+				this._updateSlidesPosition();
+			}
+
+			// Adjust the height of the slider
+			if ( this.settings.autoHeight === true ) {
+				this._resizeHeight();
+			}
+
+			var selectedSlideOffset = this.settings.centerSelectedSlide === true && this.settings.visibleSize !== 'auto' ? Math.round( ( parseInt( this.$slidesMask.css( this.sizeProperty ), 10 ) - this.getSlideAt( this.selectedSlideIndex ).getSize()[ this.sizeProperty ] ) / 2 ) : 0,
+				newSlidesPosition = - parseInt( this.$slides.find( '.sp-slide' ).eq( this.selectedSlideIndex ).css( this.positionProperty ), 10 ) + selectedSlideOffset;
+
+			// Move the slides container to the new position
+			this._moveTo( newSlidesPosition, false, function() {
+				that._resetSlidesPosition();
+
+				// Fire the 'gotoSlideComplete' event
+				that.trigger({ type: 'gotoSlideComplete', index: index, previousIndex: that.previousSlideIndex });
+				if ( $.isFunction( that.settings.gotoSlideComplete ) ) {
+					that.settings.gotoSlideComplete.call( that, { type: 'gotoSlideComplete', index: index, previousIndex: that.previousSlideIndex } );
+				}
+			});
+
+			// Fire the 'gotoSlide' event
+			this.trigger({ type: 'gotoSlide', index: index, previousIndex: this.previousSlideIndex });
+			if ( $.isFunction( this.settings.gotoSlide ) ) {
+				this.settings.gotoSlide.call( this, { type: 'gotoSlide', index: index, previousIndex: this.previousSlideIndex } );
+			}
+		},
+
+		// Open the next slide
+		nextSlide: function() {
+			var index = ( this.selectedSlideIndex >= this.getTotalSlides() - 1 ) ? 0 : ( this.selectedSlideIndex + 1 );
+			this.gotoSlide( index );
+		},
+
+		// Open the previous slide
+		previousSlide: function() {
+			var index = this.selectedSlideIndex <= 0 ? ( this.getTotalSlides() - 1 ) : ( this.selectedSlideIndex - 1 );
+			this.gotoSlide( index );
+		},
+
+		// Move the slides container to the specified position.
+		// The movement can be instant or animated.
+		_moveTo: function( position, instant, callback ) {
+			var that = this,
+				css = {};
+
+			if ( position === this.slidesPosition ) {
+				return;
+			}
+			
+			this.slidesPosition = position;
+			
+			if ( ( this.supportedAnimation === 'css-3d' || this.supportedAnimation === 'css-2d' ) && this.isIE === false ) {
+				var transition,
+					left = this.settings.orientation === 'horizontal' ? position : 0,
+					top = this.settings.orientation === 'horizontal' ? 0 : position;
+
+				if ( this.supportedAnimation === 'css-3d' ) {
+					css[ this.vendorPrefix + 'transform' ] = 'translate3d(' + left + 'px, ' + top + 'px, 0)';
+				} else {
+					css[ this.vendorPrefix + 'transform' ] = 'translate(' + left + 'px, ' + top + 'px)';
+				}
+
+				if ( typeof instant !== 'undefined' && instant === true ) {
+					transition = '';
+				} else {
+					this.$slides.addClass( 'sp-animated' );
+					transition = this.vendorPrefix + 'transform ' + this.settings.slideAnimationDuration / 1000 + 's';
+
+					this.$slides.on( this.transitionEvent, function( event ) {
+						if ( event.target !== event.currentTarget ) {
+							return;
+						}
+
+						that.$slides.off( that.transitionEvent );
+						that.$slides.removeClass( 'sp-animated' );
+						
+						if ( typeof callback === 'function' ) {
+							callback();
+						}
+					});
+				}
+
+				css[ this.vendorPrefix + 'transition' ] = transition;
+
+				this.$slides.css( css );
+			} else {
+				css[ 'margin-' + this.positionProperty ] = position;
+
+				if ( typeof instant !== 'undefined' && instant === true ) {
+					this.$slides.css( css );
+				} else {
+					this.$slides.addClass( 'sp-animated' );
+					this.$slides.animate( css, this.settings.slideAnimationDuration, function() {
+						that.$slides.removeClass( 'sp-animated' );
+
+						if ( typeof callback === 'function' ) {
+							callback();
+						}
+					});
+				}
+			}
+		},
+
+		// Stop the movement of the slides
+		_stopMovement: function() {
+			var css = {};
+
+			if ( ( this.supportedAnimation === 'css-3d' || this.supportedAnimation === 'css-2d' ) && this.isIE === false) {
+
+				// Get the current position of the slides by parsing the 'transform' property
+				var	matrixString = this.$slides.css( this.vendorPrefix + 'transform' ),
+					matrixType = matrixString.indexOf( 'matrix3d' ) !== -1 ? 'matrix3d' : 'matrix',
+					matrixArray = matrixString.replace( matrixType, '' ).match( /-?[0-9\.]+/g ),
+					left = matrixType === 'matrix3d' ? parseInt( matrixArray[ 12 ], 10 ) : parseInt( matrixArray[ 4 ], 10 ),
+					top = matrixType === 'matrix3d' ? parseInt( matrixArray[ 13 ], 10 ) : parseInt( matrixArray[ 5 ], 10 );
+					
+				// Set the transform property to the value that the transform had when the function was called
+				if ( this.supportedAnimation === 'css-3d' ) {
+					css[ this.vendorPrefix + 'transform' ] = 'translate3d(' + left + 'px, ' + top + 'px, 0)';
+				} else {
+					css[ this.vendorPrefix + 'transform' ] = 'translate(' + left + 'px, ' + top + 'px)';
+				}
+
+				css[ this.vendorPrefix + 'transition' ] = '';
+
+				this.$slides.css( css );
+				this.$slides.off( this.transitionEvent );
+				this.slidesPosition = this.settings.orientation === 'horizontal' ? left : top;
+			} else {
+				this.$slides.stop();
+				this.slidesPosition = parseInt( this.$slides.css( 'margin-' + this.positionProperty ), 10 );
+			}
+
+			this.$slides.removeClass( 'sp-animated' );
+		},
+
+		// Resize the height of the slider to the specified value
+		_resizeHeightTo: function( height ) {
+			var that = this,
+				css = { 'height': height };
+
+			if ( this.supportedAnimation === 'css-3d' || this.supportedAnimation === 'css-2d' ) {
+				css[ this.vendorPrefix + 'transition' ] = 'height ' + this.settings.heightAnimationDuration / 1000 + 's';
+
+				this.$slidesMask.off( this.transitionEvent );
+				this.$slidesMask.on( this.transitionEvent, function( event ) {
+					if ( event.target !== event.currentTarget ) {
+						return;
+					}
+
+					that.$slidesMask.off( that.transitionEvent );
+
+					// Fire the 'resizeHeightComplete' event
+					that.trigger({ type: 'resizeHeightComplete' });
+					if ( $.isFunction( that.settings.resizeHeightComplete ) ) {
+						that.settings.resizeHeightComplete.call( that, { type: 'resizeHeightComplete' } );
+					}
+				});
+
+				this.$slidesMask.css( css );
+			} else {
+				this.$slidesMask.stop().animate( css, this.settings.heightAnimationDuration, function( event ) {
+					// Fire the 'resizeHeightComplete' event
+					that.trigger({ type: 'resizeHeightComplete' });
+					if ( $.isFunction( that.settings.resizeHeightComplete ) ) {
+						that.settings.resizeHeightComplete.call( that, { type: 'resizeHeightComplete' } );
+					}
+				});
+			}
+		},
+
+		// Destroy the slider instance
+		destroy: function() {
+			// Remove the stored reference to this instance
+			this.$slider.removeData( 'sliderPro' );
+			
+			// Clean the CSS
+			this.$slider.removeAttr( 'style' );
+			this.$slides.removeAttr( 'style' );
+
+			// Remove event listeners
+			this.off( 'update.' + NS );
+			$( window ).off( 'resize.' + this.uniqueId + '.' + NS );
+
+			// Destroy modules
+			var modules = $.SliderPro.modules;
+
+			if ( typeof modules !== 'undefined' ) {
+				for ( var i = 0; i < modules.length; i++ ) {
+					if ( typeof this[ 'destroy' + modules[ i ] ] !== 'undefined' ) {
+						this[ 'destroy' + modules[ i ] ]();
+					}
+				}
+			}
+
+			// Destroy all slides
+			$.each( this.slides, function( index, element ) {
+				element.destroy();
+			});
+
+			this.slides.length = 0;
+
+			// Move the slides to their initial position in the DOM and 
+			// remove the container elements created dynamically.
+			this.$slides.prependTo( this.$slider );
+			this.$slidesContainer.remove();
+		},
+
+		// Set properties on runtime
+		_setProperties: function( properties, store ) {
+			// Parse the properties passed as an object
+			for ( var prop in properties ) {
+				this.settings[ prop ] = properties[ prop ];
+
+				// Alter the original settings as well unless 'false' is passed to the 'store' parameter
+				if ( store !== false ) {
+					this.originalSettings[ prop ] = properties[ prop ];
+				}
+			}
+
+			this.update();
+		},
+
+		// Attach an event handler to the slider
+		on: function( type, callback ) {
+			return this.$slider.on( type, callback );
+		},
+
+		// Detach an event handler
+		off: function( type ) {
+			return this.$slider.off( type );
+		},
+
+		// Trigger an event on the slider
+		trigger: function( data ) {
+			return this.$slider.triggerHandler( data );
+		},
+
+		// Return the slide at the specified index
+		getSlideAt: function( index ) {
+			return this.slides[ index ];
+		},
+
+		// Return the index of the currently opened slide
+		getSelectedSlide: function() {
+			return this.selectedSlideIndex;
+		},
+
+		// Return the total amount of slides
+		getTotalSlides: function() {
+			return this.slides.length;
+		},
+
+		// The default options of the slider
+		defaults: {
+			// Width of the slide
+			width: 500,
+
+			// Height of the slide
+			height: 300,
+
+			// Indicates if the slider is responsive
+			responsive: true,
+
+			// The aspect ratio of the slider (width/height)
+			aspectRatio: -1,
+
+			// The scale mode for images (cover, contain, exact and none)
+			imageScaleMode: 'cover',
+
+			// Indicates if the image will be centered
+			centerImage: true,
+
+			// Indicates if the image can be scaled up more than its original size
+			allowScaleUp: true,
+
+			// Indicates if height of the slider will be adjusted to the
+			// height of the selected slide
+			autoHeight: false,
+
+			// Will maintain all the slides at the same height, but will allow the width
+			// of the slides to be variable if the orientation of the slides is horizontal
+			// and vice-versa if the orientation is vertical
+			autoSlideSize: false,
+
+			// Indicates the initially selected slide
+			startSlide: 0,
+
+			// Indicates if the slides will be shuffled
+			shuffle: false,
+
+			// Indicates whether the slides will be arranged horizontally
+			// or vertically. Can be set to 'horizontal' or 'vertical'.
+			orientation: 'horizontal',
+
+			// Indicates if the size of the slider will be forced to 'fullWidth' or 'fullWindow'
+			forceSize: 'none',
+
+			// Indicates if the slider will be loopable
+			loop: true,
+
+			// The distance between slides
+			slideDistance: 10,
+
+			// The duration of the slide animation
+			slideAnimationDuration: 700,
+
+			// The duration of the height animation
+			heightAnimationDuration: 700,
+
+			// Sets the size of the visible area, allowing the increase of it in order
+			// to make more slides visible.
+			// By default, only the selected slide will be visible. 
+			visibleSize: 'auto',
+
+			// Indicates whether the selected slide will be in the center of the slider, when there
+			// are more slides visible at a time. If set to false, the selected slide will be in the
+			// left side of the slider.
+			centerSelectedSlide: true,
+
+			// Indicates if the direction of the slider will be from right to left,
+			// instead of the default left to right
+			rightToLeft: false,
+
+			// Breakpoints for allowing the slider's options to be changed
+			// based on the size of the window.
+			breakpoints: null,
+
+			// Called when the slider is initialized
+			init: function() {},
+
+			// Called when the slider is updates
+			update: function() {},
+
+			// Called when the slider is resized
+			sliderResize: function() {},
+
+			// Called when a new slide is selected
+			gotoSlide: function() {},
+
+			// Called when the navigation to the newly selected slide is complete
+			gotoSlideComplete: function() {},
+
+			// Called when the height animation of the slider is complete
+			resizeHeightComplete: function() {},
+
+			// Called when a breakpoint is reached
+			breakpointReach: function() {}
+		}
+	};
+
+	var SliderProSlide = function( slide, index, settings ) {
+
+		// Reference to the slide jQuery element
+		this.$slide = slide;
+
+		// Reference to the main slide image
+		this.$mainImage = null;
+
+		// Reference to the container that will hold the main image
+		this.$imageContainer = null;
+
+		// Indicates whether the slide has a main image
+		this.hasMainImage = false;
+
+		// Indicates whether the main image is loaded
+		this.isMainImageLoaded = false;
+
+		// Indicates whether the main image is in the process of being loaded
+		this.isMainImageLoading = false;
+
+		// Indicates whether the slide has any image. There could be other images (i.e., in layers)
+		// besides the main slide image.
+		this.hasImages = false;
+
+		// Indicates if all the images in the slide are loaded
+		this.areImagesLoaded = false;
+
+		// Indicates if the images inside the slide are in the process of being loaded
+		this.areImagesLoading = false;
+
+		// The width and height of the slide
+		this.width = 0;
+		this.height = 0;
+
+		// Reference to the global settings of the slider
+		this.settings = settings;
+
+		// Set the index of the slide
+		this.setIndex( index );
+
+		// Initialize the slide
+		this._init();
+	};
+
+	SliderProSlide.prototype = {
+
+		// The starting point for the slide
+		_init: function() {
+			var that = this;
+
+			// Mark the slide as initialized
+			this.$slide.attr( 'data-init', true );
+
+			// Get the main slide image if there is one
+			this.$mainImage = this.$slide.find( '.sp-image' ).length !== 0 ? this.$slide.find( '.sp-image' ) : null;
+
+			// If there is a main slide image, create a container for it and add the image to this container.
+			// The container will allow the isolation of the image from the rest of the slide's content. This is
+			// helpful when you want to show some content below the image and not cover it.
+			if ( this.$mainImage !== null ) {
+				this.hasMainImage = true;
+
+				this.$imageContainer = $( '<div class="sp-image-container"></div>' ).prependTo( this.$slide );
+
+				if ( this.$mainImage.parent( 'a' ).length !== 0 ) {
+					this.$mainImage.parent( 'a' ).appendTo( this.$imageContainer );
+				} else {
+					this.$mainImage.appendTo( this.$imageContainer );
+				}
+			}
+
+			this.hasImages = this.$slide.find( 'img' ).length !== 0 ? true : false;
+		},
+
+		// Set the size of the slide
+		setSize: function( width, height ) {
+			var that = this;
+
+			this.width = width;
+			this.height = height;
+
+			this.$slide.css({
+				'width': this.width,
+				'height': this.height
+			});
+
+			if ( this.hasMainImage === true ) {
+
+				// Initially set the width and height of the container to the width and height
+				// specified in the settings. This will prevent content overflowing if the width or height
+				// are 'auto'. The 'auto' value will be passed only after the image is loaded.
+				this.$imageContainer.css({
+					'width': this.settings.width,
+					'height': this.settings.height
+				});
+
+				// Resize the main image if it's loaded. If the 'data-src' attribute is present it means
+				// that the image will be lazy-loaded
+				if ( typeof this.$mainImage.attr( 'data-src' ) === 'undefined' ) {
+					this.resizeMainImage();
+				}
+			}
+		},
+
+		// Get the size (width and height) of the slide
+		getSize: function() {
+			var that = this,
+				size;
+
+			// Check if all images have loaded, and if they have, return the size, else, return
+			// the original width and height of the slide
+			if ( this.hasImages === true && this.areImagesLoaded === false && this.areImagesLoading === false ) {
+				this.areImagesLoading = true;
+				
+				var status = SliderProUtils.checkImagesStatus( this.$slide );
+
+				if ( status !== 'complete' ) {
+					SliderProUtils.checkImagesComplete( this.$slide, function() {
+						that.areImagesLoaded = true;
+						that.areImagesLoading = false;
+						that.trigger({ type: 'imagesLoaded.' + NS, index: that.index });
+					});
+
+					// if the image is not loaded yet, return the original width and height of the slider
+					return {
+						'width': this.settings.width,
+						'height': this.settings.height
+					};
+				}
+			}
+
+			size = this.calculateSize();
+
+			return {
+				'width': size.width,
+				'height': size.height
+			};
+		},
+
+		// Calculate the width and height of the slide by going
+		// through all the child elements and measuring their 'bottom'
+		// and 'right' properties. The element with the biggest
+		// 'right'/'bottom' property will determine the slide's
+		// width/height.
+		calculateSize: function() {
+			var width = this.$slide.width(),
+				height = this.$slide.height();
+
+			this.$slide.children().each(function( index, element ) {
+				var child = $( element );
+
+				if ( child.is( ':hidden' ) === true ) {
+					return;
+				}
+
+				var	rect = element.getBoundingClientRect(),
+					bottom = child.position().top + ( rect.bottom - rect.top ),
+					right = child.position().left + ( rect.right - rect.left );
+
+				if ( bottom > height ) {
+					height = bottom;
+				}
+
+				if ( right > width ) {
+					width = right;
+				}
+			});
+
+			return {
+				width: width,
+				height: height
+			};
+		},
+
+		// Resize the main image.
+		// 
+		// Call this when the slide resizes or when the main image has changed to a different image.
+		resizeMainImage: function( isNewImage ) {
+			var that = this;
+
+			// If the main image has changed, reset the 'flags'
+			if ( isNewImage === true ) {
+				this.isMainImageLoaded = false;
+				this.isMainImageLoading = false;
+			}
+
+			// If the image was not loaded yet and it's not in the process of being loaded, load it
+			if ( this.isMainImageLoaded === false && this.isMainImageLoading === false ) {
+				this.isMainImageLoading = true;
+
+				SliderProUtils.checkImagesComplete( this.$mainImage, function() {
+					that.isMainImageLoaded = true;
+					that.isMainImageLoading = false;
+					that.resizeMainImage();
+					that.trigger({ type: 'imagesLoaded.' + NS, index: that.index });
+				});
+
+				return;
+			}
+
+			// Set the size of the image container element to the proper 'width' and 'height'
+			// values, as they were calculated. Previous values were the 'width' and 'height'
+			// from the settings. 
+			this.$imageContainer.css({
+				'width': this.width,
+				'height': this.height
+			});
+
+			if ( this.settings.allowScaleUp === false ) {
+				// reset the image to its natural size
+				this.$mainImage.css({ 'width': '', 'height': '', 'maxWidth': '', 'maxHeight': '' });
+
+				// set the boundaries
+				this.$mainImage.css({ 'maxWidth': this.$mainImage.width(), 'maxHeight': this.$mainImage.height() });
+			}
+
+			// After the main image has loaded, resize it
+			if ( this.settings.autoSlideSize === true ) {
+				if ( this.settings.orientation === 'horizontal' ) {
+					this.$mainImage.css({ width: 'auto', height: '100%' });
+
+					// resize the slide's width to a fixed value instead of 'auto', to
+					// prevent incorrect sizing caused by links added to the main image
+					this.$slide.css( 'width', this.$mainImage.width() );
+				} else if ( this.settings.orientation === 'vertical' ) {
+					this.$mainImage.css({ width: '100%', height: 'auto' });
+
+					// resize the slide's height to a fixed value instead of 'auto', to
+					// prevent incorrect sizing caused by links added to the main image
+					this.$slide.css( 'height', this.$mainImage.height() );
+				}
+			} else if ( this.settings.autoHeight === true ) {
+				this.$mainImage.css({ width: '100%', height: 'auto' });
+			} else {
+				if ( this.settings.imageScaleMode === 'cover' ) {
+					if ( this.$mainImage.width() / this.$mainImage.height() <= this.$slide.width() / this.$slide.height() ) {
+						this.$mainImage.css({ width: '100%', height: 'auto' });
+					} else {
+						this.$mainImage.css({ width: 'auto', height: '100%' });
+					}
+				} else if ( this.settings.imageScaleMode === 'contain' ) {
+					if ( this.$mainImage.width() / this.$mainImage.height() >= this.$slide.width() / this.$slide.height() ) {
+						this.$mainImage.css({ width: '100%', height: 'auto' });
+					} else {
+						this.$mainImage.css({ width: 'auto', height: '100%' });
+					}
+				} else if ( this.settings.imageScaleMode === 'exact' ) {
+					this.$mainImage.css({ width: '100%', height: '100%' });
+				}
+
+				if ( this.settings.centerImage === true ) {
+					this.$mainImage.css({ 'marginLeft': ( this.$imageContainer.width() - this.$mainImage.width() ) * 0.5, 'marginTop': ( this.$imageContainer.height() - this.$mainImage.height() ) * 0.5 });
+				}
+			}
+		},
+
+		// Destroy the slide
+		destroy: function() {
+			// Clean the slide element from attached styles and data
+			this.$slide.removeAttr( 'style' );
+			this.$slide.removeAttr( 'data-init' );
+			this.$slide.removeAttr( 'data-index' );
+			this.$slide.removeAttr( 'data-loaded' );
+
+			// If there is a main image, remove its container
+			if ( this.hasMainImage === true ) {
+				this.$slide.find( '.sp-image' )
+					.removeAttr( 'style' )
+					.appendTo( this.$slide );
+
+				this.$slide.find( '.sp-image-container' ).remove();
+			}
+		},
+
+		// Return the index of the slide
+		getIndex: function() {
+			return this.index;
+		},
+
+		// Set the index of the slide
+		setIndex: function( index ) {
+			this.index = index;
+			this.$slide.attr( 'data-index', this.index );
+		},
+
+		// Attach an event handler to the slide
+		on: function( type, callback ) {
+			return this.$slide.on( type, callback );
+		},
+
+		// Detach an event handler to the slide
+		off: function( type ) {
+			return this.$slide.off( type );
+		},
+
+		// Trigger an event on the slide
+		trigger: function( data ) {
+			return this.$slide.triggerHandler( data );
+		}
+	};
+
+	window.SliderPro = SliderPro;
+	window.SliderProSlide = SliderProSlide;
+
+	$.fn.sliderPro = function( options ) {
+		var args = Array.prototype.slice.call( arguments, 1 );
+
+		return this.each(function() {
+			// Instantiate the slider or alter it
+			if ( typeof $( this ).data( 'sliderPro' ) === 'undefined' ) {
+				var newInstance = new SliderPro( this, options );
+
+				// Store a reference to the instance created
+				$( this ).data( 'sliderPro', newInstance );
+			} else if ( typeof options !== 'undefined' ) {
+				var	currentInstance = $( this ).data( 'sliderPro' );
+
+				// Check the type of argument passed
+				if ( typeof currentInstance[ options ] === 'function' ) {
+					currentInstance[ options ].apply( currentInstance, args );
+				} else if ( typeof currentInstance.settings[ options ] !== 'undefined' ) {
+					var obj = {};
+					obj[ options ] = args[ 0 ];
+					currentInstance._setProperties( obj );
+				} else if ( typeof options === 'object' ) {
+					currentInstance._setProperties( options );
+				} else {
+					$.error( options + ' does not exist in sliderPro.' );
+				}
+			}
+		});
+	};
+
+	// Contains useful utility functions
+	var SliderProUtils = {
+
+		// Indicates what type of animations are supported in the current browser
+		// Can be CSS 3D, CSS 2D or JavaScript
+		supportedAnimation: null,
+
+		// Indicates the required vendor prefix for the current browser
+		vendorPrefix: null,
+
+		// Indicates the name of the transition's complete event for the current browser
+		transitionEvent: null,
+
+		// Indicates if the current browser is Internet Explorer (any version)
+		isIE: null,
+
+		// Check whether CSS3 3D or 2D transforms are supported. If they aren't, use JavaScript animations
+		getSupportedAnimation: function() {
+			if ( this.supportedAnimation !== null ) {
+				return this.supportedAnimation;
+			}
+
+			var element = document.body || document.documentElement,
+				elementStyle = element.style,
+				isCSSTransitions = typeof elementStyle.transition !== 'undefined' ||
+									typeof elementStyle.WebkitTransition !== 'undefined' ||
+									typeof elementStyle.MozTransition !== 'undefined' ||
+									typeof elementStyle.OTransition !== 'undefined';
+
+			if ( isCSSTransitions === true ) {
+				var div = document.createElement( 'div' );
+
+				// Check if 3D transforms are supported
+				if ( typeof div.style.WebkitPerspective !== 'undefined' || typeof div.style.perspective !== 'undefined' ) {
+					this.supportedAnimation = 'css-3d';
+				}
+
+				// Additional checks for Webkit
+				if ( this.supportedAnimation === 'css-3d' && typeof div.styleWebkitPerspective !== 'undefined' ) {
+					var style = document.createElement( 'style' );
+					style.textContent = '@media (transform-3d),(-webkit-transform-3d){#test-3d{left:9px;position:absolute;height:5px;margin:0;padding:0;border:0;}}';
+					document.getElementsByTagName( 'head' )[0].appendChild( style );
+
+					div.id = 'test-3d';
+					document.body.appendChild( div );
+
+					if ( ! ( div.offsetLeft === 9 && div.offsetHeight === 5 ) ) {
+						this.supportedAnimation = null;
+					}
+
+					style.parentNode.removeChild( style );
+					div.parentNode.removeChild( div );
+				}
+
+				// If CSS 3D transforms are not supported, check if 2D transforms are supported
+				if ( this.supportedAnimation === null && ( typeof div.style['-webkit-transform'] !== 'undefined' || typeof div.style.transform !== 'undefined' ) ) {
+					this.supportedAnimation = 'css-2d';
+				}
+			} else {
+				this.supportedAnimation = 'javascript';
+			}
+			
+			return this.supportedAnimation;
+		},
+
+		// Check what vendor prefix should be used in the current browser
+		getVendorPrefix: function() {
+			if ( this.vendorPrefix !== null ) {
+				return this.vendorPrefix;
+			}
+
+			var div = document.createElement( 'div' ),
+				prefixes = [ 'Webkit', 'Moz', 'ms', 'O' ];
+			
+			if ( 'transform' in div.style ) {
+				this.vendorPrefix = '';
+				return this.vendorPrefix;
+			}
+			
+			for ( var i = 0; i < prefixes.length; i++ ) {
+				if ( ( prefixes[ i ] + 'Transform' ) in div.style ) {
+					this.vendorPrefix = '-' + prefixes[ i ].toLowerCase() + '-';
+					break;
+				}
+			}
+			
+			return this.vendorPrefix;
+		},
+
+		// Check the name of the transition's complete event in the current browser
+		getTransitionEvent: function() {
+			if ( this.transitionEvent !== null ) {
+				return this.transitionEvent;
+			}
+
+			var div = document.createElement( 'div' ),
+				transitions = {
+					'transition': 'transitionend',
+					'WebkitTransition': 'webkitTransitionEnd',
+					'MozTransition': 'transitionend',
+					'OTransition': 'oTransitionEnd'
+				};
+
+			for ( var transition in transitions ) {
+				if ( transition in div.style ) {
+					this.transitionEvent = transitions[ transition ];
+					break;
+				}
+			}
+
+			return this.transitionEvent;
+		},
+
+		// If a single image is passed, check if it's loaded.
+		// If a different element is passed, check if there are images
+		// inside it, and check if these images are loaded.
+		checkImagesComplete: function( target, callback ) {
+			var that = this,
+
+				// Check the initial status of the image(s)
+				status = this.checkImagesStatus( target );
+
+			// If there are loading images, wait for them to load.
+			// If the images are loaded, call the callback function directly.
+			if ( status === 'loading' ) {
+				var checkImages = setInterval(function() {
+					status = that.checkImagesStatus( target );
+
+					if ( status === 'complete' ) {
+						clearInterval( checkImages );
+
+						if ( typeof callback === 'function' ) {
+							callback();
+						}
+					}
+				}, 100 );
+			} else if ( typeof callback === 'function' ) {
+				callback();
+			}
+
+			return status;
+		},
+
+		checkImagesStatus: function( target ) {
+			var status = 'complete';
+
+			if ( target.is( 'img' ) && target[0].complete === false ) {
+				status = 'loading';
+			} else {
+				target.find( 'img' ).each(function( index ) {
+					var image = $( this )[0];
+
+					if ( image.complete === false ) {
+						status = 'loading';
+					}
+				});
+			}
+
+			return status;
+		},
+
+		checkIE: function() {
+			if ( this.isIE !== null ) {
+				return this.isIE;
+			}
+
+			var userAgent = window.navigator.userAgent,
+				msie = userAgent.indexOf( 'MSIE' );
+
+			if ( userAgent.indexOf( 'MSIE' ) !== -1 || userAgent.match( /Trident.*rv\:11\./ ) ) {
+				this.isIE = true;
+			} else {
+				this.isIE = false;
+			}
+
+			return this.isIE;
+		}
+	};
+
+	window.SliderProUtils = SliderProUtils;
+
+})( window, jQuery );
+
+// Thumbnails module for Slider Pro.
+// 
+// Adds the possibility to create a thumbnail scroller, each thumbnail
+// corresponding to a slide.
+;(function( window, $ ) {
+
+	"use strict";
+
+	var NS = 'Thumbnails.' + $.SliderPro.namespace;
+
+	var Thumbnails = {
+
+		// Reference to the thumbnail scroller 
+		$thumbnails: null,
+
+		// Reference to the container of the thumbnail scroller
+		$thumbnailsContainer: null,
+
+		// List of Thumbnail objects
+		thumbnails: null,
+
+		// Index of the selected thumbnail
+		selectedThumbnailIndex: 0,
+
+		// Total size (width or height, depending on the orientation) of the thumbnails
+		thumbnailsSize: 0,
+
+		// Size of the thumbnail's container
+		thumbnailsContainerSize: 0,
+
+		// The position of the thumbnail scroller inside its container
+		thumbnailsPosition: 0,
+
+		// Orientation of the thumbnails
+		thumbnailsOrientation: null,
+
+		// Indicates the 'left' or 'top' position based on the orientation of the thumbnails
+		thumbnailsPositionProperty: null,
+
+		// Indicates if there are thumbnails in the slider
+		isThumbnailScroller: false,
+
+		initThumbnails: function() {
+			var that = this;
+
+			this.thumbnails = [];
+
+			this.on( 'update.' + NS, $.proxy( this._thumbnailsOnUpdate, this ) );
+			this.on( 'sliderResize.' + NS, $.proxy( this._thumbnailsOnResize, this ) );
+			this.on( 'gotoSlide.' + NS, function( event ) {
+				that._gotoThumbnail( event.index );
+			});
+		},
+
+		// Called when the slider is updated
+		_thumbnailsOnUpdate: function() {
+			var that = this;
+
+			if ( this.$slider.find( '.sp-thumbnail' ).length === 0 && this.thumbnails.length === 0 ) {
+				this.isThumbnailScroller = false;
+				return;
+			}
+
+			this.isThumbnailScroller = true;
+
+			// Create the container of the thumbnail scroller, if it wasn't created yet
+			if ( this.$thumbnailsContainer === null ) {
+				this.$thumbnailsContainer = $( '<div class="sp-thumbnails-container"></div>' ).insertAfter( this.$slidesContainer );
+			}
+
+			// If the thumbnails' main container doesn't exist, create it, and get a reference to it
+			if ( this.$thumbnails === null ) {
+				if ( this.$slider.find( '.sp-thumbnails' ).length !== 0 ) {
+					this.$thumbnails = this.$slider.find( '.sp-thumbnails' ).appendTo( this.$thumbnailsContainer );
+
+					// Shuffle/randomize the thumbnails
+					if ( this.settings.shuffle === true ) {
+						var thumbnails = this.$thumbnails.find( '.sp-thumbnail' ),
+							shuffledThumbnails = [];
+
+						// Reposition the thumbnails based on the order of the indexes in the
+						// 'shuffledIndexes' array
+						$.each( this.shuffledIndexes, function( index, element ) {
+							var $thumbnail = $( thumbnails[ element ] );
+
+							if ( $thumbnail.parent( 'a' ).length !== 0 ) {
+								$thumbnail = $thumbnail.parent( 'a' );
+							}
+
+							shuffledThumbnails.push( $thumbnail );
+						});
+						
+						// Append the sorted thumbnails to the thumbnail scroller
+						this.$thumbnails.empty().append( shuffledThumbnails ) ;
+					}
+				} else {
+					this.$thumbnails = $( '<div class="sp-thumbnails"></div>' ).appendTo( this.$thumbnailsContainer );
+				}
+			}
+
+			// Check if there are thumbnails inside the slides and move them in the thumbnails container
+			this.$slides.find( '.sp-thumbnail' ).each( function( index ) {
+				var $thumbnail = $( this ),
+					thumbnailIndex = $thumbnail.parents( '.sp-slide' ).index(),
+					lastThumbnailIndex = that.$thumbnails.find( '.sp-thumbnail' ).length - 1;
+
+				if ( $thumbnail.parent( 'a' ).length !== 0 ) {
+					$thumbnail = $thumbnail.parent( 'a' );
+				}
+
+				// If the index of the slide that contains the thumbnail is greater than the total number
+				// of thumbnails from the thumbnails container, position the thumbnail at the end.
+				// Otherwise, add the thumbnails at the corresponding position.
+				if ( thumbnailIndex > lastThumbnailIndex ) {
+					$thumbnail.appendTo( that.$thumbnails );
+				} else {
+					$thumbnail.insertBefore( that.$thumbnails.find( '.sp-thumbnail' ).eq( thumbnailIndex ) );
+				}
+			});
+
+			// Loop through the Thumbnail objects and if a corresponding element is not found in the DOM,
+			// it means that the thumbnail might have been removed. In this case, destroy that Thumbnail instance.
+			for ( var i = this.thumbnails.length - 1; i >= 0; i-- ) {
+				if ( this.$thumbnails.find( '.sp-thumbnail[data-index="' + i + '"]' ).length === 0 ) {
+					var thumbnail = this.thumbnails[ i ];
+
+					thumbnail.destroy();
+					this.thumbnails.splice( i, 1 );
+				}
+			}
+
+			// Loop through the thumbnails and if there is any uninitialized thumbnail,
+			// initialize it, else update the thumbnail's index.
+			this.$thumbnails.find( '.sp-thumbnail' ).each(function( index ) {
+				var $thumbnail = $( this );
+
+				if ( typeof $thumbnail.attr( 'data-init' ) === 'undefined' ) {
+					that._createThumbnail( $thumbnail, index );
+				} else {
+					that.thumbnails[ index ].setIndex( index );
+				}
+			});
+
+			// Remove the previous class that corresponds to the position of the thumbnail scroller
+			this.$thumbnailsContainer.removeClass( 'sp-top-thumbnails sp-bottom-thumbnails sp-left-thumbnails sp-right-thumbnails' );
+
+			// Check the position of the thumbnail scroller and assign it the appropriate class and styling
+			if ( this.settings.thumbnailsPosition === 'top' ) {
+				this.$thumbnailsContainer.addClass( 'sp-top-thumbnails' );
+				this.thumbnailsOrientation = 'horizontal';
+			} else if ( this.settings.thumbnailsPosition === 'bottom' ) {
+				this.$thumbnailsContainer.addClass( 'sp-bottom-thumbnails' );
+				this.thumbnailsOrientation = 'horizontal';
+			} else if ( this.settings.thumbnailsPosition === 'left' ) {
+				this.$thumbnailsContainer.addClass( 'sp-left-thumbnails' );
+				this.thumbnailsOrientation = 'vertical';
+			} else if ( this.settings.thumbnailsPosition === 'right' ) {
+				this.$thumbnailsContainer.addClass( 'sp-right-thumbnails' );
+				this.thumbnailsOrientation = 'vertical';
+			}
+
+			// Check if the pointer needs to be created
+			if ( this.settings.thumbnailPointer === true ) {
+				this.$thumbnailsContainer.addClass( 'sp-has-pointer' );
+			} else {
+				this.$thumbnailsContainer.removeClass( 'sp-has-pointer' );
+			}
+
+			// Mark the thumbnail that corresponds to the selected slide
+			this.selectedThumbnailIndex = this.selectedSlideIndex;
+			this.$thumbnails.find( '.sp-thumbnail-container' ).eq( this.selectedThumbnailIndex ).addClass( 'sp-selected-thumbnail' );
+			
+			// Calculate the total size of the thumbnails
+			this.thumbnailsSize = 0;
+
+			$.each( this.thumbnails, function( index, thumbnail ) {
+				thumbnail.setSize( that.settings.thumbnailWidth, that.settings.thumbnailHeight );
+				that.thumbnailsSize += that.thumbnailsOrientation === 'horizontal' ? thumbnail.getSize().width : thumbnail.getSize().height;
+			});
+
+			// Set the size of the thumbnails
+			if ( this.thumbnailsOrientation === 'horizontal' ) {
+				this.$thumbnails.css({ 'width': this.thumbnailsSize, 'height': this.settings.thumbnailHeight });
+				this.$thumbnailsContainer.css( 'height', '' );
+				this.thumbnailsPositionProperty = 'left';
+			} else {
+				this.$thumbnails.css({ 'width': this.settings.thumbnailWidth, 'height': this.thumbnailsSize });
+				this.$thumbnailsContainer.css( 'width', '' );
+				this.thumbnailsPositionProperty = 'top';
+			}
+
+			// Fire the 'thumbnailsUpdate' event
+			this.trigger({ type: 'thumbnailsUpdate' });
+			if ( $.isFunction( this.settings.thumbnailsUpdate ) ) {
+				this.settings.thumbnailsUpdate.call( this, { type: 'thumbnailsUpdate' } );
+			}
+		},
+
+		// Create an individual thumbnail
+		_createThumbnail: function( element, index ) {
+			var that = this,
+				thumbnail = new Thumbnail( element, this.$thumbnails, index );
+
+			// When the thumbnail is clicked, navigate to the corresponding slide
+			thumbnail.on( 'thumbnailClick.' + NS, function( event ) {
+				that.gotoSlide( event.index );
+			});
+
+			// Add the thumbnail at the specified index
+			this.thumbnails.splice( index, 0, thumbnail );
+		},
+
+		// Called when the slider is resized.
+		// Resets the size and position of the thumbnail scroller container.
+		_thumbnailsOnResize: function() {
+			if ( this.isThumbnailScroller === false ) {
+				return;
+			}
+
+			var that = this,
+				newThumbnailsPosition;
+
+			if ( this.thumbnailsOrientation === 'horizontal' ) {
+				this.thumbnailsContainerSize = Math.min( this.$slidesMask.width(), this.thumbnailsSize );
+				this.$thumbnailsContainer.css( 'width', this.thumbnailsContainerSize );
+
+				// Reduce the slide mask's height, to make room for the thumbnails
+				if ( this.settings.forceSize === 'fullWindow' ) {
+					this.$slidesMask.css( 'height', this.$slidesMask.height() - this.$thumbnailsContainer.outerHeight( true ) );
+
+					// Resize the slides
+					this.slideHeight = this.$slidesMask.height();
+					this._resizeSlides();
+
+					// Re-arrange the slides
+					this._resetSlidesPosition();
+				}
+			} else if ( this.thumbnailsOrientation === 'vertical' ) {
+
+				// Check if the width of the slide mask plus the width of the thumbnail scroller is greater than
+				// the width of the slider's container and if that's the case, reduce the slides container width
+				// in order to make the entire slider fit inside the slider's container.
+				if ( this.$slidesMask.width() + this.$thumbnailsContainer.outerWidth( true ) > this.$slider.parent().width() ) {
+					// Reduce the slider's width, to make room for the thumbnails
+					if ( this.settings.forceSize === 'fullWidth' || this.settings.forceSize === 'fullWindow' ) {
+						this.$slider.css( 'max-width', $( window ).width() - this.$thumbnailsContainer.outerWidth( true ) );
+					} else {
+						this.$slider.css( 'max-width', this.$slider.parent().width() - this.$thumbnailsContainer.outerWidth( true ) );
+					}
+					
+					this.$slidesMask.css( 'width', this.$slider.width() );
+
+					// If the slides are vertically oriented, update the width and height (to maintain the aspect ratio)
+					// of the slides.
+					if ( this.settings.orientation === 'vertical' ) {
+						this.slideWidth = this.$slider.width();
+
+						this._resizeSlides();
+					}
+
+					// Re-arrange the slides
+					this._resetSlidesPosition();
+				}
+
+				this.thumbnailsContainerSize = Math.min( this.$slidesMask.height(), this.thumbnailsSize );
+				this.$thumbnailsContainer.css( 'height', this.thumbnailsContainerSize );
+			}
+
+			// If the total size of the thumbnails is smaller than the thumbnail scroller' container (which has
+			// the same size as the slides container), it means that all the thumbnails will be visible, so set
+			// the position of the thumbnail scroller to 0.
+			// 
+			// If that's not the case, the thumbnail scroller will be positioned based on which thumbnail is selected.
+			if ( this.thumbnailsSize <= this.thumbnailsContainerSize || this.$thumbnails.find( '.sp-selected-thumbnail' ).length === 0 ) {
+				newThumbnailsPosition = 0;
+			} else {
+				newThumbnailsPosition = Math.max( - this.thumbnails[ this.selectedThumbnailIndex ].getPosition()[ this.thumbnailsPositionProperty ], this.thumbnailsContainerSize - this.thumbnailsSize );
+			}
+
+			// Add a padding to the slider, based on the thumbnail scroller's orientation, to make room
+			// for the thumbnails.
+			if ( this.settings.thumbnailsPosition === 'top' ) {
+				this.$slider.css({ 'paddingTop': this.$thumbnailsContainer.outerHeight( true ), 'paddingLeft': '', 'paddingRight': '' });
+			} else if ( this.settings.thumbnailsPosition === 'bottom' ) {
+				this.$slider.css({ 'paddingTop': '', 'paddingLeft': '', 'paddingRight': '' });
+			} else if ( this.settings.thumbnailsPosition === 'left' ) {
+				this.$slider.css({ 'paddingTop': '', 'paddingLeft': this.$thumbnailsContainer.outerWidth( true ), 'paddingRight': '' });
+			} else if ( this.settings.thumbnailsPosition === 'right' ) {
+				this.$slider.css({ 'paddingTop': '', 'paddingLeft': '', 'paddingRight': this.$thumbnailsContainer.outerWidth( true ) });
+			}
+
+			this._moveThumbnailsTo( newThumbnailsPosition, true );
+		},
+
+		// Selects the thumbnail at the indicated index and moves the thumbnail scroller
+		// accordingly.
+		_gotoThumbnail: function( index ) {
+			if ( this.isThumbnailScroller === false || typeof this.thumbnails[ index ] === 'undefined' ) {
+				return;
+			}
+
+			var previousIndex = this.selectedThumbnailIndex,
+				newThumbnailsPosition = this.thumbnailsPosition;
+
+			this.selectedThumbnailIndex = index;
+
+			// Set the 'selected' class to the appropriate thumbnail
+			this.$thumbnails.find( '.sp-selected-thumbnail' ).removeClass( 'sp-selected-thumbnail' );
+			this.$thumbnails.find( '.sp-thumbnail-container' ).eq( this.selectedThumbnailIndex ).addClass( 'sp-selected-thumbnail' );
+
+			// Calculate the new position that the thumbnail scroller needs to go to.
+			// 
+			// If the selected thumbnail has a higher index than the previous one, make sure that the thumbnail
+			// that comes after the selected thumbnail will be visible, if the selected thumbnail is not the
+			// last thumbnail in the list.
+			// 
+			// If the selected thumbnail has a lower index than the previous one, make sure that the thumbnail
+			// that's before the selected thumbnail will be visible, if the selected thumbnail is not the
+			// first thumbnail in the list.
+			if ( this.settings.rightToLeft === true && this.thumbnailsOrientation === 'horizontal' ) {
+				if ( this.selectedThumbnailIndex >= previousIndex ) {
+					var rtlNextThumbnailIndex = this.selectedThumbnailIndex === this.thumbnails.length - 1 ? this.selectedThumbnailIndex : this.selectedThumbnailIndex + 1,
+						rtlNextThumbnail = this.thumbnails[ rtlNextThumbnailIndex ];
+
+					if ( rtlNextThumbnail.getPosition().left < - this.thumbnailsPosition ) {
+						newThumbnailsPosition = - rtlNextThumbnail.getPosition().left;
+					}
+				} else if ( this.selectedThumbnailIndex < previousIndex ) {
+					var rtlPreviousThumbnailIndex = this.selectedThumbnailIndex === 0 ? this.selectedThumbnailIndex : this.selectedThumbnailIndex - 1,
+						rtlPreviousThumbnail = this.thumbnails[ rtlPreviousThumbnailIndex ],
+						rtlThumbnailsRightPosition = - this.thumbnailsPosition + this.thumbnailsContainerSize;
+
+					if ( rtlPreviousThumbnail.getPosition().right > rtlThumbnailsRightPosition ) {
+						newThumbnailsPosition = this.thumbnailsPosition - ( rtlPreviousThumbnail.getPosition().right - rtlThumbnailsRightPosition );
+					}
+				}
+			} else {
+				if ( this.selectedThumbnailIndex >= previousIndex ) {
+					var nextThumbnailIndex = this.selectedThumbnailIndex === this.thumbnails.length - 1 ? this.selectedThumbnailIndex : this.selectedThumbnailIndex + 1,
+						nextThumbnail = this.thumbnails[ nextThumbnailIndex ],
+						nextThumbnailPosition = this.thumbnailsOrientation === 'horizontal' ? nextThumbnail.getPosition().right : nextThumbnail.getPosition().bottom,
+						thumbnailsRightPosition = - this.thumbnailsPosition + this.thumbnailsContainerSize;
+
+					if ( nextThumbnailPosition > thumbnailsRightPosition ) {
+						newThumbnailsPosition = this.thumbnailsPosition - ( nextThumbnailPosition - thumbnailsRightPosition );
+					}
+				} else if ( this.selectedThumbnailIndex < previousIndex ) {
+					var previousThumbnailIndex = this.selectedThumbnailIndex === 0 ? this.selectedThumbnailIndex : this.selectedThumbnailIndex - 1,
+						previousThumbnail = this.thumbnails[ previousThumbnailIndex ],
+						previousThumbnailPosition = this.thumbnailsOrientation === 'horizontal' ? previousThumbnail.getPosition().left : previousThumbnail.getPosition().top;
+
+					if ( previousThumbnailPosition < - this.thumbnailsPosition ) {
+						newThumbnailsPosition = - previousThumbnailPosition;
+					}
+				}
+			}
+
+			// Move the thumbnail scroller to the calculated position
+			this._moveThumbnailsTo( newThumbnailsPosition );
+
+			// Fire the 'gotoThumbnail' event
+			this.trigger({ type: 'gotoThumbnail' });
+			if ( $.isFunction( this.settings.gotoThumbnail ) ) {
+				this.settings.gotoThumbnail.call( this, { type: 'gotoThumbnail' });
+			}
+		},
+
+		// Move the thumbnail scroller to the indicated position
+		_moveThumbnailsTo: function( position, instant, callback ) {
+			var that = this,
+				css = {};
+
+			// Return if the position hasn't changed
+			if ( position === this.thumbnailsPosition ) {
+				return;
+			}
+
+			this.thumbnailsPosition = position;
+
+			// Use CSS transitions if they are supported. If not, use JavaScript animation
+			if ( this.supportedAnimation === 'css-3d' || this.supportedAnimation === 'css-2d' ) {
+				var transition,
+					left = this.thumbnailsOrientation === 'horizontal' ? position : 0,
+					top = this.thumbnailsOrientation === 'horizontal' ? 0 : position;
+
+				if ( this.supportedAnimation === 'css-3d' ) {
+					css[ this.vendorPrefix + 'transform' ] = 'translate3d(' + left + 'px, ' + top + 'px, 0)';
+				} else {
+					css[ this.vendorPrefix + 'transform' ] = 'translate(' + left + 'px, ' + top + 'px)';
+				}
+
+				if ( typeof instant !== 'undefined' && instant === true ) {
+					transition = '';
+				} else {
+					this.$thumbnails.addClass( 'sp-animated' );
+					transition = this.vendorPrefix + 'transform ' + 700 / 1000 + 's';
+
+					this.$thumbnails.on( this.transitionEvent, function( event ) {
+						if ( event.target !== event.currentTarget ) {
+							return;
+						}
+
+						that.$thumbnails.off( that.transitionEvent );
+						that.$thumbnails.removeClass( 'sp-animated' );
+
+						if ( typeof callback === 'function' ) {
+							callback();
+						}
+
+						// Fire the 'thumbnailsMoveComplete' event
+						that.trigger({ type: 'thumbnailsMoveComplete' });
+						if ( $.isFunction( that.settings.thumbnailsMoveComplete ) ) {
+							that.settings.thumbnailsMoveComplete.call( that, { type: 'thumbnailsMoveComplete' });
+						}
+					});
+				}
+
+				css[ this.vendorPrefix + 'transition' ] = transition;
+
+				this.$thumbnails.css( css );
+			} else {
+				css[ 'margin-' + this.thumbnailsPositionProperty ] = position;
+
+				if ( typeof instant !== 'undefined' && instant === true ) {
+					this.$thumbnails.css( css );
+				} else {
+					this.$thumbnails
+						.addClass( 'sp-animated' )
+						.animate( css, 700, function() {
+							that.$thumbnails.removeClass( 'sp-animated' );
+
+							if ( typeof callback === 'function' ) {
+								callback();
+							}
+
+							// Fire the 'thumbnailsMoveComplete' event
+							that.trigger({ type: 'thumbnailsMoveComplete' });
+							if ( $.isFunction( that.settings.thumbnailsMoveComplete ) ) {
+								that.settings.thumbnailsMoveComplete.call( that, { type: 'thumbnailsMoveComplete' });
+							}
+						});
+				}
+			}
+		},
+
+		// Stop the movement of the thumbnail scroller
+		_stopThumbnailsMovement: function() {
+			var css = {};
+
+			if ( this.supportedAnimation === 'css-3d' || this.supportedAnimation === 'css-2d' ) {
+				var	matrixString = this.$thumbnails.css( this.vendorPrefix + 'transform' ),
+					matrixType = matrixString.indexOf( 'matrix3d' ) !== -1 ? 'matrix3d' : 'matrix',
+					matrixArray = matrixString.replace( matrixType, '' ).match( /-?[0-9\.]+/g ),
+					left = matrixType === 'matrix3d' ? parseInt( matrixArray[ 12 ], 10 ) : parseInt( matrixArray[ 4 ], 10 ),
+					top = matrixType === 'matrix3d' ? parseInt( matrixArray[ 13 ], 10 ) : parseInt( matrixArray[ 5 ], 10 );
+
+				if ( this.supportedAnimation === 'css-3d' ) {
+					css[ this.vendorPrefix + 'transform' ] = 'translate3d(' + left + 'px, ' + top + 'px, 0)';
+				} else {
+					css[ this.vendorPrefix + 'transform' ] = 'translate(' + left + 'px, ' + top + 'px)';
+				}
+
+				css[ this.vendorPrefix + 'transition' ] = '';
+
+				this.$thumbnails.css( css );
+				this.$thumbnails.off( this.transitionEvent );
+				this.thumbnailsPosition = this.thumbnailsOrientation === 'horizontal' ? parseInt( matrixArray[ 4 ] , 10 ) : parseInt( matrixArray[ 5 ] , 10 );
+			} else {
+				this.$thumbnails.stop();
+				this.thumbnailsPosition = parseInt( this.$thumbnails.css( 'margin-' + this.thumbnailsPositionProperty ), 10 );
+			}
+
+			this.$thumbnails.removeClass( 'sp-animated' );
+		},
+
+		// Destroy the module
+		destroyThumbnails: function() {
+			var that = this;
+
+			// Remove event listeners
+			this.off( 'update.' + NS );
+
+			if ( this.isThumbnailScroller === false ) {
+				return;
+			}
+			
+			this.off( 'sliderResize.' + NS );
+			this.off( 'gotoSlide.' + NS );
+			$( window ).off( 'resize.' + this.uniqueId + '.' + NS );
+
+			// Destroy the individual thumbnails
+			this.$thumbnails.find( '.sp-thumbnail' ).each( function() {
+				var $thumbnail = $( this ),
+					index = parseInt( $thumbnail.attr( 'data-index' ), 10 ),
+					thumbnail = that.thumbnails[ index ];
+
+				thumbnail.off( 'thumbnailClick.' + NS );
+				thumbnail.destroy();
+			});
+
+			this.thumbnails.length = 0;
+
+			// Add the thumbnail scroller directly in the slider and
+			// remove the thumbnail scroller container
+			this.$thumbnails.appendTo( this.$slider );
+			this.$thumbnailsContainer.remove();
+			
+			// Remove any created padding
+			this.$slider.css({ 'paddingTop': '', 'paddingLeft': '', 'paddingRight': '' });
+		},
+
+		thumbnailsDefaults: {
+
+			// Sets the width of the thumbnail
+			thumbnailWidth: 100,
+
+			// Sets the height of the thumbnail
+			thumbnailHeight: 80,
+
+			// Sets the position of the thumbnail scroller (top, bottom, right, left)
+			thumbnailsPosition: 'bottom',
+
+			// Indicates if a pointer will be displayed for the selected thumbnail
+			thumbnailPointer: false,
+
+			// Called when the thumbnails are updated
+			thumbnailsUpdate: function() {},
+
+			// Called when a new thumbnail is selected
+			gotoThumbnail: function() {},
+
+			// Called when the thumbnail scroller has moved
+			thumbnailsMoveComplete: function() {}
+		}
+	};
+
+	var Thumbnail = function( thumbnail, thumbnails, index ) {
+
+		// Reference to the thumbnail jQuery element
+		this.$thumbnail = thumbnail;
+
+		// Reference to the thumbnail scroller
+		this.$thumbnails = thumbnails;
+
+		// Reference to the thumbnail's container, which will be 
+		// created dynamically.
+		this.$thumbnailContainer = null;
+
+		// The width and height of the thumbnail
+		this.width = 0;
+		this.height = 0;
+
+		// Indicates whether the thumbnail's image is loaded
+		this.isImageLoaded = false;
+
+		// Set the index of the slide
+		this.setIndex( index );
+
+		// Initialize the thumbnail
+		this._init();
+	};
+
+	Thumbnail.prototype = {
+
+		_init: function() {
+			var that = this;
+
+			// Mark the thumbnail as initialized
+			this.$thumbnail.attr( 'data-init', true );
+
+			// Create a container for the thumbnail and add the original thumbnail to this container.
+			// Having a container will help crop the thumbnail image if it's too large.
+			this.$thumbnailContainer = $( '<div class="sp-thumbnail-container"></div>' ).appendTo( this.$thumbnails );
+
+			if ( this.$thumbnail.parent( 'a' ).length !== 0 ) {
+				this.$thumbnail.parent( 'a' ).appendTo( this.$thumbnailContainer );
+			} else {
+				this.$thumbnail.appendTo( this.$thumbnailContainer );
+			}
+
+			// When the thumbnail container is clicked, fire an event
+			this.$thumbnailContainer.on( 'click.' + NS, function() {
+				that.trigger({ type: 'thumbnailClick.' + NS, index: that.index });
+			});
+		},
+
+		// Set the width and height of the thumbnail
+		setSize: function( width, height ) {
+			this.width = width;
+			this.height = height;
+
+			// Apply the width and height to the thumbnail's container
+			this.$thumbnailContainer.css({ 'width': this.width, 'height': this.height });
+
+			// If there is an image, resize it to fit the thumbnail container
+			if ( this.$thumbnail.is( 'img' ) && typeof this.$thumbnail.attr( 'data-src' ) === 'undefined' ) {
+				this.resizeImage();
+			}
+		},
+
+		// Return the width and height of the thumbnail
+		getSize: function() {
+			return {
+				width: this.$thumbnailContainer.outerWidth( true ),
+				height: this.$thumbnailContainer.outerHeight( true )
+			};
+		},
+
+		// Return the top, bottom, left and right position of the thumbnail
+		getPosition: function() {
+			return {
+				left: this.$thumbnailContainer.position().left + parseInt( this.$thumbnailContainer.css( 'marginLeft' ) , 10 ),
+				right: this.$thumbnailContainer.position().left + parseInt( this.$thumbnailContainer.css( 'marginLeft' ) , 10 ) + this.$thumbnailContainer.outerWidth(),
+				top: this.$thumbnailContainer.position().top + parseInt( this.$thumbnailContainer.css( 'marginTop' ) , 10 ),
+				bottom: this.$thumbnailContainer.position().top + parseInt( this.$thumbnailContainer.css( 'marginTop' ) , 10 ) + this.$thumbnailContainer.outerHeight()
+			};
+		},
+
+		// Set the index of the thumbnail
+		setIndex: function( index ) {
+			this.index = index;
+			this.$thumbnail.attr( 'data-index', this.index );
+		},
+
+		// Resize the thumbnail's image
+		resizeImage: function() {
+			var that = this;
+
+			// If the image is not loaded yet, load it
+			if ( this.isImageLoaded === false ) {
+				SliderProUtils.checkImagesComplete( this.$thumbnailContainer , function() {
+					that.isImageLoaded = true;
+					that.resizeImage();
+				});
+
+				return;
+			}
+
+			// Get the reference to the thumbnail image again because it was replaced by
+			// another img element during the loading process
+			this.$thumbnail = this.$thumbnailContainer.find( '.sp-thumbnail' );
+
+			// Calculate whether the image should stretch horizontally or vertically
+			var imageWidth = this.$thumbnail.width(),
+				imageHeight = this.$thumbnail.height();
+
+			if ( imageWidth / imageHeight <= this.width / this.height ) {
+				this.$thumbnail.css({ width: '100%', height: 'auto' });
+			} else {
+				this.$thumbnail.css({ width: 'auto', height: '100%' });
+			}
+
+			this.$thumbnail.css({ 'marginLeft': ( this.$thumbnailContainer.width() - this.$thumbnail.width() ) * 0.5, 'marginTop': ( this.$thumbnailContainer.height() - this.$thumbnail.height() ) * 0.5 });
+		},
+
+		// Destroy the thumbnail
+		destroy: function() {
+			this.$thumbnailContainer.off( 'click.' + NS );
+
+			// Remove added attributes
+			this.$thumbnail.removeAttr( 'data-init' );
+			this.$thumbnail.removeAttr( 'data-index' );
+
+			// Remove the thumbnail's container and add the thumbnail
+			// back to the thumbnail scroller container
+			if ( this.$thumbnail.parent( 'a' ).length !== 0 ) {
+				this.$thumbnail.parent( 'a' ).insertBefore( this.$thumbnailContainer );
+			} else {
+				this.$thumbnail.insertBefore( this.$thumbnailContainer );
+			}
+			
+			this.$thumbnailContainer.remove();
+		},
+
+		// Attach an event handler to the slide
+		on: function( type, callback ) {
+			return this.$thumbnailContainer.on( type, callback );
+		},
+
+		// Detach an event handler to the slide
+		off: function( type ) {
+			return this.$thumbnailContainer.off( type );
+		},
+
+		// Trigger an event on the slide
+		trigger: function( data ) {
+			return this.$thumbnailContainer.triggerHandler( data );
+		}
+	};
+
+	$.SliderPro.addModule( 'Thumbnails', Thumbnails );
+
+})( window, jQuery );
+
+// ConditionalImages module for Slider Pro.
+// 
+// Adds the possibility to specify multiple sources for each image and
+// load the image that's the most appropriate for the size of the slider.
+// For example, instead of loading a large image even if the slider will be small
+// you can specify a smaller image that will be loaded instead.
+;(function( window, $ ) {
+
+	"use strict";
+
+	var NS = 'ConditionalImages.' + $.SliderPro.namespace;
+
+	var ConditionalImages = {
+
+		// Reference to the previous size
+		previousImageSize: null,
+
+		// Reference to the current size
+		currentImageSize: null,
+
+		// Indicates if the current display supports high PPI
+		isRetinaScreen: false,
+
+		initConditionalImages: function() {
+			this.currentImageSize = this.previousImageSize = 'default';
+			this.isRetinaScreen = ( typeof this._isRetina !== 'undefined' ) && ( this._isRetina() === true );
+
+			this.on( 'update.' + NS, $.proxy( this._conditionalImagesOnUpdate, this ) );
+			this.on( 'sliderResize.' + NS, $.proxy( this._conditionalImagesOnResize, this ) );
+		},
+
+		// Loop through all the existing images and specify the original path of the image
+		// inside the 'data-default' attribute.
+		_conditionalImagesOnUpdate: function() {
+			$.each( this.slides, function( index, element ) {
+				var $slide = element.$slide;
+
+				$slide.find( 'img:not([ data-default ])' ).each(function() {
+					var $image = $( this );
+
+					if ( typeof $image.attr( 'data-src' ) !== 'undefined' ) {
+						$image.attr( 'data-default', $image.attr( 'data-src' ) );
+					} else {
+						$image.attr( 'data-default', $image.attr( 'src' ) );
+					}
+				});
+			});
+		},
+
+		// When the window resizes, identify the applyable image size based on the current size of the slider
+		// and apply it to all images that have a version of the image specified for this size.
+		_conditionalImagesOnResize: function() {
+			if ( this.slideWidth <= this.settings.smallSize ) {
+				this.currentImageSize = 'small';
+			} else if ( this.slideWidth <= this.settings.mediumSize ) {
+				this.currentImageSize = 'medium';
+			} else if ( this.slideWidth <= this.settings.largeSize ) {
+				this.currentImageSize = 'large';
+			} else {
+				this.currentImageSize = 'default';
+			}
+
+			if ( this.previousImageSize !== this.currentImageSize ) {
+				var that = this;
+
+				$.each( this.slides, function( index, element ) {
+					var $slide = element.$slide;
+
+					$slide.find( 'img' ).each(function() {
+						var $image = $( this ),
+							imageSource = '';
+
+						// Check if the current display supports high PPI and if a retina version of the current size was specified
+						if ( that.isRetinaScreen === true && typeof $image.attr( 'data-retina' + that.currentImageSize ) !== 'undefined' ) {
+							imageSource = $image.attr( 'data-retina' + that.currentImageSize );
+
+							// If the retina image was not loaded yet, replace the default image source with the one
+							// that corresponds to the current slider size
+							if ( typeof $image.attr( 'data-retina' ) !== 'undefined' && $image.attr( 'data-retina' ) !== imageSource ) {
+								$image.attr( 'data-retina', imageSource );
+							}
+						} else if ( ( that.isRetinaScreen === false || that.isRetinaScreen === true && typeof $image.attr( 'data-retina' ) === 'undefined' ) && typeof $image.attr( 'data-' + that.currentImageSize ) !== 'undefined' ) {
+							imageSource = $image.attr( 'data-' + that.currentImageSize );
+
+							// If the image is set to lazy load, replace the image source with the one
+							// that corresponds to the current slider size
+							if ( typeof $image.attr( 'data-src' ) !== 'undefined' && $image.attr( 'data-src' ) !== imageSource ) {
+								$image.attr( 'data-src', imageSource );
+							}
+						}
+
+						// If a new image was found
+						if ( imageSource !== '' ) {
+
+							// The existence of the 'data-src' attribute indicates that the image
+							// will be lazy loaded, so don't load the new image yet
+							if ( typeof $image.attr( 'data-src' ) === 'undefined' && $image.attr( 'src' ) !== imageSource  ) {
+								that._loadConditionalImage( $image, imageSource, function( newImage ) {
+									if ( newImage.hasClass( 'sp-image' ) ) {
+										element.$mainImage = newImage;
+										element.resizeMainImage( true );
+									}
+								});
+							}
+						}
+					});
+				});
+
+				this.previousImageSize = this.currentImageSize;
+			}
+		},
+
+		// Replace the target image with a new image
+		_loadConditionalImage: function( image, source, callback ) {
+
+			// Create a new image element
+			var newImage = $( new Image() );
+
+			// Copy the class(es) and inline style
+			newImage.attr( 'class', image.attr( 'class' ) );
+			newImage.attr( 'style', image.attr( 'style' ) );
+
+			// Copy the data attributes
+			$.each( image.data(), function( name, value ) {
+				newImage.attr( 'data-' + name, value );
+			});
+
+			// Copy the width and height attributes if they exist
+			if ( typeof image.attr( 'width' ) !== 'undefined') {
+				newImage.attr( 'width', image.attr( 'width' ) );
+			}
+
+			if ( typeof image.attr( 'height' ) !== 'undefined') {
+				newImage.attr( 'height', image.attr( 'height' ) );
+			}
+
+			if ( typeof image.attr( 'alt' ) !== 'undefined' ) {
+				newImage.attr( 'alt', image.attr( 'alt' ) );
+			}
+
+			if ( typeof image.attr( 'title' ) !== 'undefined' ) {
+				newImage.attr( 'title', image.attr( 'title' ) );
+			}
+
+			newImage.attr( 'src', source );
+
+			// Add the new image in the same container and remove the older image
+			newImage.insertAfter( image );
+			image.remove();
+			image = null;
+				
+			if ( typeof callback === 'function' ) {
+				callback( newImage );
+			}
+		},
+
+		// Destroy the module
+		destroyConditionalImages: function() {
+			this.off( 'update.' + NS );
+			this.off( 'sliderResize.' + NS );
+		},
+
+		conditionalImagesDefaults: {
+
+			// If the slider size is below this size, the small version of the images will be used
+			smallSize: 480,
+
+			// If the slider size is below this size, the small version of the images will be used
+			mediumSize: 768,
+
+			// If the slider size is below this size, the small version of the images will be used
+			largeSize: 1024
+		}
+	};
+
+	$.SliderPro.addModule( 'ConditionalImages', ConditionalImages );
+
+})( window, jQuery );
+
+// Retina module for Slider Pro.
+// 
+// Adds the possibility to load a different image when the slider is
+// viewed on a retina screen.
+;(function( window, $ ) {
+
+	"use strict";
+	
+	var NS = 'Retina.' + $.SliderPro.namespace;
+
+	var Retina = {
+
+		initRetina: function() {
+			var that = this;
+
+			// Return if it's not a retina screen
+			if ( this._isRetina() === false ) {
+				return;
+			}
+			
+			this.on( 'sliderResize.' + NS, $.proxy( this._checkRetinaImages, this ) );
+
+			if ( this.$slider.find( '.sp-thumbnail' ).length !== 0 ) {
+				this.on( 'update.Thumbnails.' + NS, $.proxy( this._checkRetinaThumbnailImages, this ) );
+			}
+		},
+
+		// Checks if the current display supports high PPI
+		_isRetina: function() {
+			if ( window.devicePixelRatio >= 2 ) {
+				return true;
+			}
+
+			if ( window.matchMedia && ( window.matchMedia( "(-webkit-min-device-pixel-ratio: 2),(min-resolution: 2dppx)" ).matches ) ) {
+				return true;
+			}
+
+			return false;
+		},
+
+		// Loop through the slides and replace the images with their retina version
+		_checkRetinaImages: function() {
+			var that = this;
+
+			$.each( this.slides, function( index, element ) {
+				var $slide = element.$slide;
+
+				if ( typeof $slide.attr( 'data-retina-loaded' ) === 'undefined' ) {
+					$slide.attr( 'data-retina-loaded', true );
+
+					$slide.find( 'img[data-retina]' ).each(function() {
+						var $image = $( this );
+
+						if ( typeof $image.attr( 'data-src' ) !== 'undefined' ) {
+							$image.attr( 'data-src', $image.attr( 'data-retina' ) );
+						} else {
+							that._loadRetinaImage( $image, function( newImage ) {
+								if ( newImage.hasClass( 'sp-image' ) ) {
+									element.$mainImage = newImage;
+									element.resizeMainImage( true );
+								}
+							});
+						}
+					});
+				}
+			});
+		},
+
+		// Loop through the thumbnails and replace the images with their retina version
+		_checkRetinaThumbnailImages: function() {
+			var that = this;
+
+			$.each( this.thumbnails, function( index, element ) {
+				var $thumbnail = element.$thumbnailContainer;
+
+				if ( typeof $thumbnail.attr( 'data-retina-loaded' ) === 'undefined' ) {
+					$thumbnail.attr( 'data-retina-loaded', true );
+
+					$thumbnail.find( 'img[data-retina]' ).each(function() {
+						var $image = $( this );
+
+						if ( typeof $image.attr( 'data-src' ) !== 'undefined' ) {
+							$image.attr( 'data-src', $image.attr( 'data-retina' ) );
+						} else {
+							that._loadRetinaImage( $image, function( newImage ) {
+								if ( newImage.hasClass( 'sp-thumbnail' ) ) {
+									element.resizeImage();
+								}
+							});
+						}
+					});
+				}
+			});
+		},
+
+		// Load the retina image
+		_loadRetinaImage: function( image, callback ) {
+			var retinaFound = false,
+				newImagePath = '';
+
+			// Check if there is a retina image specified
+			if ( typeof image.attr( 'data-retina' ) !== 'undefined' ) {
+				retinaFound = true;
+
+				newImagePath = image.attr( 'data-retina' );
+			}
+
+			// Check if there is a lazy loaded, non-retina, image specified
+			if ( typeof image.attr( 'data-src' ) !== 'undefined' ) {
+				if ( retinaFound === false ) {
+					newImagePath = image.attr( 'data-src') ;
+				}
+
+				image.removeAttr('data-src');
+			}
+
+			// Return if there isn't a retina or lazy loaded image
+			if ( newImagePath === '' ) {
+				return;
+			}
+
+			// Create a new image element
+			var newImage = $( new Image() );
+
+			// Copy the class(es) and inline style
+			newImage.attr( 'class', image.attr('class') );
+			newImage.attr( 'style', image.attr('style') );
+
+			// Copy the data attributes
+			$.each( image.data(), function( name, value ) {
+				newImage.attr( 'data-' + name, value );
+			});
+
+			// Copy the width and height attributes if they exist
+			if ( typeof image.attr( 'width' ) !== 'undefined' ) {
+				newImage.attr( 'width', image.attr( 'width' ) );
+			}
+
+			if ( typeof image.attr( 'height' ) !== 'undefined' ) {
+				newImage.attr( 'height', image.attr( 'height' ) );
+			}
+
+			if ( typeof image.attr( 'alt' ) !== 'undefined' ) {
+				newImage.attr( 'alt', image.attr( 'alt' ) );
+			}
+
+			if ( typeof image.attr( 'title' ) !== 'undefined' ) {
+				newImage.attr( 'title', image.attr( 'title' ) );
+			}
+
+			// Add the new image in the same container and remove the older image
+			newImage.insertAfter( image );
+			image.remove();
+			image = null;
+
+			// Assign the source of the image
+			newImage.attr( 'src', newImagePath );
+
+			if ( typeof callback === 'function' ) {
+				callback( newImage );
+			}
+		},
+
+		// Destroy the module
+		destroyRetina: function() {
+			this.off( 'update.' + NS );
+			this.off( 'update.Thumbnails.' + NS );
+		}
+	};
+
+	$.SliderPro.addModule( 'Retina', Retina );
+	
+})( window, jQuery );
+
+// Lazy Loading module for Slider Pro.
+// 
+// Adds the possibility to delay the loading of the images until the slides/thumbnails
+// that contain them become visible. This technique improves the initial loading
+// performance.
+;(function( window, $ ) {
+
+	"use strict";
+
+	var NS = 'LazyLoading.' + $.SliderPro.namespace;
+
+	var LazyLoading = {
+
+		allowLazyLoadingCheck: true,
+
+		initLazyLoading: function() {
+			var that = this;
+
+			// The 'resize' event is fired after every update, so it's possible to use it for checking
+			// if the update made new slides become visible
+			// 
+			// Also, resizing the slider might make new slides or thumbnails visible
+			this.on( 'sliderResize.' + NS, $.proxy( this._lazyLoadingOnResize, this ) );
+
+			// Check visible images when a new slide is selected
+			this.on( 'gotoSlide.' + NS, $.proxy( this._checkAndLoadVisibleImages, this ) );
+
+			// Check visible thumbnail images when the thumbnails are updated because new thumbnail
+			// might have been added or the settings might have been changed so that more thumbnail
+			// images become visible
+			// 
+			// Also, check visible thumbnail images after the thumbnails have moved because new thumbnails might
+			// have become visible
+			this.on( 'thumbnailsUpdate.' + NS + ' ' + 'thumbnailsMoveComplete.' + NS, $.proxy( this._checkAndLoadVisibleThumbnailImages, this ) );
+		},
+
+		_lazyLoadingOnResize: function() {
+			var that = this;
+
+			if ( this.allowLazyLoadingCheck === false ) {
+				return;
+			}
+
+			this.allowLazyLoadingCheck = false;
+			
+			this._checkAndLoadVisibleImages();
+
+			if ( this.$slider.find( '.sp-thumbnail' ).length !== 0 ) {
+				this._checkAndLoadVisibleThumbnailImages();
+			}
+
+			// Use a timer to deffer the loading of images in order to prevent too many
+			// checking attempts
+			setTimeout(function() {
+				that.allowLazyLoadingCheck = true;
+			}, 500 );
+		},
+
+		// Check visible slides and load their images
+		_checkAndLoadVisibleImages: function() {
+			if ( this.$slider.find( '.sp-slide:not([ data-loaded ])' ).length === 0 ) {
+				return;
+			}
+
+			var that = this,
+
+				// Use either the middle position or the index of the selected slide as a reference, depending on
+				// whether the slider is loopable
+				referencePosition = this.settings.loop === true ? this.middleSlidePosition : this.selectedSlideIndex,
+
+				// Calculate how many slides are visible at the sides of the selected slide
+				visibleOnSides = Math.ceil( ( parseInt( this.$slidesMask.css( this.sizeProperty ), 10) - this.averageSlideSize ) / 2 / this.averageSlideSize ),
+
+				// Calculate the indexes of the first and last slide that will be checked
+				from = this.settings.centerSelectedSlide === true ? Math.max( referencePosition - visibleOnSides - 1, 0 ) : Math.max( referencePosition - 1, 0 ),
+				to = this.settings.centerSelectedSlide === true ? Math.min( referencePosition + visibleOnSides + 1, this.getTotalSlides() - 1 ) : Math.min( referencePosition + visibleOnSides * 2 + 1, this.getTotalSlides() - 1  ),
+				
+				// Get all the slides that need to be checked
+				slidesToCheck = this.slidesOrder.slice( from, to + 1 );
+
+			// Loop through the selected slides and if the slide is not marked as having
+			// been loaded yet, loop through its images and load them.
+			$.each( slidesToCheck, function( index, element ) {
+				var slide = that.slides[ element ],
+					$slide = slide.$slide;
+
+				if ( typeof $slide.attr( 'data-loaded' ) === 'undefined' ) {
+					$slide.attr( 'data-loaded', true );
+
+					$slide.find( 'img[ data-src ]' ).each(function() {
+						var image = $( this );
+						that._loadImage( image, function( newImage ) {
+							if ( newImage.hasClass( 'sp-image' ) ) {
+								slide.$mainImage = newImage;
+								slide.resizeMainImage( true );
+							}
+						});
+					});
+				}
+			});
+		},
+
+		// Check visible thumbnails and load their images
+		_checkAndLoadVisibleThumbnailImages: function() {
+			if ( this.$slider.find( '.sp-thumbnail-container:not([ data-loaded ])' ).length === 0 ) {
+				return;
+			}
+
+			var that = this,
+				thumbnailSize = this.thumbnailsSize / this.thumbnails.length,
+
+				// Calculate the indexes of the first and last thumbnail that will be checked
+				from = Math.floor( Math.abs( this.thumbnailsPosition / thumbnailSize ) ),
+				to = Math.floor( ( - this.thumbnailsPosition + this.thumbnailsContainerSize ) / thumbnailSize ),
+
+				// Get all the thumbnails that need to be checked
+				thumbnailsToCheck = this.thumbnails.slice( from, to + 1 );
+
+			// Loop through the selected thumbnails and if the thumbnail is not marked as having
+			// been loaded yet, load its image.
+			$.each( thumbnailsToCheck, function( index, element ) {
+				var $thumbnailContainer = element.$thumbnailContainer;
+
+				if ( typeof $thumbnailContainer.attr( 'data-loaded' ) === 'undefined' ) {
+					$thumbnailContainer.attr( 'data-loaded', true );
+
+					$thumbnailContainer.find( 'img[ data-src ]' ).each(function() {
+						var image = $( this );
+
+						that._loadImage( image, function() {
+							element.resizeImage();
+						});
+					});
+				}
+			});
+		},
+
+		// Load an image
+		_loadImage: function( image, callback ) {
+			// Create a new image element
+			var newImage = $( new Image() );
+
+			// Copy the class(es) and inline style
+			newImage.attr( 'class', image.attr( 'class' ) );
+			newImage.attr( 'style', image.attr( 'style' ) );
+
+			// Copy the data attributes
+			$.each( image.data(), function( name, value ) {
+				newImage.attr( 'data-' + name, value );
+			});
+
+			// Copy the width and height attributes if they exist
+			if ( typeof image.attr( 'width' ) !== 'undefined') {
+				newImage.attr( 'width', image.attr( 'width' ) );
+			}
+
+			if ( typeof image.attr( 'height' ) !== 'undefined') {
+				newImage.attr( 'height', image.attr( 'height' ) );
+			}
+
+			if ( typeof image.attr( 'alt' ) !== 'undefined' ) {
+				newImage.attr( 'alt', image.attr( 'alt' ) );
+			}
+
+			if ( typeof image.attr( 'title' ) !== 'undefined' ) {
+				newImage.attr( 'title', image.attr( 'title' ) );
+			}
+
+			// Assign the source of the image
+			newImage.attr( 'src', image.attr( 'data-src' ) );
+			newImage.removeAttr( 'data-src' );
+
+			// Add the new image in the same container and remove the older image
+			newImage.insertAfter( image );
+			image.remove();
+			image = null;
+			
+			if ( typeof callback === 'function' ) {
+				callback( newImage );
+			}
+		},
+
+		// Destroy the module
+		destroyLazyLoading: function() {
+			this.off( 'update.' + NS );
+			this.off( 'gotoSlide.' + NS );
+			this.off( 'sliderResize.' + NS );
+			this.off( 'thumbnailsUpdate.' + NS );
+			this.off( 'thumbnailsMoveComplete.' + NS );
+		}
+	};
+
+	$.SliderPro.addModule( 'LazyLoading', LazyLoading );
+
+})( window, jQuery );
+
+// Layers module for Slider Pro.
+// 
+// Adds support for animated and static layers. The layers can contain any content,
+// from simple text for video elements.
+;(function( window, $ ) {
+
+	"use strict";
+
+	var NS = 'Layers.' +  $.SliderPro.namespace;
+
+	var Layers = {
+
+		// Reference to the original 'gotoSlide' method
+		layersGotoSlideReference: null,
+
+		// Reference to the timer that will delay the overriding
+		// of the 'gotoSlide' method
+		waitForLayersTimer: null,
+
+		initLayers: function() {
+			this.on( 'update.' + NS, $.proxy( this._layersOnUpdate, this ) );
+			this.on( 'sliderResize.' + NS, $.proxy( this._layersOnResize, this ) );
+			this.on( 'gotoSlide.' + NS, $.proxy( this._layersOnGotoSlide, this ) );
+		},
+
+		// Loop through the slides and initialize all layers
+		_layersOnUpdate: function( event ) {
+			var that = this;
+
+			$.each( this.slides, function( index, element ) {
+				var $slide = element.$slide;
+
+				// Initialize the layers
+				this.$slide.find( '.sp-layer:not([ data-layer-init ])' ).each(function() {
+					var layer = new Layer( $( this ) );
+
+					// Add the 'layers' array to the slide objects (instance of SliderProSlide)
+					if ( typeof element.layers === 'undefined' ) {
+						element.layers = [];
+					}
+
+					element.layers.push( layer );
+
+					if ( $( this ).hasClass( 'sp-static' ) === false ) {
+
+						// Add the 'animatedLayers' array to the slide objects (instance of SliderProSlide)
+						if ( typeof element.animatedLayers === 'undefined' ) {
+							element.animatedLayers = [];
+						}
+
+						element.animatedLayers.push( layer );
+					}
+				});
+			});
+
+			// If the 'waitForLayers' option is enabled, the slider will not move to another slide
+			// until all the layers from the previous slide will be hidden. To achieve this,
+			// replace the current 'gotoSlide' function with another function that will include the 
+			// required functionality.
+			// 
+			// Since the 'gotoSlide' method might be overridden by other modules as well, delay this
+			// override to make sure it's the last override.
+			if ( this.settings.waitForLayers === true ) {
+				clearTimeout( this.waitForLayersTimer );
+
+				this.waitForLayersTimer = setTimeout(function() {
+					that.layersGotoSlideReference = that.gotoSlide;
+					that.gotoSlide = that._layersGotoSlide;
+				}, 1 );
+			}
+
+			// Show the layers for the initial slide
+			// Delay the call in order to make sure the layers
+			// are scaled properly before displaying them
+			setTimeout(function() {
+				that.showLayers( that.selectedSlideIndex );
+			}, 1);
+		},
+
+		// When the slider resizes, try to scale down the layers proportionally. The automatic scaling
+		// will make use of an option, 'autoScaleReference', by comparing the current width of the slider
+		// with the reference width. So, if the reference width is 1000 pixels and the current width is
+		// 500 pixels, it means that the layers will be scaled down to 50% of their size.
+		_layersOnResize: function() {
+			var that = this,
+				autoScaleReference,
+				useAutoScale = this.settings.autoScaleLayers,
+				scaleRatio;
+
+			if ( this.settings.autoScaleLayers === false ) {
+				return;
+			}
+
+			// If there isn't a reference for how the layers should scale down automatically, use the 'width'
+			// option as a reference, unless the width was set to a percentage. If there isn't a set reference and
+			// the width was set to a percentage, auto scaling will not be used because it's not possible to
+			// calculate how much should the layers scale.
+			if ( this.settings.autoScaleReference === -1 ) {
+				if ( typeof this.settings.width === 'string' && this.settings.width.indexOf( '%' ) !== -1 ) {
+					useAutoScale = false;
+				} else {
+					autoScaleReference = parseInt( this.settings.width, 10 );
+				}
+			} else {
+				autoScaleReference = this.settings.autoScaleReference;
+			}
+
+			if ( useAutoScale === true && this.slideWidth < autoScaleReference ) {
+				scaleRatio = that.slideWidth / autoScaleReference;
+			} else {
+				scaleRatio = 1;
+			}
+
+			$.each( this.slides, function( index, slide ) {
+				if ( typeof slide.layers !== 'undefined' ) {
+					$.each( slide.layers, function( index, layer ) {
+						layer.scale( scaleRatio );
+					});
+				}
+			});
+		},
+
+		// Replace the 'gotoSlide' method with this one, which makes it possible to 
+		// change the slide only after the layers from the previous slide are hidden.
+		_layersGotoSlide: function( index ) {
+			var that = this,
+				animatedLayers = this.slides[ this.selectedSlideIndex ].animatedLayers;
+
+			// If the slider is dragged, don't wait for the layer to hide
+			if ( this.$slider.hasClass( 'sp-swiping' ) || typeof animatedLayers === 'undefined' || animatedLayers.length === 0  ) {
+				this.layersGotoSlideReference( index );
+			} else {
+				this.on( 'hideLayersComplete.' + NS, function() {
+					that.off( 'hideLayersComplete.' + NS );
+					that.layersGotoSlideReference( index );
+				});
+
+				this.hideLayers( this.selectedSlideIndex );
+			}
+		},
+
+		// When a new slide is selected, hide the layers from the previous slide
+		// and show the layers from the current slide.
+		_layersOnGotoSlide: function( event ) {
+			if ( this.previousSlideIndex !== this.selectedSlideIndex ) {
+				this.hideLayers( this.previousSlideIndex );
+			}
+
+			this.showLayers( this.selectedSlideIndex );
+		},
+
+		// Show the animated layers from the slide at the specified index,
+		// and fire an event when all the layers from the slide become visible.
+		showLayers: function( index ) {
+			var that = this,
+				animatedLayers = this.slides[ index ].animatedLayers,
+				layerCounter = 0;
+
+			if ( typeof animatedLayers === 'undefined' ) {
+				return;
+			}
+
+			$.each( animatedLayers, function( index, element ) {
+
+				// If the layer is already visible, increment the counter directly, else wait 
+				// for the layer's showing animation to complete.
+				if ( element.isVisible() === true ) {
+					layerCounter++;
+
+					if ( layerCounter === animatedLayers.length ) {
+						that.trigger({ type: 'showLayersComplete', index: index });
+						if ( $.isFunction( that.settings.showLayersComplete ) ) {
+							that.settings.showLayersComplete.call( that, { type: 'showLayersComplete', index: index });
+						}
+					}
+				} else {
+					element.show(function() {
+						layerCounter++;
+
+						if ( layerCounter === animatedLayers.length ) {
+							that.trigger({ type: 'showLayersComplete', index: index });
+							if ( $.isFunction( that.settings.showLayersComplete ) ) {
+								that.settings.showLayersComplete.call( that, { type: 'showLayersComplete', index: index });
+							}
+						}
+					});
+				}
+			});
+		},
+
+		// Hide the animated layers from the slide at the specified index,
+		// and fire an event when all the layers from the slide become invisible.
+		hideLayers: function( index ) {
+			var that = this,
+				animatedLayers = this.slides[ index ].animatedLayers,
+				layerCounter = 0;
+
+			if ( typeof animatedLayers === 'undefined' ) {
+				return;
+			}
+
+			$.each( animatedLayers, function( index, element ) {
+
+				// If the layer is already invisible, increment the counter directly, else wait 
+				// for the layer's hiding animation to complete.
+				if ( element.isVisible() === false ) {
+					layerCounter++;
+
+					if ( layerCounter === animatedLayers.length ) {
+						that.trigger({ type: 'hideLayersComplete', index: index });
+						if ( $.isFunction( that.settings.hideLayersComplete ) ) {
+							that.settings.hideLayersComplete.call( that, { type: 'hideLayersComplete', index: index });
+						}
+					}
+				} else {
+					element.hide(function() {
+						layerCounter++;
+
+						if ( layerCounter === animatedLayers.length ) {
+							that.trigger({ type: 'hideLayersComplete', index: index });
+							if ( $.isFunction( that.settings.hideLayersComplete ) ) {
+								that.settings.hideLayersComplete.call( that, { type: 'hideLayersComplete', index: index });
+							}
+						}
+					});
+				}
+			});
+		},
+
+		// Destroy the module
+		destroyLayers: function() {
+			this.off( 'update.' + NS );
+			this.off( 'sliderResize.' + NS );
+			this.off( 'gotoSlide.' + NS );
+			this.off( 'hideLayersComplete.' + NS );
+		},
+
+		layersDefaults: {
+
+			// Indicates whether the slider will wait for the layers to disappear before
+			// going to a new slide
+			waitForLayers: false,
+
+			// Indicates whether the layers will be scaled automatically
+			autoScaleLayers: true,
+
+			// Sets a reference width which will be compared to the current slider width
+			// in order to determine how much the layers need to scale down. By default,
+			// the reference width will be equal to the slide width. However, if the slide width
+			// is set to a percentage value, then it's necessary to set a specific value for 'autoScaleReference'.
+			autoScaleReference: -1,
+
+			// Called when all animated layers become visible
+			showLayersComplete: function() {},
+
+			// Called when all animated layers become invisible
+			hideLayersComplete: function() {}
+		}
+	};
+
+	// Override the slide's 'destroy' method in order to destroy the 
+	// layers that where added to the slide as well.
+	var slideDestroy = window.SliderProSlide.prototype.destroy;
+
+	window.SliderProSlide.prototype.destroy = function() {
+		if ( typeof this.layers !== 'undefined' ) {
+			$.each( this.layers, function( index, element ) {
+				element.destroy();
+			});
+
+			this.layers.length = 0;
+		}
+
+		if ( typeof this.animatedLayers !== 'undefined' ) {
+			this.animatedLayers.length = 0;
+		}
+
+		slideDestroy.apply( this );
+	};
+
+	var Layer = function( layer ) {
+
+		// Reference to the layer jQuery element
+		this.$layer = layer;
+
+		// Indicates whether a layer is currently visible or hidden
+		this.visible = false;
+
+		// Indicates whether the layer was styled
+		this.styled = false;
+
+		// Holds the data attributes added to the layer
+		this.data = null;
+
+		// Indicates the layer's reference point (topLeft, bottomLeft, topRight or bottomRight)
+		this.position = null;
+		
+		// Indicates which CSS property (left or right) will be used for positioning the layer 
+		this.horizontalProperty = null;
+		
+		// Indicates which CSS property (top or bottom) will be used for positioning the layer 
+		this.verticalProperty = null;
+
+		// Indicates the value of the horizontal position
+		this.horizontalPosition = null;
+		
+		// Indicates the value of the vertical position
+		this.verticalPosition = null;
+
+		// Indicates how much the layers needs to be scaled
+		this.scaleRatio = 1;
+
+		// Indicates the type of supported transition (CSS3 2D, CSS3 3D or JavaScript)
+		this.supportedAnimation = SliderProUtils.getSupportedAnimation();
+
+		// Indicates the required vendor prefix for CSS (i.e., -webkit, -moz, etc.)
+		this.vendorPrefix = SliderProUtils.getVendorPrefix();
+
+		// Indicates the name of the CSS transition's complete event (i.e., transitionend, webkitTransitionEnd, etc.)
+		this.transitionEvent = SliderProUtils.getTransitionEvent();
+
+		// Reference to the timer that will be used to hide/show the layers
+		this.delayTimer = null;
+
+		// Reference to the timer that will be used to hide the layers automatically after a given time interval
+		this.stayTimer = null;
+
+		this._init();
+	};
+
+	Layer.prototype = {
+
+		// Initialize the layers
+		_init: function() {
+			this.$layer.attr( 'data-layer-init', true );
+
+			if ( this.$layer.hasClass( 'sp-static' ) ) {
+				this._setStyle();
+			} else {
+				this.$layer.css({ 'visibility': 'hidden' });
+			}
+		},
+
+		// Set the size and position of the layer
+		_setStyle: function() {
+			this.styled = true;
+
+			// Get the data attributes specified in HTML
+			this.data = this.$layer.data();
+			
+			if ( typeof this.data.width !== 'undefined' ) {
+				this.$layer.css( 'width', this.data.width );
+			}
+
+			if ( typeof this.data.height !== 'undefined' ) {
+				this.$layer.css( 'height', this.data.height );
+			}
+
+			if ( typeof this.data.depth !== 'undefined' ) {
+				this.$layer.css( 'z-index', this.data.depth );
+			}
+
+			this.position = this.data.position ? ( this.data.position ).toLowerCase() : 'topleft';
+
+			if ( this.position.indexOf( 'right' ) !== -1 ) {
+				this.horizontalProperty = 'right';
+			} else if ( this.position.indexOf( 'left' ) !== -1 ) {
+				this.horizontalProperty = 'left';
+			} else {
+				this.horizontalProperty = 'center';
+			}
+
+			if ( this.position.indexOf( 'bottom' ) !== -1 ) {
+				this.verticalProperty = 'bottom';
+			} else if ( this.position.indexOf( 'top' ) !== -1 ) {
+				this.verticalProperty = 'top';
+			} else {
+				this.verticalProperty = 'center';
+			}
+
+			this._setPosition();
+
+			this.scale( this.scaleRatio );
+		},
+
+		// Set the position of the layer
+		_setPosition: function() {
+			var inlineStyle = this.$layer.attr( 'style' );
+
+			this.horizontalPosition = typeof this.data.horizontal !== 'undefined' ? this.data.horizontal : 0;
+			this.verticalPosition = typeof this.data.vertical !== 'undefined' ? this.data.vertical : 0;
+
+			// Set the horizontal position of the layer based on the data set
+			if ( this.horizontalProperty === 'center' ) {
+				
+				// prevent content wrapping while setting the width
+				if ( this.$layer.is( 'img' ) === false && ( typeof inlineStyle === 'undefined' || ( typeof inlineStyle !== 'undefined' && inlineStyle.indexOf( 'width' ) === -1 ) ) ) {
+					this.$layer.css( 'white-space', 'nowrap' );
+					this.$layer.css( 'width', this.$layer.outerWidth( true ) );
+				}
+
+				this.$layer.css({ 'marginLeft': 'auto', 'marginRight': 'auto', 'left': this.horizontalPosition, 'right': 0 });
+			} else {
+				this.$layer.css( this.horizontalProperty, this.horizontalPosition );
+			}
+
+			// Set the vertical position of the layer based on the data set
+			if ( this.verticalProperty === 'center' ) {
+
+				// prevent content wrapping while setting the height
+				if ( this.$layer.is( 'img' ) === false && ( typeof inlineStyle === 'undefined' || ( typeof inlineStyle !== 'undefined' && inlineStyle.indexOf( 'height' ) === -1 ) ) ) {
+					this.$layer.css( 'white-space', 'nowrap' );
+					this.$layer.css( 'height', this.$layer.outerHeight( true ) );
+				}
+
+				this.$layer.css({ 'marginTop': 'auto', 'marginBottom': 'auto', 'top': this.verticalPosition, 'bottom': 0 });
+			} else {
+				this.$layer.css( this.verticalProperty, this.verticalPosition );
+			}
+		},
+
+		// Scale the layer
+		scale: function( ratio ) {
+
+			// Return if the layer is set to be unscalable
+			if ( this.$layer.hasClass( 'sp-no-scale' ) ) {
+				return;
+			}
+
+			// Store the ratio (even if the layer is not ready to be scaled yet)
+			this.scaleRatio = ratio;
+
+			// Return if the layer is not styled yet
+			if ( this.styled === false ) {
+				return;
+			}
+
+			var horizontalProperty = this.horizontalProperty === 'center' ? 'left' : this.horizontalProperty,
+				verticalProperty = this.verticalProperty === 'center' ? 'top' : this.verticalProperty,
+				css = {};
+
+			// Apply the scaling
+			css[ this.vendorPrefix + 'transform-origin' ] = this.horizontalProperty + ' ' + this.verticalProperty;
+			css[ this.vendorPrefix + 'transform' ] = 'scale(' + this.scaleRatio + ')';
+
+			// If the position is not set to a percentage value, apply the scaling to the position
+			if ( typeof this.horizontalPosition !== 'string' ) {
+				css[ horizontalProperty ] = this.horizontalPosition * this.scaleRatio;
+			}
+
+			// If the position is not set to a percentage value, apply the scaling to the position
+			if ( typeof this.verticalPosition !== 'string' ) {
+				css[ verticalProperty ] = this.verticalPosition * this.scaleRatio;
+			}
+
+			// If the width or height is set to a percentage value, increase the percentage in order to
+			// maintain the same layer to slide proportions. This is necessary because otherwise the scaling
+			// transform would minimize the layers more than intended.
+			if ( typeof this.data.width === 'string' && this.data.width.indexOf( '%' ) !== -1 ) {
+				css.width = ( parseInt( this.data.width, 10 ) / this.scaleRatio ).toString() + '%';
+			}
+
+			if ( typeof this.data.height === 'string' && this.data.height.indexOf( '%' ) !== -1 ) {
+				css.height = ( parseInt( this.data.height, 10 ) / this.scaleRatio ).toString() + '%';
+			}
+
+			this.$layer.css( css );
+		},
+
+		// Show the layer
+		show: function( callback ) {
+			if ( this.visible === true ) {
+				return;
+			}
+
+			this.visible = true;
+
+			// First, style the layer if it's not already styled
+			if ( this.styled === false ) {
+				this._setStyle();
+			}
+
+			var that = this,
+				offset = typeof this.data.showOffset !== 'undefined' ? this.data.showOffset : 50,
+				duration = typeof this.data.showDuration !== 'undefined' ? this.data.showDuration / 1000 : 0.4,
+				delay = typeof this.data.showDelay !== 'undefined' ? this.data.showDelay : 10,
+				stayDuration = typeof that.data.stayDuration !== 'undefined' ? parseInt( that.data.stayDuration, 10 ) : -1;
+
+			// Animate the layers with CSS3 or with JavaScript
+			if ( this.supportedAnimation === 'javascript' ) {
+				this.$layer
+					.stop()
+					.delay( delay )
+					.css({ 'opacity': 0, 'visibility': 'visible' })
+					.animate( { 'opacity': 1 }, duration * 1000, function() {
+
+						// Hide the layer after a given time interval
+						if ( stayDuration !== -1 ) {
+							that.stayTimer = setTimeout(function() {
+								that.hide();
+								that.stayTimer = null;
+							}, stayDuration );
+						}
+
+						if ( typeof callback !== 'undefined' ) {
+							callback();
+						}
+					});
+			} else {
+				var start = { 'opacity': 0, 'visibility': 'visible' },
+					target = { 'opacity': 1 },
+					transformValues = '';
+
+				start[ this.vendorPrefix + 'transform' ] = 'scale(' + this.scaleRatio + ')';
+				target[ this.vendorPrefix + 'transform' ] = 'scale(' + this.scaleRatio + ')';
+				target[ this.vendorPrefix + 'transition' ] = 'opacity ' + duration + 's';
+
+				if ( typeof this.data.showTransition !== 'undefined' ) {
+					if ( this.data.showTransition === 'left' ) {
+						transformValues = offset + 'px, 0';
+					} else if ( this.data.showTransition === 'right' ) {
+						transformValues = '-' + offset + 'px, 0';
+					} else if ( this.data.showTransition === 'up' ) {
+						transformValues = '0, ' + offset + 'px';
+					} else if ( this.data.showTransition === 'down') {
+						transformValues = '0, -' + offset + 'px';
+					}
+
+					start[ this.vendorPrefix + 'transform' ] += this.supportedAnimation === 'css-3d' ? ' translate3d(' + transformValues + ', 0)' : ' translate(' + transformValues + ')';
+					target[ this.vendorPrefix + 'transform' ] += this.supportedAnimation === 'css-3d' ? ' translate3d(0, 0, 0)' : ' translate(0, 0)';
+					target[ this.vendorPrefix + 'transition' ] += ', ' + this.vendorPrefix + 'transform ' + duration + 's';
+				}
+
+				// Listen when the layer animation is complete
+				this.$layer.on( this.transitionEvent, function( event ) {
+					if ( event.target !== event.currentTarget ) {
+						return;
+					}
+
+					that.$layer
+						.off( that.transitionEvent )
+						.css( that.vendorPrefix + 'transition', '' );
+
+					// Hide the layer after a given time interval
+					if ( stayDuration !== -1 ) {
+						that.stayTimer = setTimeout(function() {
+							that.hide();
+							that.stayTimer = null;
+						}, stayDuration );
+					}
+
+					if ( typeof callback !== 'undefined' ) {
+						callback();
+					}
+				});
+
+				this.$layer.css( start );
+
+				this.delayTimer = setTimeout( function() {
+					that.$layer.css( target );
+				}, delay );
+			}
+		},
+
+		// Hide the layer
+		hide: function( callback ) {
+			if ( this.visible === false ) {
+				return;
+			}
+
+			var that = this,
+				offset = typeof this.data.hideOffset !== 'undefined' ? this.data.hideOffset : 50,
+				duration = typeof this.data.hideDuration !== 'undefined' ? this.data.hideDuration / 1000 : 0.4,
+				delay = typeof this.data.hideDelay !== 'undefined' ? this.data.hideDelay : 10;
+
+			this.visible = false;
+
+			// If the layer is hidden before it hides automatically, clear the timer
+			if ( this.stayTimer !== null ) {
+				clearTimeout( this.stayTimer );
+			}
+
+			// Animate the layers with CSS3 or with JavaScript
+			if ( this.supportedAnimation === 'javascript' ) {
+				this.$layer
+					.stop()
+					.delay( delay )
+					.animate({ 'opacity': 0 }, duration * 1000, function() {
+						$( this ).css( 'visibility', 'hidden' );
+
+						if ( typeof callback !== 'undefined' ) {
+							callback();
+						}
+					});
+			} else {
+				var transformValues = '',
+					target = { 'opacity': 0 };
+
+				target[ this.vendorPrefix + 'transform' ] = 'scale(' + this.scaleRatio + ')';
+				target[ this.vendorPrefix + 'transition' ] = 'opacity ' + duration + 's';
+
+				if ( typeof this.data.hideTransition !== 'undefined' ) {
+					if ( this.data.hideTransition === 'left' ) {
+						transformValues = '-' + offset + 'px, 0';
+					} else if ( this.data.hideTransition === 'right' ) {
+						transformValues = offset + 'px, 0';
+					} else if ( this.data.hideTransition === 'up' ) {
+						transformValues = '0, -' + offset + 'px';
+					} else if ( this.data.hideTransition === 'down' ) {
+						transformValues = '0, ' + offset + 'px';
+					}
+
+					target[ this.vendorPrefix + 'transform' ] += this.supportedAnimation === 'css-3d' ? ' translate3d(' + transformValues + ', 0)' : ' translate(' + transformValues + ')';
+					target[ this.vendorPrefix + 'transition' ] += ', ' + this.vendorPrefix + 'transform ' + duration + 's';
+				}
+
+				// Listen when the layer animation is complete
+				this.$layer.on( this.transitionEvent, function( event ) {
+					if ( event.target !== event.currentTarget ) {
+						return;
+					}
+
+					that.$layer
+						.off( that.transitionEvent )
+						.css( that.vendorPrefix + 'transition', '' );
+
+					// Hide the layer after transition
+					if ( that.visible === false ) {
+						that.$layer.css( 'visibility', 'hidden' );
+					}
+
+					if ( typeof callback !== 'undefined' ) {
+						callback();
+					}
+				});
+
+				this.delayTimer = setTimeout( function() {
+					that.$layer.css( target );
+				}, delay );
+			}
+		},
+
+		isVisible: function() {
+			if ( this.visible === false || this.$layer.is( ':hidden' ) ) {
+				return false;
+			}
+
+			return true;
+		},
+
+		// Destroy the layer
+		destroy: function() {
+			this.$layer.removeAttr( 'style' );
+			this.$layer.removeAttr( 'data-layer-init' );
+			clearTimeout( this.delayTimer );
+			clearTimeout( this.stayTimer );
+			this.delayTimer = null;
+			this.stayTimer = null;
+		}
+	};
+
+	$.SliderPro.addModule( 'Layers', Layers );
+	
+})( window, jQuery );
+
+// Fade module for Slider Pro.
+// 
+// Adds the possibility to navigate through slides using a cross-fade effect.
+;(function( window, $ ) {
+
+	"use strict";
+
+	var NS = 'Fade.' + $.SliderPro.namespace;
+
+	var Fade = {
+
+		// Reference to the original 'gotoSlide' method
+		fadeGotoSlideReference: null,
+
+		initFade: function() {
+			this.on( 'update.' + NS, $.proxy( this._fadeOnUpdate, this ) );
+		},
+
+		// If fade is enabled, store a reference to the original 'gotoSlide' method
+		// and then assign a new function to 'gotoSlide'.
+		_fadeOnUpdate: function() {
+			if ( this.settings.fade === true ) {
+				this.fadeGotoSlideReference = this.gotoSlide;
+				this.gotoSlide = this._fadeGotoSlide;
+			}
+		},
+
+		// Will replace the original 'gotoSlide' function by adding a cross-fade effect
+		// between the previous and the next slide.
+		_fadeGotoSlide: function( index ) {
+			if ( index === this.selectedSlideIndex ) {
+				return;
+			}
+			
+			// If the slides are being swiped/dragged, don't use fade, but call the original method instead.
+			// If not, which means that a new slide was selected through a button, arrows or direct call, then
+			// use fade.
+			if ( this.$slider.hasClass( 'sp-swiping' ) ) {
+				this.fadeGotoSlideReference( index );
+			} else {
+				var that = this,
+					$nextSlide,
+					$previousSlide,
+					newIndex = index;
+
+				// Loop through all the slides and overlap the previous and next slide,
+				// and hide the other slides.
+				$.each( this.slides, function( index, element ) {
+					var slideIndex = element.getIndex(),
+						$slide = element.$slide;
+
+					if ( slideIndex === newIndex ) {
+						$slide.css({ 'opacity': 0, 'left': 0, 'top': 0, 'z-index': 20, visibility: 'visible' });
+						$nextSlide = $slide;
+					} else if ( slideIndex === that.selectedSlideIndex ) {
+						$slide.css({ 'opacity': 1, 'left': 0, 'top': 0, 'z-index': 10, visibility: 'visible' });
+						$previousSlide = $slide;
+					} else {
+						$slide.css({ 'opacity': 1, visibility: 'hidden', 'z-index': '' });
+					}
+				});
+
+				// Set the new indexes for the previous and selected slides
+				this.previousSlideIndex = this.selectedSlideIndex;
+				this.selectedSlideIndex = index;
+
+				// Re-assign the 'sp-selected' class to the currently selected slide
+				this.$slides.find( '.sp-selected' ).removeClass( 'sp-selected' );
+				this.$slides.find( '.sp-slide' ).eq( this.selectedSlideIndex ).addClass( 'sp-selected' );
+			
+				// Rearrange the slides if the slider is loop-able
+				if ( that.settings.loop === true ) {
+					that._updateSlidesOrder();
+				}
+
+				// Move the slides container so that the cross-fading slides (which now have the top and left
+				// position set to 0) become visible.
+				this._moveTo( 0, true );
+
+				// Fade in the selected slide
+				this._fadeSlideTo( $nextSlide, 1, function() {
+
+					// This flag will indicate if all the fade transitions are complete,
+					// in case there are multiple running at the same time, which happens
+					// when the slides are navigated very quickly
+					var allTransitionsComplete = true;
+
+					// Go through all the slides and check if there is at least one slide 
+					// that is still transitioning.
+					$.each( that.slides, function( index, element ) {
+						if ( typeof element.$slide.attr( 'data-transitioning' ) !== 'undefined' ) {
+							allTransitionsComplete = false;
+						}
+					});
+
+					if ( allTransitionsComplete === true ) {
+
+						// After all the transitions are complete, make all the slides visible again
+						$.each( that.slides, function( index, element ) {
+							var $slide = element.$slide;
+							$slide.css({ 'visibility': '', 'opacity': '', 'z-index': '' });
+						});
+						
+						// Reset the position of the slides and slides container
+						that._resetSlidesPosition();
+					}
+
+					// Fire the 'gotoSlideComplete' event
+					that.trigger({ type: 'gotoSlideComplete', index: index, previousIndex: that.previousSlideIndex });
+					if ( $.isFunction( that.settings.gotoSlideComplete ) ) {
+						that.settings.gotoSlideComplete.call( that, { type: 'gotoSlideComplete', index: index, previousIndex: that.previousSlideIndex } );
+					}
+				});
+
+				// Fade out the previous slide, if indicated, in addition to fading in the next slide
+				if ( this.settings.fadeOutPreviousSlide === true ) {
+					this._fadeSlideTo( $previousSlide, 0 );
+				}
+
+				if ( this.settings.autoHeight === true ) {
+					this._resizeHeight();
+				}
+
+				// Fire the 'gotoSlide' event
+				this.trigger({ type: 'gotoSlide', index: index, previousIndex: this.previousSlideIndex });
+				if ( $.isFunction( this.settings.gotoSlide ) ) {
+					this.settings.gotoSlide.call( this, { type: 'gotoSlide', index: index, previousIndex: this.previousSlideIndex });
+				}
+			}
+		},
+
+		// Fade the target slide to the specified opacity (0 or 1)
+		_fadeSlideTo: function( target, opacity, callback ) {
+			var that = this;
+
+			// apply the attribute only to slides that fade in
+			if ( opacity === 1 ) {
+				target.attr( 'data-transitioning', true );
+			}
+
+			// Use CSS transitions if they are supported. If not, use JavaScript animation.
+			if ( this.supportedAnimation === 'css-3d' || this.supportedAnimation === 'css-2d' ) {
+
+				// There needs to be a delay between the moment the opacity is set
+				// and the moment the transitions starts.
+				setTimeout(function(){
+					var css = { 'opacity': opacity };
+					css[ that.vendorPrefix + 'transition' ] = 'opacity ' + that.settings.fadeDuration / 1000 + 's';
+					target.css( css );
+				}, 100 );
+
+				target.on( this.transitionEvent, function( event ) {
+					if ( event.target !== event.currentTarget ) {
+						return;
+					}
+					
+					target.off( that.transitionEvent );
+					target.css( that.vendorPrefix + 'transition', '' );
+					target.removeAttr( 'data-transitioning');
+
+					if ( typeof callback === 'function' ) {
+						callback();
+					}
+				});
+			} else {
+				target.stop().animate({ 'opacity': opacity }, this.settings.fadeDuration, function() {
+					target.removeAttr( 'data-transitioning' );
+
+					if ( typeof callback === 'function' ) {
+						callback();
+					}
+				});
+			}
+		},
+
+		// Destroy the module
+		destroyFade: function() {
+			this.off( 'update.' + NS );
+
+			if ( this.fadeGotoSlideReference !== null ) {
+				this.gotoSlide = this.fadeGotoSlideReference;
+			}
+		},
+
+		fadeDefaults: {
+
+			// Indicates if fade will be used
+			fade: false,
+
+			// Indicates if the previous slide will be faded out (in addition to the next slide being faded in)
+			fadeOutPreviousSlide: true,
+
+			// Sets the duration of the fade effect
+			fadeDuration: 500
+		}
+	};
+
+	$.SliderPro.addModule( 'Fade', Fade );
+
+})( window, jQuery );
+
+// Touch Swipe module for Slider Pro.
+// 
+// Adds touch-swipe functionality for slides.
+;(function( window, $ ) {
+
+	"use strict";
+	
+	var NS = 'TouchSwipe.' + $.SliderPro.namespace;
+
+	var TouchSwipe = {
+
+		// The x and y coordinates of the pointer/finger's starting position
+		touchStartPoint: {x: 0, y: 0},
+
+		// The x and y coordinates of the pointer/finger's end position
+		touchEndPoint: {x: 0, y: 0},
+
+		// The distance from the starting to the end position on the x and y axis
+		touchDistance: {x: 0, y: 0},
+
+		// The position of the slides when the touch swipe starts
+		touchStartPosition: 0,
+
+		// Indicates if the slides are being swiped
+		isTouchMoving: false,
+
+		// Stores the names of the events
+		touchSwipeEvents: { startEvent: '', moveEvent: '', endEvent: '' },
+
+		// Indicates if scrolling (the page) in the opposite direction of the
+		// slides' layout is allowed. This is used to block vertical (or horizontal)
+		// scrolling when the user is scrolling through the slides.
+		allowOppositeScrolling: true,
+
+		// Indicates whether the previous 'start' event was a 'touchstart' or 'mousedown'
+		previousStartEvent: '',
+
+		initTouchSwipe: function() {
+			var that = this;
+
+			// check if touch swipe is enabled
+			if ( this.settings.touchSwipe === false ) {
+				return;
+			}
+
+			this.touchSwipeEvents.startEvent = 'touchstart' + '.' + NS + ' mousedown' + '.' + NS;
+			this.touchSwipeEvents.moveEvent = 'touchmove' + '.' + NS + ' mousemove' + '.' + NS;
+			this.touchSwipeEvents.endEvent = 'touchend' + '.' + this.uniqueId + '.' + NS + ' mouseup' + '.' + this.uniqueId + '.' + NS;
+
+			// Listen for touch swipe/mouse move events
+			this.$slidesMask.on( this.touchSwipeEvents.startEvent, $.proxy( this._onTouchStart, this ) );
+			this.$slidesMask.on( 'dragstart.' + NS, function( event ) {
+				event.preventDefault();
+			});
+
+			// Prevent 'click' events unless there is intention for a 'click'
+			this.$slidesMask.find( 'a' ).on( 'click.' + NS, function( event ) {
+				if ( that.$slider.hasClass( 'sp-swiping' ) ) {
+					event.preventDefault();
+				}
+			});
+
+			// Add the grabbing icon
+			this.$slidesMask.addClass( 'sp-grab' );
+		},
+
+		// Called when the slides starts being dragged
+		_onTouchStart: function( event ) {
+
+			// Return if a 'mousedown' event follows a 'touchstart' event
+			if ( event.type === 'mousedown' && this.previousStartEvent === 'touchstart' ) {
+				this.previousStartEvent = event.type;
+				return;
+			}
+
+			// Assign the new 'start' event
+			this.previousStartEvent = event.type;
+
+			// Disable dragging if the element is set to allow selections
+			if ( $( event.target ).closest( '.sp-selectable' ).length >= 1 ) {
+				return;
+			}
+
+			var that = this,
+				eventObject = typeof event.originalEvent.touches !== 'undefined' ? event.originalEvent.touches[0] : event.originalEvent;
+
+			// Get the initial position of the mouse pointer and the initial position
+			// of the slides' container
+			this.touchStartPoint.x = eventObject.pageX || eventObject.clientX;
+			this.touchStartPoint.y = eventObject.pageY || eventObject.clientY;
+			this.touchStartPosition = this.slidesPosition;
+
+			// Clear the previous distance values
+			this.touchDistance.x = this.touchDistance.y = 0;
+
+			// If the slides are being grabbed while they're still animating, stop the
+			// current movement
+			if ( this.$slides.hasClass( 'sp-animated' ) ) {
+				this.isTouchMoving = true;
+				this._stopMovement();
+				this.touchStartPosition = this.slidesPosition;
+			}
+
+			// Listen for move and end events
+			this.$slidesMask.on( this.touchSwipeEvents.moveEvent, $.proxy( this._onTouchMove, this ) );
+			$( document ).on( this.touchSwipeEvents.endEvent, $.proxy( this._onTouchEnd, this ) );
+
+			// Swap grabbing icons
+			this.$slidesMask.removeClass( 'sp-grab' ).addClass( 'sp-grabbing' );
+		},
+
+		// Called during the slides' dragging
+		_onTouchMove: function( event ) {
+			var eventObject = typeof event.originalEvent.touches !== 'undefined' ? event.originalEvent.touches[0] : event.originalEvent;
+
+			// Indicate that the move event is being fired
+			this.isTouchMoving = true;
+
+			// Add 'sp-swiping' class to indicate that the slides are being swiped
+			if ( this.$slider.hasClass( 'sp-swiping' ) === false ) {
+				this.$slider.addClass( 'sp-swiping' );
+			}
+
+			// Get the current position of the mouse pointer
+			this.touchEndPoint.x = eventObject.pageX || eventObject.clientX;
+			this.touchEndPoint.y = eventObject.pageY || eventObject.clientY;
+
+			// Calculate the distance of the movement on both axis
+			this.touchDistance.x = this.touchEndPoint.x - this.touchStartPoint.x;
+			this.touchDistance.y = this.touchEndPoint.y - this.touchStartPoint.y;
+			
+			// Calculate the distance of the swipe that takes place in the same direction as the orientation of the slides
+			// and calculate the distance from the opposite direction.
+			// 
+			// For a swipe to be valid there should more distance in the same direction as the orientation of the slides.
+			var distance = this.settings.orientation === 'horizontal' ? this.touchDistance.x : this.touchDistance.y,
+				oppositeDistance = this.settings.orientation === 'horizontal' ? this.touchDistance.y : this.touchDistance.x;
+
+			// If the movement is in the same direction as the orientation of the slides, the swipe is valid
+			// and opposite scrolling will not be allowed.
+			if ( Math.abs( distance ) > Math.abs( oppositeDistance ) ) {
+				this.allowOppositeScrolling = false;
+			}
+
+			// If opposite scrolling is still allowed, the swipe wasn't valid, so return.
+			if ( this.allowOppositeScrolling === true ) {
+				return;
+			}
+			
+			// Don't allow opposite scrolling
+			event.preventDefault();
+
+			if ( this.settings.loop === false ) {
+				// Make the slides move slower if they're dragged outside its bounds
+				if ( ( this.slidesPosition > this.touchStartPosition && this.selectedSlideIndex === 0 ) ||
+					( this.slidesPosition < this.touchStartPosition && this.selectedSlideIndex === this.getTotalSlides() - 1 )
+				) {
+					distance = distance * 0.2;
+				}
+			}
+
+			this._moveTo( this.touchStartPosition + distance, true );
+		},
+
+		// Called when the slides are released
+		_onTouchEnd: function( event ) {
+			var that = this,
+				touchDistance = this.settings.orientation === 'horizontal' ? this.touchDistance.x : this.touchDistance.y;
+
+			// Remove the 'move' and 'end' listeners
+			this.$slidesMask.off( this.touchSwipeEvents.moveEvent );
+			$( document ).off( this.touchSwipeEvents.endEvent );
+
+			this.allowOppositeScrolling = true;
+
+			// Swap grabbing icons
+			this.$slidesMask.removeClass( 'sp-grabbing' ).addClass( 'sp-grab' );
+
+			// Remove the 'sp-swiping' class with a delay, to allow
+			// other event listeners (i.e. click) to check the existance
+			// of the swipe event.
+			if ( this.$slider.hasClass( 'sp-swiping' ) ) {
+				setTimeout(function() {
+					that.$slider.removeClass( 'sp-swiping' );
+				}, 100 );
+			}
+
+			// Return if the slides didn't move
+			if ( this.isTouchMoving === false ) {
+				return;
+			}
+
+			this.isTouchMoving = false;
+
+			// Calculate the old position of the slides in order to return to it if the swipe
+			// is below the threshold
+			var selectedSlideOffset = this.settings.centerSelectedSlide === true && this.settings.visibleSize !== 'auto' ? Math.round( ( parseInt( this.$slidesMask.css( this.sizeProperty ), 10 ) - this.getSlideAt( this.selectedSlideIndex ).getSize()[ this.sizeProperty ] ) / 2 ) : 0,
+				oldSlidesPosition = - parseInt( this.$slides.find( '.sp-slide' ).eq( this.selectedSlideIndex ).css( this.positionProperty ), 10 ) + selectedSlideOffset;
+
+			if ( Math.abs( touchDistance ) < this.settings.touchSwipeThreshold ) {
+				this._moveTo( oldSlidesPosition );
+			} else {
+				
+				// Calculate by how many slides the slides container has moved
+				var	slideArrayDistance = ( this.settings.rightToLeft === true && this.settings.orientation === 'horizontal' ? -1 : 1 ) * touchDistance / ( this.averageSlideSize + this.settings.slideDistance );
+
+				// Floor the obtained value and add or subtract 1, depending on the direction of the swipe
+				slideArrayDistance = parseInt( slideArrayDistance, 10 ) + ( slideArrayDistance > 0 ? 1 : - 1 );
+
+				// Get the index of the currently selected slide and subtract the position index in order to obtain
+				// the new index of the selected slide. 
+				var nextSlideIndex = this.slidesOrder[ $.inArray( this.selectedSlideIndex, this.slidesOrder ) - slideArrayDistance ];
+
+				if ( this.settings.loop === true ) {
+					this.gotoSlide( nextSlideIndex );
+				} else {
+					if ( typeof nextSlideIndex !== 'undefined' ) {
+						this.gotoSlide( nextSlideIndex );
+					} else {
+						this._moveTo( oldSlidesPosition );
+					}
+				}
+			}
+		},
+
+		// Destroy the module
+		destroyTouchSwipe: function() {
+			this.$slidesMask.off( 'dragstart.' + NS );
+			this.$slidesMask.find( 'a' ).off( 'click.' + NS );
+
+			this.$slidesMask.off( this.touchSwipeEvents.startEvent );
+			this.$slidesMask.off( this.touchSwipeEvents.moveEvent );
+			$( document ).off( this.touchSwipeEvents.endEvent );
+			
+			this.$slidesMask.removeClass( 'sp-grab' );
+		},
+
+		touchSwipeDefaults: {
+			
+			// Indicates whether the touch swipe will be enabled
+			touchSwipe: true,
+
+			// Sets the minimum amount that the slides should move
+			touchSwipeThreshold: 50
+		}
+	};
+
+	$.SliderPro.addModule( 'TouchSwipe', TouchSwipe );
+	
+})( window, jQuery );
+
+// Caption module for Slider Pro.
+// 
+// Adds a corresponding caption for each slide. The caption
+// will appear and disappear with the slide.
+;(function( window, $ ) {
+
+	"use strict";
+	
+	var NS = 'Caption.' + $.SliderPro.namespace;
+
+	var Caption = {
+
+		// Reference to the container element that will hold the caption
+		$captionContainer: null,
+
+		// The caption content/text
+		captionContent: '',
+
+		initCaption: function() {
+			this.on( 'update.' + NS, $.proxy( this._captionOnUpdate, this ) );
+			this.on( 'gotoSlide.' + NS, $.proxy( this._updateCaptionContent, this ) );
+		},
+
+		// Create the caption container and hide the captions inside the slides
+		_captionOnUpdate: function() {
+			this.$captionContainer = this.$slider.find( '.sp-caption-container' );
+
+			if ( this.$slider.find( '.sp-caption' ).length && this.$captionContainer.length === 0 ) {
+				this.$captionContainer = $( '<div class="sp-caption-container"></div>' ).appendTo( this.$slider );
+
+				// Show the caption for the selected slide
+				this._updateCaptionContent();
+			}
+
+			// Hide the captions inside the slides
+			this.$slides.find( '.sp-caption' ).each(function() {
+				$( this ).css( 'display', 'none' );
+			});
+		},
+
+		// Show the caption content for the selected slide
+		_updateCaptionContent: function() {
+			var that = this,
+				newCaptionField = this.$slider.find( '.sp-slide' ).eq( this.selectedSlideIndex ).find( '.sp-caption' ),
+				newCaptionContent = newCaptionField.length !== 0 ? newCaptionField.html() : '';
+
+			// Either use a fade effect for swapping the captions or use an instant change
+			if ( this.settings.fadeCaption === true ) {
+				
+				// If the previous slide had a caption, fade out that caption first and when the animation is over
+				// fade in the current caption.
+				// If the previous slide didn't have a caption, fade in the current caption directly.
+				if ( this.captionContent !== '' ) {
+
+					// If the caption container has 0 opacity when the fade out transition starts, set it
+					// to 1 because the transition wouldn't work if the initial and final values are the same,
+					// and the callback functions wouldn't fire in this case.
+					if ( parseFloat( this.$captionContainer.css( 'opacity' ), 10 ) === 0 ) {
+						this.$captionContainer.css( this.vendorPrefix + 'transition', '' );
+						this.$captionContainer.css( 'opacity', 1 );
+					}
+
+					this._fadeCaptionTo( 0, function() {
+						that.captionContent = newCaptionContent;
+
+						if ( newCaptionContent !== '' ) {
+							that.$captionContainer.html( that.captionContent );
+							that._fadeCaptionTo( 1 );
+						} else {
+							that.$captionContainer.empty();
+						}
+					});
+				} else {
+					this.captionContent = newCaptionContent;
+					this.$captionContainer.html( this.captionContent );
+					this.$captionContainer.css( 'opacity', 0 );
+					this._fadeCaptionTo( 1 );
+				}
+			} else {
+				this.captionContent = newCaptionContent;
+				this.$captionContainer.html( this.captionContent );
+			}
+		},
+
+		// Fade the caption container to the specified opacity
+		_fadeCaptionTo: function( opacity, callback ) {
+			var that = this;
+
+			// Use CSS transitions if they are supported. If not, use JavaScript animation.
+			if ( this.supportedAnimation === 'css-3d' || this.supportedAnimation === 'css-2d' ) {
+				
+				// There needs to be a delay between the moment the opacity is set
+				// and the moment the transitions starts.
+				setTimeout(function(){
+					var css = { 'opacity': opacity };
+					css[ that.vendorPrefix + 'transition' ] = 'opacity ' + that.settings.captionFadeDuration / 1000 + 's';
+					that.$captionContainer.css( css );
+				}, 1 );
+
+				this.$captionContainer.on( this.transitionEvent, function( event ) {
+					if ( event.target !== event.currentTarget ) {
+						return;
+					}
+
+					that.$captionContainer.off( that.transitionEvent );
+					that.$captionContainer.css( that.vendorPrefix + 'transition', '' );
+
+					if ( typeof callback === 'function' ) {
+						callback();
+					}
+				});
+			} else {
+				this.$captionContainer.stop().animate({ 'opacity': opacity }, this.settings.captionFadeDuration, function() {
+					if ( typeof callback === 'function' ) {
+						callback();
+					}
+				});
+			}
+		},
+
+		// Destroy the module
+		destroyCaption: function() {
+			this.off( 'update.' + NS );
+			this.off( 'gotoSlide.' + NS );
+
+			this.$captionContainer.remove();
+
+			this.$slider.find( '.sp-caption' ).each(function() {
+				$( this ).css( 'display', '' );
+			});
+		},
+
+		captionDefaults: {
+
+			// Indicates whether or not the captions will be faded
+			fadeCaption: true,
+
+			// Sets the duration of the fade animation
+			captionFadeDuration: 500
+		}
+	};
+
+	$.SliderPro.addModule( 'Caption', Caption );
+	
+})( window, jQuery );
+
+// Deep Linking module for Slider Pro.
+// 
+// Updates the hash of the URL as the user navigates through the slides.
+// Also, allows navigating to a specific slide by indicating it in the hash.
+;(function( window, $ ) {
+
+	"use strict";
+
+	var NS = 'DeepLinking.' + $.SliderPro.namespace;
+
+	var DeepLinking = {
+
+		initDeepLinking: function() {
+			var that = this;
+
+			// Parse the initial hash
+			this.on( 'init.' + NS, function() {
+				that._gotoHash( window.location.hash );
+			});
+
+			// Update the hash when a new slide is selected
+			this.on( 'gotoSlide.' + NS, function( event ) {
+				if ( that.settings.updateHash === true ) {
+
+					// get the 'id' attribute of the slide
+					var slideId = that.$slider.find( '.sp-slide' ).eq( event.index ).attr( 'id' );
+
+					// if the slide doesn't have an 'id' attribute, use the slide index
+					if ( typeof slideId === 'undefined' ) {
+						slideId = event.index;
+					}
+
+					window.location.hash = that.$slider.attr( 'id' ) + '/' + slideId;
+				}
+			});
+
+			// Check when the hash changes and navigate to the indicated slide
+			$( window ).on( 'hashchange.' + this.uniqueId + '.' + NS, function() {
+				that._gotoHash( window.location.hash );
+			});
+		},
+
+		// Parse the hash and return the slider id and the slide id
+		_parseHash: function( hash ) {
+			if ( hash !== '' ) {
+				// Eliminate the # symbol
+				hash = hash.substring(1);
+
+				// Get the specified slider id and slide id
+				var values = hash.split( '/' ),
+					slideId = values.pop(),
+					sliderId = hash.slice( 0, - slideId.toString().length - 1 );
+
+				if ( this.$slider.attr( 'id' ) === sliderId ) {
+					return { 'sliderID': sliderId, 'slideId': slideId };
+				}
+			}
+
+			return false;
+		},
+
+		// Navigate to the appropriate slide, based on the specified hash
+		_gotoHash: function( hash ) {
+			var result = this._parseHash( hash );
+
+			if ( result === false ) {
+				return;
+			}
+
+			var slideId = result.slideId,
+				slideIdNumber = parseInt( slideId, 10 );
+
+			// check if the specified slide id is a number or string
+			if ( isNaN( slideIdNumber ) ) {
+				// get the index of the slide based on the specified id
+				var slideIndex = this.$slider.find( '.sp-slide#' + slideId ).index();
+
+				if ( slideIndex !== -1 && slideIndex !== this.selectedSlideIndex ) {
+					this.gotoSlide( slideIndex );
+				}
+			} else if ( slideIdNumber !== this.selectedSlideIndex ) {
+				this.gotoSlide( slideIdNumber );
+			}
+		},
+
+		// Destroy the module
+		destroyDeepLinking: function() {
+			this.off( 'init.' + NS );
+			this.off( 'gotoSlide.' + NS );
+			$( window ).off( 'hashchange.' + this.uniqueId + '.' + NS );
+		},
+
+		deepLinkingDefaults: {
+
+			// Indicates whether the hash will be updated when a new slide is selected
+			updateHash: false
+		}
+	};
+
+	$.SliderPro.addModule( 'DeepLinking', DeepLinking );
+	
+})( window, jQuery );
+
+// Autoplay module for Slider Pro.
+// 
+// Adds automatic navigation through the slides by calling the
+// 'nextSlide' or 'previousSlide' methods at certain time intervals.
+;(function( window, $ ) {
+
+	"use strict";
+	
+	var NS = 'Autoplay.' + $.SliderPro.namespace;
+
+	var Autoplay = {
+
+		autoplayTimer: null,
+
+		isTimerRunning: false,
+
+		isTimerPaused: false,
+
+		initAutoplay: function() {
+			this.on( 'update.' + NS, $.proxy( this._autoplayOnUpdate, this ) );
+		},
+
+		// Start the autoplay if it's enabled, or stop it if it's disabled but running 
+		_autoplayOnUpdate: function( event ) {
+			if ( this.settings.autoplay === true ) {
+				this.on( 'gotoSlide.' + NS, $.proxy( this._autoplayOnGotoSlide, this ) );
+				this.on( 'mouseenter.' + NS, $.proxy( this._autoplayOnMouseEnter, this ) );
+				this.on( 'mouseleave.' + NS, $.proxy( this._autoplayOnMouseLeave, this ) );
+
+				this.startAutoplay();
+			} else {
+				this.off( 'gotoSlide.' + NS );
+				this.off( 'mouseenter.' + NS );
+				this.off( 'mouseleave.' + NS );
+
+				this.stopAutoplay();
+			}
+		},
+
+		// Restart the autoplay timer when a new slide is selected
+		_autoplayOnGotoSlide: function( event ) {
+			// stop previous timers before starting a new one
+			if ( this.isTimerRunning === true ) {
+				this.stopAutoplay();
+			}
+			
+			if ( this.isTimerPaused === false ) {
+				this.startAutoplay();
+			}
+		},
+
+		// Pause the autoplay when the slider is hovered
+		_autoplayOnMouseEnter: function( event ) {
+			if ( this.isTimerRunning && ( this.settings.autoplayOnHover === 'pause' || this.settings.autoplayOnHover === 'stop' ) ) {
+				this.stopAutoplay();
+				this.isTimerPaused = true;
+			}
+		},
+
+		// Start the autoplay when the mouse moves away from the slider
+		_autoplayOnMouseLeave: function( event ) {
+			if ( this.settings.autoplay === true && this.isTimerRunning === false && this.settings.autoplayOnHover !== 'stop' ) {
+				this.startAutoplay();
+				this.isTimerPaused = false;
+			}
+		},
+
+		// Starts the autoplay
+		startAutoplay: function() {
+			var that = this;
+			
+			this.isTimerRunning = true;
+
+			this.autoplayTimer = setTimeout(function() {
+				if ( that.settings.autoplayDirection === 'normal' ) {
+					that.nextSlide();
+				} else if ( that.settings.autoplayDirection === 'backwards' ) {
+					that.previousSlide();
+				}
+			}, this.settings.autoplayDelay );
+		},
+
+		// Stops the autoplay
+		stopAutoplay: function() {
+			this.isTimerRunning = false;
+			this.isTimerPaused = false;
+
+			clearTimeout( this.autoplayTimer );
+		},
+
+		// Destroy the module
+		destroyAutoplay: function() {
+			clearTimeout( this.autoplayTimer );
+
+			this.off( 'update.' + NS );
+			this.off( 'gotoSlide.' + NS );
+			this.off( 'mouseenter.' + NS );
+			this.off( 'mouseleave.' + NS );
+		},
+
+		autoplayDefaults: {
+			// Indicates whether or not autoplay will be enabled
+			autoplay: true,
+
+			// Sets the delay/interval at which the autoplay will run
+			autoplayDelay: 5000,
+
+			// Indicates whether autoplay will navigate to the next slide or previous slide
+			autoplayDirection: 'normal',
+
+			// Indicates if the autoplay will be paused or stopped when the slider is hovered.
+			// Possible values are 'pause', 'stop' or 'none'.
+			autoplayOnHover: 'pause'
+		}
+	};
+
+	$.SliderPro.addModule( 'Autoplay', Autoplay );
+	
+})(window, jQuery);
+
+// Keyboard module for Slider Pro.
+// 
+// Adds the possibility to navigate through slides using the keyboard arrow keys, or
+// open the link attached to the main slide image by using the Enter key.
+;(function( window, $ ) {
+
+	"use strict";
+	
+	var NS = 'Keyboard.' + $.SliderPro.namespace;
+
+	var Keyboard = {
+
+		initKeyboard: function() {
+			var that = this,
+				hasFocus = false;
+
+			if ( this.settings.keyboard === false ) {
+				return;
+			}
+
+			// Detect when the slide is in focus and when it's not, and, optionally, make it
+			// responsive to keyboard input only when it's in focus
+			this.$slider.on( 'focus.' + NS, function() {
+				hasFocus = true;
+			});
+
+			this.$slider.on( 'blur.' + NS, function() {
+				hasFocus = false;
+			});
+
+			$( document ).on( 'keydown.' + this.uniqueId + '.' + NS, function( event ) {
+				if ( that.settings.keyboardOnlyOnFocus === true && hasFocus === false ) {
+					return;
+				}
+
+				// If the left arrow key is pressed, go to the previous slide.
+				// If the right arrow key is pressed, go to the next slide.
+				// If the Enter key is pressed, open the link attached to the main slide image.
+				if ( event.which === 37 ) {
+					that.previousSlide();
+				} else if ( event.which === 39 ) {
+					that.nextSlide();
+				} else if ( event.which === 13 ) {
+					var link = that.$slider.find( '.sp-slide' ).eq( that.selectedSlideIndex ).find( '.sp-image-container a' );
+					
+					if ( link.length !== 0 ) {
+						link[0].click();
+					}
+				}
+			});
+		},
+
+		// Destroy the module
+		destroyKeyboard: function() {
+			this.$slider.off( 'focus.' + NS );
+			this.$slider.off( 'blur.' + NS );
+			$( document ).off( 'keydown.' + this.uniqueId + '.' + NS );
+		},
+
+		keyboardDefaults: {
+
+			// Indicates whether keyboard navigation will be enabled
+			keyboard: true,
+
+			// Indicates whether the slider will respond to keyboard input only when
+			// the slider is in focus.
+			keyboardOnlyOnFocus: false
+		}
+	};
+
+	$.SliderPro.addModule( 'Keyboard', Keyboard );
+	
+})( window, jQuery );
+
+// Full Screen module for Slider Pro.
+// 
+// Adds the possibility to open the slider full-screen, using the HTML5 FullScreen API.
+;(function( window, $ ) {
+
+	"use strict";
+
+	var NS = 'FullScreen.' + $.SliderPro.namespace;
+
+	var FullScreen = {
+
+		// Indicates whether the slider is currently in full-screen mode
+		isFullScreen: false,
+
+		// Reference to the full-screen button
+		$fullScreenButton: null,
+
+		// Reference to a set of settings that influence the slider's size
+		// before it goes full-screen
+		sizeBeforeFullScreen: {},
+
+		initFullScreen: function() {
+			if ( ! ( document.fullscreenEnabled ||
+				document.webkitFullscreenEnabled ||
+				document.mozFullScreenEnabled ||
+				document.msFullscreenEnabled ) ) {
+				return;
+			}
+		
+			this.on( 'update.' + NS, $.proxy( this._fullScreenOnUpdate, this ) );
+		},
+
+		// Create or remove the full-screen button depending on the value of the 'fullScreen' option
+		_fullScreenOnUpdate: function() {
+			if ( this.settings.fullScreen === true && this.$fullScreenButton === null ) {
+				this._addFullScreen();
+			} else if ( this.settings.fullScreen === false && this.$fullScreenButton !== null ) {
+				this._removeFullScreen();
+			}
+
+			if ( this.settings.fullScreen === true ) {
+				if ( this.settings.fadeFullScreen === true ) {
+					this.$fullScreenButton.addClass( 'sp-fade-full-screen' );
+				} else if ( this.settings.fadeFullScreen === false ) {
+					this.$fullScreenButton.removeClass( 'sp-fade-full-screen' );
+				}
+			}
+		},
+
+		// Create the full-screen button
+		_addFullScreen: function() {
+			this.$fullScreenButton = $('<div class="sp-full-screen-button"></div>').appendTo( this.$slider );
+			this.$fullScreenButton.on( 'click.' + NS, $.proxy( this._onFullScreenButtonClick, this ) );
+
+			document.addEventListener( 'fullscreenchange', $.proxy( this._onFullScreenChange, this ) );
+			document.addEventListener( 'mozfullscreenchange', $.proxy( this._onFullScreenChange, this ) );
+			document.addEventListener( 'webkitfullscreenchange', $.proxy( this._onFullScreenChange, this ) );
+			document.addEventListener( 'MSFullscreenChange', $.proxy( this._onFullScreenChange, this ) );
+		},
+
+		// Remove the full-screen button
+		_removeFullScreen: function() {
+			if ( this.$fullScreenButton !== null ) {
+				this.$fullScreenButton.off( 'click.' + NS );
+				this.$fullScreenButton.remove();
+				this.$fullScreenButton = null;
+				document.removeEventListener( 'fullscreenchange', this._onFullScreenChange );
+				document.removeEventListener( 'mozfullscreenchange', this._onFullScreenChange );
+				document.removeEventListener( 'webkitfullscreenchange', this._onFullScreenChange );
+				document.removeEventListener( 'MSFullscreenChange', this._onFullScreenChange );
+			}
+		},
+
+		// When the full-screen button is clicked, put the slider into full-screen mode, and
+		// take it out of the full-screen mode when it's clicked again.
+		_onFullScreenButtonClick: function() {
+			if ( this.isFullScreen === false ) {
+				if ( this.instance.requestFullScreen ) {
+					this.instance.requestFullScreen();
+				} else if ( this.instance.mozRequestFullScreen ) {
+					this.instance.mozRequestFullScreen();
+				} else if ( this.instance.webkitRequestFullScreen ) {
+					this.instance.webkitRequestFullScreen();
+				} else if ( this.instance.msRequestFullscreen ) {
+					this.instance.msRequestFullscreen();
+				}
+			} else {
+				if ( document.exitFullScreen ) {
+					document.exitFullScreen();
+				} else if ( document.mozCancelFullScreen ) {
+					document.mozCancelFullScreen();
+				} else if ( document.webkitCancelFullScreen ) {
+					document.webkitCancelFullScreen();
+				} else if ( document.msExitFullscreen ) {
+					document.msExitFullscreen();
+				}
+			}
+		},
+
+		// This will be called whenever the full-screen mode changes.
+		// If the slider is in full-screen mode, set it to 'full window', and if it's
+		// not in full-screen mode anymore, set it back to the original size.
+		_onFullScreenChange: function() {
+			this.isFullScreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement ? true : false;
+
+			if ( this.isFullScreen === true ) {
+				this.sizeBeforeFullScreen = { forceSize: this.settings.forceSize, autoHeight: this.settings.autoHeight };
+				this.$slider.addClass( 'sp-full-screen' );
+				this.settings.forceSize = 'fullWindow';
+				this.settings.autoHeight = false;
+			} else {
+				this.$slider.css( 'margin', '' );
+				this.$slider.removeClass( 'sp-full-screen' );
+				this.settings.forceSize = this.sizeBeforeFullScreen.forceSize;
+				this.settings.autoHeight = this.sizeBeforeFullScreen.autoHeight;
+			}
+
+			this.resize();
+		},
+
+		// Destroy the module
+		destroyFullScreen: function() {
+			this.off( 'update.' + NS );
+			this._removeFullScreen();
+		},
+
+		fullScreenDefaults: {
+
+			// Indicates whether the full-screen button is enabled
+			fullScreen: false,
+
+			// Indicates whether the button will fade in only on hover
+			fadeFullScreen: true
+		}
+	};
+
+	$.SliderPro.addModule( 'FullScreen', FullScreen );
+
+})( window, jQuery );
+
+// Buttons module for Slider Pro.
+// 
+// Adds navigation buttons at the bottom of the slider.
+;(function( window, $ ) {
+
+	"use strict";
+	
+	var NS = 'Buttons.' + $.SliderPro.namespace;
+
+	var Buttons = {
+
+		// Reference to the buttons container
+		$buttons: null,
+
+		initButtons: function() {
+			this.on( 'update.' + NS, $.proxy( this._buttonsOnUpdate, this ) );
+		},
+
+		_buttonsOnUpdate: function() {
+			this.$buttons = this.$slider.find('.sp-buttons');
+			
+			// If there is more that one slide but the buttons weren't created yet, create the buttons.
+			// If the buttons were created but their number differs from the total number of slides, re-create the buttons.
+			// If the buttons were created but there are less than one slide, remove the buttons.s
+			if ( this.settings.buttons === true && this.getTotalSlides() > 1 && this.$buttons.length === 0 ) {
+				this._createButtons();
+			} else if ( this.settings.buttons === true && this.getTotalSlides() !== this.$buttons.find( '.sp-button' ).length && this.$buttons.length !== 0 ) {
+				this._adjustButtons();
+			} else if ( this.settings.buttons === false || ( this.getTotalSlides() <= 1 && this.$buttons.length !== 0 ) ) {
+				this._removeButtons();
+			}
+		},
+
+		// Create the buttons
+		_createButtons: function() {
+			var that = this;
+
+			// Create the buttons' container
+			this.$buttons = $( '<div class="sp-buttons"></div>' ).appendTo( this.$slider );
+
+			// Create the buttons
+			for ( var i = 0; i < this.getTotalSlides(); i++ ) {
+				$( '<div class="sp-button"></div>' ).appendTo( this.$buttons );
+			}
+
+			// Listen for button clicks 
+			this.$buttons.on( 'click.' + NS, '.sp-button', function() {
+				that.gotoSlide( $( this ).index() );
+			});
+
+			// Set the initially selected button
+			this.$buttons.find( '.sp-button' ).eq( this.selectedSlideIndex ).addClass( 'sp-selected-button' );
+
+			// Select the corresponding button when the slide changes
+			this.on( 'gotoSlide.' + NS, function( event ) {
+				that.$buttons.find( '.sp-selected-button' ).removeClass( 'sp-selected-button' );
+				that.$buttons.find( '.sp-button' ).eq( event.index ).addClass( 'sp-selected-button' );
+			});
+
+			// Indicate that the slider has buttons 
+			this.$slider.addClass( 'sp-has-buttons' );
+		},
+
+		// Re-create the buttons. This is calles when the number of slides changes.
+		_adjustButtons: function() {
+			this.$buttons.empty();
+
+			// Create the buttons
+			for ( var i = 0; i < this.getTotalSlides(); i++ ) {
+				$( '<div class="sp-button"></div>' ).appendTo( this.$buttons );
+			}
+
+			// Change the selected the buttons
+			this.$buttons.find( '.sp-selected-button' ).removeClass( 'sp-selected-button' );
+			this.$buttons.find( '.sp-button' ).eq( this.selectedSlideIndex ).addClass( 'sp-selected-button' );
+		},
+
+		// Remove the buttons
+		_removeButtons: function() {
+			this.$buttons.off( 'click.' + NS, '.sp-button' );
+			this.off( 'gotoSlide.' + NS );
+			this.$buttons.remove();
+			this.$slider.removeClass( 'sp-has-buttons' );
+		},
+
+		destroyButtons: function() {
+			this._removeButtons();
+			this.off( 'update.' + NS );
+		},
+
+		buttonsDefaults: {
+			
+			// Indicates whether the buttons will be created
+			buttons: true
+		}
+	};
+
+	$.SliderPro.addModule( 'Buttons', Buttons );
+
+})( window, jQuery );
+
+// Arrows module for Slider Pro.
+// 
+// Adds arrows for navigating to the next or previous slide.
+;(function( window, $ ) {
+
+	"use strict";
+
+	var NS = 'Arrows.' + $.SliderPro.namespace;
+
+	var Arrows = {
+
+		// Reference to the arrows container
+		$arrows: null,
+
+		// Reference to the previous arrow
+		$previousArrow: null,
+
+		// Reference to the next arrow
+		$nextArrow: null,
+
+		initArrows: function() {
+			this.on( 'update.' + NS, $.proxy( this._arrowsOnUpdate, this ) );
+			this.on( 'gotoSlide.' + NS, $.proxy( this._checkArrowsVisibility, this ) );
+		},
+
+		_arrowsOnUpdate: function() {
+			var that = this;
+
+			// Create the arrows if the 'arrows' option is set to true
+			if ( this.settings.arrows === true && this.$arrows === null ) {
+				this.$arrows = $( '<div class="sp-arrows"></div>' ).appendTo( this.$slidesContainer );
+				
+				this.$previousArrow = $( '<div class="sp-arrow sp-previous-arrow"></div>' ).appendTo( this.$arrows );
+				this.$nextArrow = $( '<div class="sp-arrow sp-next-arrow"></div>' ).appendTo( this.$arrows );
+
+				this.$previousArrow.on( 'click.' + NS, function() {
+					that.previousSlide();
+				});
+
+				this.$nextArrow.on( 'click.' + NS, function() {
+					that.nextSlide();
+				});
+
+				this._checkArrowsVisibility();
+			} else if ( this.settings.arrows === false && this.$arrows !== null ) {
+				this._removeArrows();
+			}
+
+			if ( this.settings.arrows === true ) {
+				if ( this.settings.fadeArrows === true ) {
+					this.$arrows.addClass( 'sp-fade-arrows' );
+				} else if ( this.settings.fadeArrows === false ) {
+					this.$arrows.removeClass( 'sp-fade-arrows' );
+				}
+			}
+		},
+
+		// Show or hide the arrows depending on the position of the selected slide
+		_checkArrowsVisibility: function() {
+			if ( this.settings.arrows === false || this.settings.loop === true ) {
+				return;
+			}
+
+			if ( this.selectedSlideIndex === 0 ) {
+				this.$previousArrow.css( 'display', 'none' );
+			} else {
+				this.$previousArrow.css( 'display', 'block' );
+			}
+
+			if ( this.selectedSlideIndex === this.getTotalSlides() - 1 ) {
+				this.$nextArrow.css( 'display', 'none' );
+			} else {
+				this.$nextArrow.css( 'display', 'block' );
+			}
+		},
+		
+		_removeArrows: function() {
+			if ( this.$arrows !== null ) {
+				this.$previousArrow.off( 'click.' + NS );
+				this.$nextArrow.off( 'click.' + NS );
+				this.$arrows.remove();
+				this.$arrows = null;
+			}
+		},
+
+		destroyArrows: function() {
+			this._removeArrows();
+			this.off( 'update.' + NS );
+			this.off( 'gotoSlide.' + NS );
+		},
+
+		arrowsDefaults: {
+
+			// Indicates whether the arrow buttons will be created
+			arrows: false,
+
+			// Indicates whether the arrows will fade in only on hover
+			fadeArrows: true
+		}
+	};
+
+	$.SliderPro.addModule( 'Arrows', Arrows );
+
+})( window, jQuery );
+
+// Thumbnail Touch Swipe module for Slider Pro.
+// 
+// Adds touch-swipe functionality for thumbnails.
+;(function( window, $ ) {
+
+	"use strict";
+	
+	var NS = 'ThumbnailTouchSwipe.' + $.SliderPro.namespace;
+
+	var ThumbnailTouchSwipe = {
+
+		// The x and y coordinates of the pointer/finger's starting position
+		thumbnailTouchStartPoint: { x: 0, y: 0 },
+
+		// The x and y coordinates of the pointer/finger's end position
+		thumbnailTouchEndPoint: { x: 0, y: 0 },
+
+		// The distance from the starting to the end position on the x and y axis
+		thumbnailTouchDistance: { x: 0, y: 0 },
+
+		// The position of the thumbnail scroller when the touch swipe starts
+		thumbnailTouchStartPosition: 0,
+
+		// Indicates if the thumbnail scroller is being swiped
+		isThumbnailTouchMoving: false,
+
+		// Indicates if the touch swipe was initialized
+		isThumbnailTouchSwipe: false,
+
+		// Stores the names of the events
+		thumbnailTouchSwipeEvents: { startEvent: '', moveEvent: '', endEvent: '' },
+
+		// Indicates whether the previous 'start' event was a 'touchstart' or 'mousedown'
+		thumbnailPreviousStartEvent: '',
+
+		initThumbnailTouchSwipe: function() {
+			this.on( 'update.' + NS, $.proxy( this._thumbnailTouchSwipeOnUpdate, this ) );
+		},
+
+		_thumbnailTouchSwipeOnUpdate: function() {
+
+			// Return if there are no thumbnails
+			if ( this.isThumbnailScroller === false ) {
+				return;
+			}
+
+			// Initialize the touch swipe functionality if it wasn't initialized yet
+			if ( this.settings.thumbnailTouchSwipe === true && this.isThumbnailTouchSwipe === false ) {
+				this.isThumbnailTouchSwipe = true;
+
+				this.thumbnailTouchSwipeEvents.startEvent = 'touchstart' + '.' + NS + ' mousedown' + '.' + NS;
+				this.thumbnailTouchSwipeEvents.moveEvent = 'touchmove' + '.' + NS + ' mousemove' + '.' + NS;
+				this.thumbnailTouchSwipeEvents.endEvent = 'touchend' + '.' + this.uniqueId + '.' + NS + ' mouseup' + '.' + this.uniqueId + '.' + NS;
+				
+				// Listen for touch swipe/mouse move events
+				this.$thumbnails.on( this.thumbnailTouchSwipeEvents.startEvent, $.proxy( this._onThumbnailTouchStart, this ) );
+				this.$thumbnails.on( 'dragstart.' + NS, function( event ) {
+					event.preventDefault();
+				});
+			
+				// Add the grabbing icon
+				this.$thumbnails.addClass( 'sp-grab' );
+			}
+
+			// Remove the default thumbnailClick
+			$.each( this.thumbnails, function( index, thumbnail ) {
+				thumbnail.off( 'thumbnailClick' );
+			});
+		},
+
+		// Called when the thumbnail scroller starts being dragged
+		_onThumbnailTouchStart: function( event ) {
+
+			// Return if a 'mousedown' event follows a 'touchstart' event
+			if ( event.type === 'mousedown' && this.thumbnailPreviousStartEvent === 'touchstart' ) {
+				this.thumbnailPreviousStartEvent = event.type;
+				return;
+			}
+
+			// Assign the new 'start' event
+			this.thumbnailPreviousStartEvent = event.type;
+
+			// Disable dragging if the element is set to allow selections
+			if ( $( event.target ).closest( '.sp-selectable' ).length >= 1 ) {
+				return;
+			}
+
+			var that = this,
+				eventObject = typeof event.originalEvent.touches !== 'undefined' ? event.originalEvent.touches[0] : event.originalEvent;
+
+			// Prevent default behavior for mouse events
+			if ( typeof event.originalEvent.touches === 'undefined' ) {
+				event.preventDefault();
+			}
+
+			// Disable click events on links
+			$( event.target ).parents( '.sp-thumbnail-container' ).find( 'a' ).one( 'click.' + NS, function( event ) {
+				event.preventDefault();
+			});
+
+			// Get the initial position of the mouse pointer and the initial position
+			// of the thumbnail scroller
+			this.thumbnailTouchStartPoint.x = eventObject.pageX || eventObject.clientX;
+			this.thumbnailTouchStartPoint.y = eventObject.pageY || eventObject.clientY;
+			this.thumbnailTouchStartPosition = this.thumbnailsPosition;
+
+			// Clear the previous distance values
+			this.thumbnailTouchDistance.x = this.thumbnailTouchDistance.y = 0;
+
+			// If the thumbnail scroller is being grabbed while it's still animating, stop the
+			// current movement
+			if ( this.$thumbnails.hasClass( 'sp-animated' ) ) {
+				this.isThumbnailTouchMoving = true;
+				this._stopThumbnailsMovement();
+				this.thumbnailTouchStartPosition = this.thumbnailsPosition;
+			}
+
+			// Listen for move and end events
+			this.$thumbnails.on( this.thumbnailTouchSwipeEvents.moveEvent, $.proxy( this._onThumbnailTouchMove, this ) );
+			$( document ).on( this.thumbnailTouchSwipeEvents.endEvent, $.proxy( this._onThumbnailTouchEnd, this ) );
+
+			// Swap grabbing icons
+			this.$thumbnails.removeClass( 'sp-grab' ).addClass( 'sp-grabbing' );
+
+			// Add 'sp-swiping' class to indicate that the thumbnail scroller is being swiped
+			this.$thumbnailsContainer.addClass( 'sp-swiping' );
+		},
+
+		// Called during the thumbnail scroller's dragging
+		_onThumbnailTouchMove: function( event ) {
+			var eventObject = typeof event.originalEvent.touches !== 'undefined' ? event.originalEvent.touches[0] : event.originalEvent;
+
+			// Indicate that the move event is being fired
+			this.isThumbnailTouchMoving = true;
+
+			// Get the current position of the mouse pointer
+			this.thumbnailTouchEndPoint.x = eventObject.pageX || eventObject.clientX;
+			this.thumbnailTouchEndPoint.y = eventObject.pageY || eventObject.clientY;
+
+			// Calculate the distance of the movement on both axis
+			this.thumbnailTouchDistance.x = this.thumbnailTouchEndPoint.x - this.thumbnailTouchStartPoint.x;
+			this.thumbnailTouchDistance.y = this.thumbnailTouchEndPoint.y - this.thumbnailTouchStartPoint.y;
+			
+			// Calculate the distance of the swipe that takes place in the same direction as the orientation of the thumbnails
+			// and calculate the distance from the opposite direction.
+			// 
+			// For a swipe to be valid there should more distance in the same direction as the orientation of the thumbnails.
+			var distance = this.thumbnailsOrientation === 'horizontal' ? this.thumbnailTouchDistance.x : this.thumbnailTouchDistance.y,
+				oppositeDistance = this.thumbnailsOrientation === 'horizontal' ? this.thumbnailTouchDistance.y : this.thumbnailTouchDistance.x;
+
+			// If the movement is in the same direction as the orientation of the thumbnails, the swipe is valid
+			if ( Math.abs( distance ) > Math.abs( oppositeDistance ) ) {
+				event.preventDefault();
+			} else {
+				return;
+			}
+
+			// Make the thumbnail scroller move slower if it's dragged outside its bounds
+			if ( this.thumbnailsPosition >= 0 ) {
+				var infOffset = - this.thumbnailTouchStartPosition;
+				distance = infOffset + ( distance - infOffset ) * 0.2;
+			} else if ( this.thumbnailsPosition <= - this.thumbnailsSize + this.thumbnailsContainerSize ) {
+				var supOffset = this.thumbnailsSize - this.thumbnailsContainerSize + this.thumbnailTouchStartPosition;
+				distance = - supOffset + ( distance + supOffset ) * 0.2;
+			}
+			
+			this._moveThumbnailsTo( this.thumbnailTouchStartPosition + distance, true );
+		},
+
+		// Called when the thumbnail scroller is released
+		_onThumbnailTouchEnd: function( event ) {
+			var that = this,
+				thumbnailTouchDistance = this.thumbnailsOrientation === 'horizontal' ? this.thumbnailTouchDistance.x : this.thumbnailTouchDistance.y;
+
+			// Remove the move and end listeners
+			this.$thumbnails.off( this.thumbnailTouchSwipeEvents.moveEvent );
+			$( document ).off( this.thumbnailTouchSwipeEvents.endEvent );
+
+			// Swap grabbing icons
+			this.$thumbnails.removeClass( 'sp-grabbing' ).addClass( 'sp-grab' );
+
+			// Check if there is intention for a tap/click
+			if ( this.isThumbnailTouchMoving === false ||
+				this.isThumbnailTouchMoving === true &&
+				Math.abs( this.thumbnailTouchDistance.x ) < 10 &&
+				Math.abs( this.thumbnailTouchDistance.y ) < 10
+			) {
+				var targetThumbnail = $( event.target ).hasClass( 'sp-thumbnail-container' ) ? $( event.target ) : $( event.target ).parents( '.sp-thumbnail-container' ),
+					index = targetThumbnail.index();
+
+				// If a link is cliked, navigate to that link, else navigate to the slide that corresponds to the thumbnail
+				if ( $( event.target ).parents( 'a' ).length !== 0 ) {
+					$( event.target ).parents( 'a' ).off( 'click.' + NS );
+					this.$thumbnailsContainer.removeClass( 'sp-swiping' );
+				} else if ( index !== this.selectedThumbnailIndex && index !== -1 ) {
+					this.gotoSlide( index );
+				}
+
+				return;
+			}
+
+			this.isThumbnailTouchMoving = false;
+
+			$( event.target ).parents( '.sp-thumbnail' ).one( 'click', function( event ) {
+				event.preventDefault();
+			});
+
+			// Remove the 'sp-swiping' class but with a delay
+			// because there might be other event listeners that check
+			// the existence of this class, and this class should still be 
+			// applied for those listeners, since there was a swipe event
+			setTimeout(function() {
+				that.$thumbnailsContainer.removeClass( 'sp-swiping' );
+			}, 1 );
+
+			// Keep the thumbnail scroller inside the bounds
+			if ( this.thumbnailsPosition > 0 ) {
+				this._moveThumbnailsTo( 0 );
+			} else if ( this.thumbnailsPosition < this.thumbnailsContainerSize - this.thumbnailsSize ) {
+				this._moveThumbnailsTo( this.thumbnailsContainerSize - this.thumbnailsSize );
+			}
+
+			// Fire the 'thumbnailsMoveComplete' event
+			this.trigger({ type: 'thumbnailsMoveComplete' });
+			if ( $.isFunction( this.settings.thumbnailsMoveComplete ) ) {
+				this.settings.thumbnailsMoveComplete.call( this, { type: 'thumbnailsMoveComplete' });
+			}
+		},
+
+		// Destroy the module
+		destroyThumbnailTouchSwipe: function() {
+			this.off( 'update.' + NS );
+
+			if ( this.isThumbnailScroller === false ) {
+				return;
+			}
+
+			this.$thumbnails.off( this.thumbnailTouchSwipeEvents.startEvent );
+			this.$thumbnails.off( this.thumbnailTouchSwipeEvents.moveEvent );
+			this.$thumbnails.off( 'dragstart.' + NS );
+			$( document ).off( this.thumbnailTouchSwipeEvents.endEvent );
+			this.$thumbnails.removeClass( 'sp-grab' );
+		},
+
+		thumbnailTouchSwipeDefaults: {
+
+			// Indicates whether the touch swipe will be enabled for thumbnails
+			thumbnailTouchSwipe: true
+		}
+	};
+
+	$.SliderPro.addModule( 'ThumbnailTouchSwipe', ThumbnailTouchSwipe );
+
+})( window, jQuery );
+
+// Thumbnail Arrows module for Slider Pro.
+// 
+// Adds thumbnail arrows for moving the thumbnail scroller.
+;(function( window, $ ) {
+
+	"use strict";
+	
+	var NS = 'ThumbnailArrows.' + $.SliderPro.namespace;
+
+	var ThumbnailArrows = {
+
+		// Reference to the arrows container
+		$thumbnailArrows: null,
+
+		// Reference to the 'previous' thumbnail arrow
+		$previousThumbnailArrow: null,
+
+		// Reference to the 'next' thumbnail arrow
+		$nextThumbnailArrow: null,
+
+		initThumbnailArrows: function() {
+			var that = this;
+
+			this.on( 'update.' + NS, $.proxy( this._thumbnailArrowsOnUpdate, this ) );
+			
+			// Check if the arrows need to be visible or invisible when the thumbnail scroller
+			// resizes and when the thumbnail scroller moves.
+			this.on( 'sliderResize.' + NS + ' ' + 'thumbnailsMoveComplete.' + NS, function() {
+				if ( that.isThumbnailScroller === true && that.settings.thumbnailArrows === true ) {
+					that._checkThumbnailArrowsVisibility();
+				}
+			});
+		},
+		
+		// Called when the slider is updated
+		_thumbnailArrowsOnUpdate: function() {
+			var that = this;
+			
+			if ( this.isThumbnailScroller === false ) {
+				return;
+			}
+
+			// Create or remove the thumbnail scroller arrows
+			if ( this.settings.thumbnailArrows === true && this.$thumbnailArrows === null ) {
+				this.$thumbnailArrows = $( '<div class="sp-thumbnail-arrows"></div>' ).appendTo( this.$thumbnailsContainer );
+				
+				this.$previousThumbnailArrow = $( '<div class="sp-thumbnail-arrow sp-previous-thumbnail-arrow"></div>' ).appendTo( this.$thumbnailArrows );
+				this.$nextThumbnailArrow = $( '<div class="sp-thumbnail-arrow sp-next-thumbnail-arrow"></div>' ).appendTo( this.$thumbnailArrows );
+
+				this.$previousThumbnailArrow.on( 'click.' + NS, function() {
+					var previousPosition = Math.min( 0, that.thumbnailsPosition + that.thumbnailsContainerSize );
+					that._moveThumbnailsTo( previousPosition );
+				});
+
+				this.$nextThumbnailArrow.on( 'click.' + NS, function() {
+					var nextPosition = Math.max( that.thumbnailsContainerSize - that.thumbnailsSize, that.thumbnailsPosition - that.thumbnailsContainerSize );
+					that._moveThumbnailsTo( nextPosition );
+				});
+			} else if ( this.settings.thumbnailArrows === false && this.$thumbnailArrows !== null ) {
+				this._removeThumbnailArrows();
+			}
+
+			// Add fading functionality and check if the arrows need to be visible or not
+			if ( this.settings.thumbnailArrows === true ) {
+				if ( this.settings.fadeThumbnailArrows === true ) {
+					this.$thumbnailArrows.addClass( 'sp-fade-thumbnail-arrows' );
+				} else if ( this.settings.fadeThumbnailArrows === false ) {
+					this.$thumbnailArrows.removeClass( 'sp-fade-thumbnail-arrows' );
+				}
+
+				this._checkThumbnailArrowsVisibility();
+			}
+		},
+
+		// Checks if the 'next' or 'previous' arrows need to be visible or hidden,
+		// based on the position of the thumbnail scroller
+		_checkThumbnailArrowsVisibility: function() {
+			if ( this.thumbnailsPosition === 0 ) {
+				this.$previousThumbnailArrow.css( 'display', 'none' );
+			} else {
+				this.$previousThumbnailArrow.css( 'display', 'block' );
+			}
+
+			if ( this.thumbnailsPosition === this.thumbnailsContainerSize - this.thumbnailsSize ) {
+				this.$nextThumbnailArrow.css( 'display', 'none' );
+			} else {
+				this.$nextThumbnailArrow.css( 'display', 'block' );
+			}
+		},
+
+		// Remove the thumbnail arrows
+		_removeThumbnailArrows: function() {
+			if ( this.$thumbnailArrows !== null ) {
+				this.$previousThumbnailArrow.off( 'click.' + NS );
+				this.$nextThumbnailArrow.off( 'click.' + NS );
+				this.$thumbnailArrows.remove();
+				this.$thumbnailArrows = null;
+			}
+		},
+
+		// Destroy the module
+		destroyThumbnailArrows: function() {
+			this._removeThumbnailArrows();
+			this.off( 'update.' + NS );
+			this.off( 'sliderResize.' + NS );
+			this.off( 'thumbnailsMoveComplete.' + NS );
+		},
+
+		thumbnailArrowsDefaults: {
+
+			// Indicates whether the thumbnail arrows will be enabled
+			thumbnailArrows: false,
+
+			// Indicates whether the thumbnail arrows will be faded
+			fadeThumbnailArrows: true
+		}
+	};
+
+	$.SliderPro.addModule( 'ThumbnailArrows', ThumbnailArrows );
+
+})( window, jQuery );
+
+// Video module for Slider Pro
+//
+// Adds automatic control for several video players and providers
+;(function( window, $ ) {
+
+	"use strict";
+
+	var NS = 'Video.' + $.SliderPro.namespace;
+	
+	var Video = {
+
+		firstInit: false,
+
+		initVideo: function() {
+			this.on( 'update.' + NS, $.proxy( this._videoOnUpdate, this ) );
+			this.on( 'gotoSlide.' + NS, $.proxy( this._videoOnGotoSlide, this ) );
+			this.on( 'gotoSlideComplete.' + NS, $.proxy( this._videoOnGotoSlideComplete, this ) );
+		},
+
+		_videoOnUpdate: function() {
+			var that = this;
+
+			// Find all the inline videos and initialize them
+			this.$slider.find( '.sp-video' ).not( 'a, [data-video-init]' ).each(function() {
+				var video = $( this );
+				that._initVideo( video );
+			});
+
+			// Find all the lazy-loaded videos and preinitialize them. They will be initialized
+			// only when their play button is clicked.
+			this.$slider.find( 'a.sp-video' ).not( '[data-video-preinit]' ).each(function() {
+				var video = $( this );
+				that._preinitVideo( video );
+			});
+
+			// call the 'gotoSlideComplete' method in case the first slide contains a video that
+			// needs to play automatically
+			if ( this.firstInit === false ) {
+				this.firstInit = true;
+				this._videoOnGotoSlideComplete({ index: this.selectedSlideIndex, previousIndex: -1 });
+			}
+		},
+
+		// Initialize the target video
+		_initVideo: function( video ) {
+			var that = this;
+
+			video.attr( 'data-video-init', true )
+				.videoController();
+
+			// When the video starts playing, pause the autoplay if it's running
+			video.on( 'videoPlay.' + NS, function() {
+				if ( that.settings.playVideoAction === 'stopAutoplay' && typeof that.stopAutoplay !== 'undefined' ) {
+					that.stopAutoplay();
+					that.settings.autoplay = false;
+				}
+
+				// Fire the 'videoPlay' event
+				var eventObject = { type: 'videoPlay', video: video };
+				that.trigger( eventObject );
+				if ( $.isFunction( that.settings.videoPlay ) ) {
+					that.settings.videoPlay.call( that, eventObject );
+				}
+			});
+
+			// When the video is paused, restart the autoplay
+			video.on( 'videoPause.' + NS, function() {
+				if ( that.settings.pauseVideoAction === 'startAutoplay' && typeof that.startAutoplay !== 'undefined' ) {
+					that.stopAutoplay();
+					that.startAutoplay();
+					that.settings.autoplay = true;
+				}
+
+				// Fire the 'videoPause' event
+				var eventObject = { type: 'videoPause', video: video };
+				that.trigger( eventObject );
+				if ( $.isFunction( that.settings.videoPause ) ) {
+					that.settings.videoPause.call( that, eventObject );
+				}
+			});
+
+			// When the video ends, restart the autoplay (which was paused during the playback), or
+			// go to the next slide, or replay the video
+			video.on( 'videoEnded.' + NS, function() {
+				if ( that.settings.endVideoAction === 'startAutoplay' && typeof that.startAutoplay !== 'undefined' ) {
+					that.stopAutoplay();
+					that.startAutoplay();
+					that.settings.autoplay = true;
+				} else if ( that.settings.endVideoAction === 'nextSlide' ) {
+					that.nextSlide();
+				} else if ( that.settings.endVideoAction === 'replayVideo' ) {
+					video.videoController( 'replay' );
+				}
+
+				// Fire the 'videoEnd' event
+				var eventObject = { type: 'videoEnd', video: video };
+				that.trigger( eventObject );
+				if ( $.isFunction(that.settings.videoEnd ) ) {
+					that.settings.videoEnd.call( that, eventObject );
+				}
+			});
+		},
+
+		// Pre-initialize the video. This is for lazy loaded videos.
+		_preinitVideo: function( video ) {
+			var that = this;
+
+			video.attr( 'data-video-preinit', true );
+
+			// When the video poster is clicked, remove the poster and create
+			// the inline video
+			video.on( 'click.' + NS, function( event ) {
+
+				// If the video is being dragged, don't start the video
+				if ( that.$slider.hasClass( 'sp-swiping' ) ) {
+					return;
+				}
+
+				event.preventDefault();
+
+				var href = video.attr( 'href' ),
+					iframe,
+					provider,
+					regExp,
+					match,
+					id,
+					src,
+					videoAttributes,
+					videoWidth = video.children( 'img' ).attr( 'width' ) || video.children( 'img' ).width(),
+					videoHeight = video.children( 'img' ).attr( 'height') || video.children( 'img' ).height();
+
+				// Check if it's a youtube or vimeo video
+				if ( href.indexOf( 'youtube' ) !== -1 || href.indexOf( 'youtu.be' ) !== -1 ) {
+					provider = 'youtube';
+				} else if ( href.indexOf( 'vimeo' ) !== -1 ) {
+					provider = 'vimeo';
+				}
+
+				// Get the id of the video
+				regExp = provider === 'youtube' ? /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/ : /http:\/\/(www\.)?vimeo.com\/(\d+)/;
+				match = href.match( regExp );
+				id = match[2];
+
+				// Get the source of the iframe that will be created
+				src = provider === 'youtube' ? '//www.youtube.com/embed/' + id + '?enablejsapi=1&wmode=opaque' : '//player.vimeo.com/video/'+ id;
+				
+				// Get the attributes passed to the video link and then pass them to the iframe's src
+				videoAttributes = href.split( '?' )[ 1 ];
+
+				if ( typeof videoAttributes !== 'undefined' ) {
+					videoAttributes = videoAttributes.split( '&' );
+
+					$.each( videoAttributes, function( index, value ) {
+						if ( value.indexOf( id ) === -1 ) {
+							src += '&' + value;
+						}
+					});
+				}
+
+				// Create the iframe
+				iframe = $( '<iframe></iframe>' )
+					.attr({
+						'src': src,
+						'width': videoWidth,
+						'height': videoHeight,
+						'class': video.attr( 'class' ),
+						'frameborder': 0,
+						'allowfullscreen': 'allowfullscreen'
+					}).insertBefore( video );
+
+				// Initialize the video and play it
+				that._initVideo( iframe );
+				iframe.videoController( 'play' );
+
+				// Hide the video poster
+				video.css( 'display', 'none' );
+			});
+		},
+
+		// Called when a new slide is selected
+		_videoOnGotoSlide: function( event ) {
+
+			// Get the video from the previous slide
+			var previousVideo = this.$slides.find( '.sp-slide' ).eq( event.previousIndex ).find( '.sp-video[data-video-init]' );
+
+			// Handle the video from the previous slide by stopping it, or pausing it,
+			// or remove it, depending on the value of the 'leaveVideoAction' option.
+			if ( event.previousIndex !== -1 && previousVideo.length !== 0 ) {
+				if ( this.settings.leaveVideoAction === 'stopVideo' ) {
+					previousVideo.videoController( 'stop' );
+				} else if ( this.settings.leaveVideoAction === 'pauseVideo' ) {
+					previousVideo.videoController( 'pause' );
+				} else if ( this.settings.leaveVideoAction === 'removeVideo'  ) {
+					// If the video was lazy-loaded, remove it and show the poster again. If the video
+					// was not lazy-loaded, but inline, stop the video.
+					if ( previousVideo.siblings( 'a.sp-video' ).length !== 0 ) {
+						previousVideo.siblings( 'a.sp-video' ).css( 'display', '' );
+						previousVideo.videoController( 'destroy' );
+						previousVideo.remove();
+					} else {
+						previousVideo.videoController( 'stop' );
+					}
+				}
+			}
+		},
+
+		// Called when a new slide is selected, 
+		// after the transition animation is complete.
+		_videoOnGotoSlideComplete: function( event ) {
+
+			// Handle the video from the selected slide
+			if ( this.settings.reachVideoAction === 'playVideo' && event.index === this.selectedSlideIndex ) {
+				var loadedVideo = this.$slides.find( '.sp-slide' ).eq( event.index ).find( '.sp-video[data-video-init]' ),
+					unloadedVideo = this.$slides.find( '.sp-slide' ).eq( event.index ).find( '.sp-video[data-video-preinit]' );
+
+				// If the video was already initialized, play it. If it's not initialized (because
+				// it's lazy loaded) initialize it and play it.
+				if ( loadedVideo.length !== 0 ) {
+					loadedVideo.videoController( 'play' );
+				} else if ( unloadedVideo.length !== 0 ) {
+					unloadedVideo.trigger( 'click.' + NS );
+				}
+
+				// Autoplay is stopped when the video starts playing
+				// and the video's 'play' event is fired, but on slower connections,
+				// the video's playing will be delayed and the 'play' event
+				// will not fire in time to stop the autoplay, so we'll
+				// stop it here as well.
+				if ( ( loadedVideo.length !== 0 || unloadedVideo.length !== 0 ) && this.settings.playVideoAction === 'stopAutoplay' && typeof this.stopAutoplay !== 'undefined' ) {
+					this.stopAutoplay();
+					this.settings.autoplay = false;
+				}
+			}
+		},
+
+		// Destroy the module
+		destroyVideo: function() {
+			this.$slider.find( '.sp-video[ data-video-preinit ]' ).each(function() {
+				var video = $( this );
+				video.removeAttr( 'data-video-preinit' );
+				video.off( 'click.' + NS );
+			});
+
+			// Loop through the all the videos and destroy them
+			this.$slider.find( '.sp-video[ data-video-init ]' ).each(function() {
+				var video = $( this );
+				video.removeAttr( 'data-video-init' );
+				video.off( 'Video' );
+				video.videoController( 'destroy' );
+			});
+
+			this.off( 'update.' + NS );
+			this.off( 'gotoSlide.' + NS );
+			this.off( 'gotoSlideComplete.' + NS );
+		},
+
+		videoDefaults: {
+
+			// Sets the action that the video will perform when its slide container is selected
+			// ( 'playVideo' and 'none' )
+			reachVideoAction: 'none',
+
+			// Sets the action that the video will perform when another slide is selected
+			// ( 'stopVideo', 'pauseVideo', 'removeVideo' and 'none' )
+			leaveVideoAction: 'pauseVideo',
+
+			// Sets the action that the slider will perform when the video starts playing
+			// ( 'stopAutoplay' and 'none' )
+			playVideoAction: 'stopAutoplay',
+
+			// Sets the action that the slider will perform when the video is paused
+			// ( 'startAutoplay' and 'none' )
+			pauseVideoAction: 'none',
+
+			// Sets the action that the slider will perform when the video ends
+			// ( 'startAutoplay', 'nextSlide', 'replayVideo' and 'none' )
+			endVideoAction: 'none',
+
+			// Called when the video starts playing
+			videoPlay: function() {},
+
+			// Called when the video is paused
+			videoPause: function() {},
+
+			// Called when the video ends
+			videoEnd: function() {}
+		}
+	};
+
+	$.SliderPro.addModule( 'Video', Video );
+	
+})( window, jQuery );
+
+// Video Controller jQuery plugin
+// Creates a universal controller for multiple video types and providers
+;(function( $ ) {
+
+	"use strict";
+
+// Check if an iOS device is used.
+// This information is important because a video can not be
+// controlled programmatically unless the user has started the video manually.
+var	isIOS = window.navigator.userAgent.match( /(iPad|iPhone|iPod)/g ) ? true : false;
+
+var VideoController = function( instance, options ) {
+	this.$video = $( instance );
+	this.options = options;
+	this.settings = {};
+	this.player = null;
+
+	this._init();
+};
+
+VideoController.prototype = {
+
+	_init: function() {
+		this.settings = $.extend( {}, this.defaults, this.options );
+
+		var that = this,
+			players = $.VideoController.players,
+			videoID = this.$video.attr( 'id' );
+
+		// Loop through the available video players
+		// and check if the targeted video element is supported by one of the players.
+		// If a compatible type is found, store the video type.
+		for ( var name in players ) {
+			if ( typeof players[ name ] !== 'undefined' && players[ name ].isType( this.$video ) ) {
+				this.player = new players[ name ]( this.$video );
+				break;
+			}
+		}
+
+		// Return if the player could not be instantiated
+		if ( this.player === null ) {
+			return;
+		}
+
+		// Add event listeners
+		var events = [ 'ready', 'start', 'play', 'pause', 'ended' ];
+		
+		$.each( events, function( index, element ) {
+			var event = 'video' + element.charAt( 0 ).toUpperCase() + element.slice( 1 );
+
+			that.player.on( element, function() {
+				that.trigger({ type: event, video: videoID });
+				if ( $.isFunction( that.settings[ event ] ) ) {
+					that.settings[ event ].call( that, { type: event, video: videoID } );
+				}
+			});
+		});
+	},
+	
+	play: function() {
+		if ( isIOS === true && this.player.isStarted() === false || this.player.getState() === 'playing' ) {
+			return;
+		}
+
+		this.player.play();
+	},
+	
+	stop: function() {
+		if ( isIOS === true && this.player.isStarted() === false || this.player.getState() === 'stopped' ) {
+			return;
+		}
+
+		this.player.stop();
+	},
+	
+	pause: function() {
+		if ( isIOS === true && this.player.isStarted() === false || this.player.getState() === 'paused' ) {
+			return;
+		}
+
+		this.player.pause();
+	},
+
+	replay: function() {
+		if ( isIOS === true && this.player.isStarted() === false ) {
+			return;
+		}
+		
+		this.player.replay();
+	},
+
+	on: function( type, callback ) {
+		return this.$video.on( type, callback );
+	},
+	
+	off: function( type ) {
+		return this.$video.off( type );
+	},
+
+	trigger: function( data ) {
+		return this.$video.triggerHandler( data );
+	},
+
+	destroy: function() {
+		if ( this.player.isStarted() === true ) {
+			this.stop();
+		}
+
+		this.player.off( 'ready' );
+		this.player.off( 'start' );
+		this.player.off( 'play' );
+		this.player.off( 'pause' );
+		this.player.off( 'ended' );
+
+		this.$video.removeData( 'videoController' );
+	},
+
+	defaults: {
+		videoReady: function() {},
+		videoStart: function() {},
+		videoPlay: function() {},
+		videoPause: function() {},
+		videoEnded: function() {}
+	}
+};
+
+$.VideoController = {
+	players: {},
+
+	addPlayer: function( name, player ) {
+		this.players[ name ] = player;
+	}
+};
+
+$.fn.videoController = function( options ) {
+	var args = Array.prototype.slice.call( arguments, 1 );
+
+	return this.each(function() {
+		// Instantiate the video controller or call a function on the current instance
+		if ( typeof $( this ).data( 'videoController' ) === 'undefined' ) {
+			var newInstance = new VideoController( this, options );
+
+			// Store a reference to the instance created
+			$( this ).data( 'videoController', newInstance );
+		} else if ( typeof options !== 'undefined' ) {
+			var	currentInstance = $( this ).data( 'videoController' );
+
+			// Check the type of argument passed
+			if ( typeof currentInstance[ options ] === 'function' ) {
+				currentInstance[ options ].apply( currentInstance, args );
+			} else {
+				$.error( options + ' does not exist in videoController.' );
+			}
+		}
+	});
+};
+
+// Base object for the video players
+var Video = function( video ) {
+	this.$video = video;
+	this.player = null;
+	this.ready = false;
+	this.started = false;
+	this.state = '';
+	this.events = $({});
+
+	this._init();
+};
+
+Video.prototype = {
+	_init: function() {},
+
+	play: function() {},
+
+	pause: function() {},
+
+	stop: function() {},
+
+	replay: function() {},
+
+	isType: function() {},
+
+	isReady: function() {
+		return this.ready;
+	},
+
+	isStarted: function() {
+		return this.started;
+	},
+
+	getState: function() {
+		return this.state;
+	},
+
+	on: function( type, callback ) {
+		return this.events.on( type, callback );
+	},
+	
+	off: function( type ) {
+		return this.events.off( type );
+	},
+
+	trigger: function( data ) {
+		return this.events.triggerHandler( data );
+	}
+};
+
+// YouTube video
+var YoutubeVideoHelper = {
+	youtubeAPIAdded: false,
+	youtubeVideos: []
+};
+
+var YoutubeVideo = function( video ) {
+	this.init = false;
+	var youtubeAPILoaded = window.YT && window.YT.Player;
+
+	if ( typeof youtubeAPILoaded !== 'undefined' ) {
+		Video.call( this, video );
+	} else {
+		YoutubeVideoHelper.youtubeVideos.push({ 'video': video, 'scope': this });
+		
+		if ( YoutubeVideoHelper.youtubeAPIAdded === false ) {
+			YoutubeVideoHelper.youtubeAPIAdded = true;
+
+			var tag = document.createElement( 'script' );
+			tag.src = "//www.youtube.com/player_api";
+			var firstScriptTag = document.getElementsByTagName( 'script' )[0];
+			firstScriptTag.parentNode.insertBefore( tag, firstScriptTag );
+
+			window.onYouTubePlayerAPIReady = function() {
+				$.each( YoutubeVideoHelper.youtubeVideos, function( index, element ) {
+					Video.call( element.scope, element.video );
+				});
+			};
+		}
+	}
+};
+
+YoutubeVideo.prototype = new Video();
+YoutubeVideo.prototype.constructor = YoutubeVideo;
+$.VideoController.addPlayer( 'YoutubeVideo', YoutubeVideo );
+
+YoutubeVideo.isType = function( video ) {
+	if ( video.is( 'iframe' ) ) {
+		var src = video.attr( 'src' );
+
+		if ( src.indexOf( 'youtube.com' ) !== -1 || src.indexOf( 'youtu.be' ) !== -1 ) {
+			return true;
+		}
+	}
+
+	return false;
+};
+
+YoutubeVideo.prototype._init = function() {
+	this.init = true;
+	this._setup();
+};
+	
+YoutubeVideo.prototype._setup = function() {
+	var that = this;
+
+	// Get a reference to the player
+	this.player = new YT.Player( this.$video[0], {
+		events: {
+			'onReady': function() {
+				that.trigger({ type: 'ready' });
+				that.ready = true;
+			},
+			
+			'onStateChange': function( event ) {
+				switch ( event.data ) {
+					case YT.PlayerState.PLAYING:
+						if (that.started === false) {
+							that.started = true;
+							that.trigger({ type: 'start' });
+						}
+
+						that.state = 'playing';
+						that.trigger({ type: 'play' });
+						break;
+					
+					case YT.PlayerState.PAUSED:
+						that.state = 'paused';
+						that.trigger({ type: 'pause' });
+						break;
+					
+					case YT.PlayerState.ENDED:
+						that.state = 'ended';
+						that.trigger({ type: 'ended' });
+						break;
+				}
+			}
+		}
+	});
+};
+
+YoutubeVideo.prototype.play = function() {
+	var that = this;
+
+	if ( this.ready === true ) {
+		this.player.playVideo();
+	} else {
+		var timer = setInterval(function() {
+			if ( that.ready === true ) {
+				clearInterval( timer );
+				that.player.playVideo();
+			}
+		}, 100 );
+	}
+};
+
+YoutubeVideo.prototype.pause = function() {
+	// On iOS, simply pausing the video can make other videos unresponsive
+	// so we stop the video instead.
+	if ( isIOS === true ) {
+		this.stop();
+	} else {
+		this.player.pauseVideo();
+	}
+};
+
+YoutubeVideo.prototype.stop = function() {
+	this.player.seekTo( 1 );
+	this.player.stopVideo();
+	this.state = 'stopped';
+};
+
+YoutubeVideo.prototype.replay = function() {
+	this.player.seekTo( 1 );
+	this.player.playVideo();
+};
+
+YoutubeVideo.prototype.on = function( type, callback ) {
+	var that = this;
+
+	if ( this.init === true ) {
+		Video.prototype.on.call( this, type, callback );
+	} else {
+		var timer = setInterval(function() {
+			if ( that.init === true ) {
+				clearInterval( timer );
+				Video.prototype.on.call( that, type, callback );
+			}
+		}, 100 );
+	}
+};
+
+// Vimeo video
+var VimeoVideoHelper = {
+	vimeoAPIAdded: false,
+	vimeoVideos: []
+};
+
+var VimeoVideo = function( video ) {
+	this.init = false;
+
+	if ( typeof window.Vimeo !== 'undefined' ) {
+		Video.call( this, video );
+	} else {
+		VimeoVideoHelper.vimeoVideos.push({ 'video': video, 'scope': this });
+
+		if ( VimeoVideoHelper.vimeoAPIAdded === false ) {
+			VimeoVideoHelper.vimeoAPIAdded = true;
+
+			var tag = document.createElement('script');
+			tag.src = "//player.vimeo.com/api/player.js";
+			var firstScriptTag = document.getElementsByTagName( 'script' )[0];
+			firstScriptTag.parentNode.insertBefore( tag, firstScriptTag );
+		
+			var checkVimeoAPITimer = setInterval(function() {
+				if ( typeof window.Vimeo !== 'undefined' ) {
+					clearInterval( checkVimeoAPITimer );
+					
+					$.each( VimeoVideoHelper.vimeoVideos, function( index, element ) {
+						Video.call( element.scope, element.video );
+					});
+				}
+			}, 100 );
+		}
+	}
+};
+
+VimeoVideo.prototype = new Video();
+VimeoVideo.prototype.constructor = VimeoVideo;
+$.VideoController.addPlayer( 'VimeoVideo', VimeoVideo );
+
+VimeoVideo.isType = function( video ) {
+	if ( video.is( 'iframe' ) ) {
+		var src = video.attr('src');
+
+		if ( src.indexOf( 'vimeo.com' ) !== -1 ) {
+			return true;
+		}
+	}
+
+	return false;
+};
+
+VimeoVideo.prototype._init = function() {
+	this.init = true;
+	this._setup();
+};
+
+VimeoVideo.prototype._setup = function() {
+	var that = this;
+
+	// Get a reference to the player
+	this.player = new Vimeo.Player( this.$video[0] );
+	
+	that.ready = true;
+	that.trigger({ type: 'ready' });
+		
+	that.player.on( 'play', function() {
+		if ( that.started === false ) {
+			that.started = true;
+			that.trigger({ type: 'start' });
+		}
+
+		that.state = 'playing';
+		that.trigger({ type: 'play' });
+	});
+		
+	that.player.on( 'pause', function() {
+		that.state = 'paused';
+		that.trigger({ type: 'pause' });
+	});
+		
+	that.player.on( 'ended', function() {
+		that.state = 'ended';
+		that.trigger({ type: 'ended' });
+	});
+};
+
+VimeoVideo.prototype.play = function() {
+	var that = this;
+ 
+    if ( this.ready === true ) {
+        this.player.play();
+    } else {
+        var timer = setInterval(function() {
+            if ( that.ready === true ) {
+                clearInterval( timer );
+                that.player.play();
+            }
+        }, 100 );
+    }
+};
+
+VimeoVideo.prototype.pause = function() {
+	this.player.pause();
+};
+
+VimeoVideo.prototype.stop = function() {
+	var that = this;
+
+	this.player.setCurrentTime( 0 ).then( function() {
+		that.player.pause();
+		that.state = 'stopped';
+	} );
+};
+
+VimeoVideo.prototype.replay = function() {
+	var that = this;
+
+	this.player.setCurrentTime( 0 ).then( function() {
+		that.player.play();
+	} );
+};
+
+VimeoVideo.prototype.on = function( type, callback ) {
+	var that = this;
+
+	if ( this.init === true ) {
+		Video.prototype.on.call( this, type, callback );
+	} else {
+		var timer = setInterval(function() {
+			if ( that.init === true ) {
+				clearInterval( timer );
+				Video.prototype.on.call( that, type, callback );
+			}
+		}, 100 );
+	}
+};
+
+// HTML5 video
+var HTML5Video = function( video ) {
+	Video.call( this, video );
+};
+
+HTML5Video.prototype = new Video();
+HTML5Video.prototype.constructor = HTML5Video;
+$.VideoController.addPlayer( 'HTML5Video', HTML5Video );
+
+HTML5Video.isType = function( video ) {
+	if ( video.is( 'video' ) && video.hasClass( 'video-js' ) === false && video.hasClass( 'sublime' ) === false ) {
+		return true;
+	}
+
+	return false;
+};
+
+HTML5Video.prototype._init = function() {
+	var that = this;
+
+	// Get a reference to the player
+	this.player = this.$video[0];
+	
+	var checkVideoReady = setInterval(function() {
+		if ( that.player.readyState === 4 ) {
+			clearInterval( checkVideoReady );
+
+			that.ready = true;
+			that.trigger({ type: 'ready' });
+
+			that.player.addEventListener( 'play', function() {
+				if ( that.started === false ) {
+					that.started = true;
+					that.trigger({ type: 'start' });
+				}
+
+				that.state = 'playing';
+				that.trigger({ type: 'play' });
+			});
+			
+			that.player.addEventListener( 'pause', function() {
+				that.state = 'paused';
+				that.trigger({ type: 'pause' });
+			});
+			
+			that.player.addEventListener( 'ended', function() {
+				that.state = 'ended';
+				that.trigger({ type: 'ended' });
+			});
+		}
+	}, 100 );
+};
+
+HTML5Video.prototype.play = function() {
+	var that = this;
+
+	if ( this.ready === true ) {
+		this.player.play();
+	} else {
+		var timer = setInterval(function() {
+			if ( that.ready === true ) {
+				clearInterval( timer );
+				that.player.play();
+			}
+		}, 100 );
+	}
+};
+
+HTML5Video.prototype.pause = function() {
+	this.player.pause();
+};
+
+HTML5Video.prototype.stop = function() {
+	this.player.currentTime = 0;
+	this.player.pause();
+	this.state = 'stopped';
+};
+
+HTML5Video.prototype.replay = function() {
+	this.player.currentTime = 0;
+	this.player.play();
+};
+
+// VideoJS video
+var VideoJSVideo = function( video ) {
+	Video.call( this, video );
+};
+
+VideoJSVideo.prototype = new Video();
+VideoJSVideo.prototype.constructor = VideoJSVideo;
+$.VideoController.addPlayer( 'VideoJSVideo', VideoJSVideo );
+
+VideoJSVideo.isType = function( video ) {
+	if ( ( typeof video.attr( 'data-videojs-id' ) !== 'undefined' || video.hasClass( 'video-js' ) ) && typeof videojs !== 'undefined' ) {
+		return true;
+	}
+
+	return false;
+};
+
+VideoJSVideo.prototype._init = function() {
+	var that = this,
+		videoID = this.$video.hasClass( 'video-js' ) ? this.$video.attr( 'id' ) : this.$video.attr( 'data-videojs-id' );
+	
+	this.player = videojs( videoID );
+
+	this.player.ready(function() {
+		that.ready = true;
+		that.trigger({ type: 'ready' });
+
+		that.player.on( 'play', function() {
+			if ( that.started === false ) {
+				that.started = true;
+				that.trigger({ type: 'start' });
+			}
+
+			that.state = 'playing';
+			that.trigger({ type: 'play' });
+		});
+		
+		that.player.on( 'pause', function() {
+			that.state = 'paused';
+			that.trigger({ type: 'pause' });
+		});
+		
+		that.player.on( 'ended', function() {
+			that.state = 'ended';
+			that.trigger({ type: 'ended' });
+		});
+	});
+};
+
+VideoJSVideo.prototype.play = function() {
+	this.player.play();
+};
+
+VideoJSVideo.prototype.pause = function() {
+	this.player.pause();
+};
+
+VideoJSVideo.prototype.stop = function() {
+	this.player.currentTime( 0 );
+	this.player.pause();
+	this.state = 'stopped';
+};
+
+VideoJSVideo.prototype.replay = function() {
+	this.player.currentTime( 0 );
+	this.player.play();
+};
+
+// Sublime video
+var SublimeVideo = function( video ) {
+	Video.call( this, video );
+};
+
+SublimeVideo.prototype = new Video();
+SublimeVideo.prototype.constructor = SublimeVideo;
+$.VideoController.addPlayer( 'SublimeVideo', SublimeVideo );
+
+SublimeVideo.isType = function( video ) {
+	if ( video.hasClass( 'sublime' ) && typeof sublime !== 'undefined' ) {
+		return true;
+	}
+
+	return false;
+};
+
+SublimeVideo.prototype._init = function() {
+	var that = this;
+
+	sublime.ready(function() {
+		// Get a reference to the player
+		that.player = sublime.player( that.$video.attr( 'id' ) );
+
+		that.ready = true;
+		that.trigger({ type: 'ready' });
+
+		that.player.on( 'play', function() {
+			if ( that.started === false ) {
+				that.started = true;
+				that.trigger({ type: 'start' });
+			}
+
+			that.state = 'playing';
+			that.trigger({ type: 'play' });
+		});
+
+		that.player.on( 'pause', function() {
+			that.state = 'paused';
+			that.trigger({ type: 'pause' });
+		});
+
+		that.player.on( 'stop', function() {
+			that.state = 'stopped';
+			that.trigger({ type: 'stop' });
+		});
+
+		that.player.on( 'end', function() {
+			that.state = 'ended';
+			that.trigger({ type: 'ended' });
+		});
+	});
+};
+
+SublimeVideo.prototype.play = function() {
+	this.player.play();
+};
+
+SublimeVideo.prototype.pause = function() {
+	this.player.pause();
+};
+
+SublimeVideo.prototype.stop = function() {
+	this.player.stop();
+};
+
+SublimeVideo.prototype.replay = function() {
+	this.player.stop();
+	this.player.play();
+};
+
+// JWPlayer video
+var JWPlayerVideo = function( video ) {
+	Video.call( this, video );
+};
+
+JWPlayerVideo.prototype = new Video();
+JWPlayerVideo.prototype.constructor = JWPlayerVideo;
+$.VideoController.addPlayer( 'JWPlayerVideo', JWPlayerVideo );
+
+JWPlayerVideo.isType = function( video ) {
+	if ( ( typeof video.attr( 'data-jwplayer-id' ) !== 'undefined' || video.hasClass( 'jwplayer' ) || video.find( "object[data*='jwplayer']" ).length !== 0 ) &&
+		typeof jwplayer !== 'undefined') {
+		return true;
+	}
+
+	return false;
+};
+
+JWPlayerVideo.prototype._init = function() {
+	var that = this,
+		videoID;
+
+	if ( this.$video.hasClass( 'jwplayer' ) ) {
+		videoID = this.$video.attr( 'id' );
+	} else if ( typeof this.$video.attr( 'data-jwplayer-id' ) !== 'undefined' ) {
+		videoID = this.$video.attr( 'data-jwplayer-id');
+	} else if ( this.$video.find( "object[data*='jwplayer']" ).length !== 0 ) {
+		videoID = this.$video.find( 'object' ).attr( 'id' );
+	}
+
+	// Get a reference to the player
+	this.player = jwplayer( videoID );
+
+	this.player.onReady(function() {
+		that.ready = true;
+		that.trigger({ type: 'ready' });
+	
+		that.player.onPlay(function() {
+			if ( that.started === false ) {
+				that.started = true;
+				that.trigger({ type: 'start' });
+			}
+
+			that.state = 'playing';
+			that.trigger({ type: 'play' });
+		});
+
+		that.player.onPause(function() {
+			that.state = 'paused';
+			that.trigger({ type: 'pause' });
+		});
+		
+		that.player.onComplete(function() {
+			that.state = 'ended';
+			that.trigger({ type: 'ended' });
+		});
+	});
+};
+
+JWPlayerVideo.prototype.play = function() {
+	this.player.play( true );
+};
+
+JWPlayerVideo.prototype.pause = function() {
+	this.player.pause( true );
+};
+
+JWPlayerVideo.prototype.stop = function() {
+	this.player.stop();
+	this.state = 'stopped';
+};
+
+JWPlayerVideo.prototype.replay = function() {
+	this.player.seek( 0 );
+	this.player.play( true );
+};
+
+})( jQuery );
+
 
 /***/ }),
 /* 18 */
+/***/ (function(module, exports) {
+
+// ==================================================
+// fancyBox v3.5.6
+//
+// Licensed GPLv3 for open source use
+// or fancyBox Commercial License for commercial use
+//
+// http://fancyapps.com/fancybox/
+// Copyright 2018 fancyApps
+//
+// ==================================================
+(function(window, document, $, undefined) {
+  "use strict";
+
+  window.console = window.console || {
+    info: function(stuff) {}
+  };
+
+  // If there's no jQuery, fancyBox can't work
+  // =========================================
+
+  if (!$) {
+    return;
+  }
+
+  // Check if fancyBox is already initialized
+  // ========================================
+
+  if ($.fn.fancybox) {
+    console.info("fancyBox already initialized");
+
+    return;
+  }
+
+  // Private default settings
+  // ========================
+
+  var defaults = {
+    // Close existing modals
+    // Set this to false if you do not need to stack multiple instances
+    closeExisting: false,
+
+    // Enable infinite gallery navigation
+    loop: false,
+
+    // Horizontal space between slides
+    gutter: 50,
+
+    // Enable keyboard navigation
+    keyboard: true,
+
+    // Should allow caption to overlap the content
+    preventCaptionOverlap: true,
+
+    // Should display navigation arrows at the screen edges
+    arrows: true,
+
+    // Should display counter at the top left corner
+    infobar: true,
+
+    // Should display close button (using `btnTpl.smallBtn` template) over the content
+    // Can be true, false, "auto"
+    // If "auto" - will be automatically enabled for "html", "inline" or "ajax" items
+    smallBtn: "auto",
+
+    // Should display toolbar (buttons at the top)
+    // Can be true, false, "auto"
+    // If "auto" - will be automatically hidden if "smallBtn" is enabled
+    toolbar: "auto",
+
+    // What buttons should appear in the top right corner.
+    // Buttons will be created using templates from `btnTpl` option
+    // and they will be placed into toolbar (class="fancybox-toolbar"` element)
+    buttons: [
+      "zoom",
+      //"share",
+      "slideShow",
+      //"fullScreen",
+      //"download",
+      "thumbs",
+      "close"
+    ],
+
+    // Detect "idle" time in seconds
+    idleTime: 3,
+
+    // Disable right-click and use simple image protection for images
+    protect: false,
+
+    // Shortcut to make content "modal" - disable keyboard navigtion, hide buttons, etc
+    modal: false,
+
+    image: {
+      // Wait for images to load before displaying
+      //   true  - wait for image to load and then display;
+      //   false - display thumbnail and load the full-sized image over top,
+      //           requires predefined image dimensions (`data-width` and `data-height` attributes)
+      preload: false
+    },
+
+    ajax: {
+      // Object containing settings for ajax request
+      settings: {
+        // This helps to indicate that request comes from the modal
+        // Feel free to change naming
+        data: {
+          fancybox: true
+        }
+      }
+    },
+
+    iframe: {
+      // Iframe template
+      tpl:
+        '<iframe id="fancybox-frame{rnd}" name="fancybox-frame{rnd}" class="fancybox-iframe" allowfullscreen="allowfullscreen" allow="autoplay; fullscreen" src=""></iframe>',
+
+      // Preload iframe before displaying it
+      // This allows to calculate iframe content width and height
+      // (note: Due to "Same Origin Policy", you can't get cross domain data).
+      preload: true,
+
+      // Custom CSS styling for iframe wrapping element
+      // You can use this to set custom iframe dimensions
+      css: {},
+
+      // Iframe tag attributes
+      attr: {
+        scrolling: "auto"
+      }
+    },
+
+    // For HTML5 video only
+    video: {
+      tpl:
+        '<video class="fancybox-video" controls controlsList="nodownload" poster="{{poster}}">' +
+        '<source src="{{src}}" type="{{format}}" />' +
+        'Sorry, your browser doesn\'t support embedded videos, <a href="{{src}}">download</a> and watch with your favorite video player!' +
+        "</video>",
+      format: "", // custom video format
+      autoStart: true
+    },
+
+    // Default content type if cannot be detected automatically
+    defaultType: "image",
+
+    // Open/close animation type
+    // Possible values:
+    //   false            - disable
+    //   "zoom"           - zoom images from/to thumbnail
+    //   "fade"
+    //   "zoom-in-out"
+    //
+    animationEffect: "zoom",
+
+    // Duration in ms for open/close animation
+    animationDuration: 366,
+
+    // Should image change opacity while zooming
+    // If opacity is "auto", then opacity will be changed if image and thumbnail have different aspect ratios
+    zoomOpacity: "auto",
+
+    // Transition effect between slides
+    //
+    // Possible values:
+    //   false            - disable
+    //   "fade'
+    //   "slide'
+    //   "circular'
+    //   "tube'
+    //   "zoom-in-out'
+    //   "rotate'
+    //
+    transitionEffect: "fade",
+
+    // Duration in ms for transition animation
+    transitionDuration: 366,
+
+    // Custom CSS class for slide element
+    slideClass: "",
+
+    // Custom CSS class for layout
+    baseClass: "",
+
+    // Base template for layout
+    baseTpl:
+      '<div class="fancybox-container" role="dialog" tabindex="-1">' +
+      '<div class="fancybox-bg"></div>' +
+      '<div class="fancybox-inner">' +
+      '<div class="fancybox-infobar"><span data-fancybox-index></span>&nbsp;/&nbsp;<span data-fancybox-count></span></div>' +
+      '<div class="fancybox-toolbar">{{buttons}}</div>' +
+      '<div class="fancybox-navigation">{{arrows}}</div>' +
+      '<div class="fancybox-stage"></div>' +
+      '<div class="fancybox-caption"><div class="fancybox-caption__body"></div></div>' +
+      "</div>" +
+      "</div>",
+
+    // Loading indicator template
+    spinnerTpl: '<div class="fancybox-loading"></div>',
+
+    // Error message template
+    errorTpl: '<div class="fancybox-error"><p>{{ERROR}}</p></div>',
+
+    btnTpl: {
+      download:
+        '<a download data-fancybox-download class="fancybox-button fancybox-button--download" title="{{DOWNLOAD}}" href="javascript:;">' +
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.62 17.09V19H5.38v-1.91zm-2.97-6.96L17 11.45l-5 4.87-5-4.87 1.36-1.32 2.68 2.64V5h1.92v7.77z"/></svg>' +
+        "</a>",
+
+      zoom:
+        '<button data-fancybox-zoom class="fancybox-button fancybox-button--zoom" title="{{ZOOM}}">' +
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.7 17.3l-3-3a5.9 5.9 0 0 0-.6-7.6 5.9 5.9 0 0 0-8.4 0 5.9 5.9 0 0 0 0 8.4 5.9 5.9 0 0 0 7.7.7l3 3a1 1 0 0 0 1.3 0c.4-.5.4-1 0-1.5zM8.1 13.8a4 4 0 0 1 0-5.7 4 4 0 0 1 5.7 0 4 4 0 0 1 0 5.7 4 4 0 0 1-5.7 0z"/></svg>' +
+        "</button>",
+
+      close:
+        '<button data-fancybox-close class="fancybox-button fancybox-button--close" title="{{CLOSE}}">' +
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 10.6L6.6 5.2 5.2 6.6l5.4 5.4-5.4 5.4 1.4 1.4 5.4-5.4 5.4 5.4 1.4-1.4-5.4-5.4 5.4-5.4-1.4-1.4-5.4 5.4z"/></svg>' +
+        "</button>",
+
+      // Arrows
+      arrowLeft:
+        '<button data-fancybox-prev class="fancybox-button fancybox-button--arrow_left" title="{{PREV}}">' +
+        '<div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.28 15.7l-1.34 1.37L5 12l4.94-5.07 1.34 1.38-2.68 2.72H19v1.94H8.6z"/></svg></div>' +
+        "</button>",
+
+      arrowRight:
+        '<button data-fancybox-next class="fancybox-button fancybox-button--arrow_right" title="{{NEXT}}">' +
+        '<div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.4 12.97l-2.68 2.72 1.34 1.38L19 12l-4.94-5.07-1.34 1.38 2.68 2.72H5v1.94z"/></svg></div>' +
+        "</button>",
+
+      // This small close button will be appended to your html/inline/ajax content by default,
+      // if "smallBtn" option is not set to false
+      smallBtn:
+        '<button type="button" data-fancybox-close class="fancybox-button fancybox-close-small" title="{{CLOSE}}">' +
+        '<svg xmlns="http://www.w3.org/2000/svg" version="1" viewBox="0 0 24 24"><path d="M13 12l5-5-1-1-5 5-5-5-1 1 5 5-5 5 1 1 5-5 5 5 1-1z"/></svg>' +
+        "</button>"
+    },
+
+    // Container is injected into this element
+    parentEl: "body",
+
+    // Hide browser vertical scrollbars; use at your own risk
+    hideScrollbar: true,
+
+    // Focus handling
+    // ==============
+
+    // Try to focus on the first focusable element after opening
+    autoFocus: true,
+
+    // Put focus back to active element after closing
+    backFocus: true,
+
+    // Do not let user to focus on element outside modal content
+    trapFocus: true,
+
+    // Module specific options
+    // =======================
+
+    fullScreen: {
+      autoStart: false
+    },
+
+    // Set `touch: false` to disable panning/swiping
+    touch: {
+      vertical: true, // Allow to drag content vertically
+      momentum: true // Continue movement after releasing mouse/touch when panning
+    },
+
+    // Hash value when initializing manually,
+    // set `false` to disable hash change
+    hash: null,
+
+    // Customize or add new media types
+    // Example:
+    /*
+      media : {
+        youtube : {
+          params : {
+            autoplay : 0
+          }
+        }
+      }
+    */
+    media: {},
+
+    slideShow: {
+      autoStart: false,
+      speed: 3000
+    },
+
+    thumbs: {
+      autoStart: false, // Display thumbnails on opening
+      hideOnClose: true, // Hide thumbnail grid when closing animation starts
+      parentEl: ".fancybox-container", // Container is injected into this element
+      axis: "y" // Vertical (y) or horizontal (x) scrolling
+    },
+
+    // Use mousewheel to navigate gallery
+    // If 'auto' - enabled for images only
+    wheel: "auto",
+
+    // Callbacks
+    //==========
+
+    // See Documentation/API/Events for more information
+    // Example:
+    /*
+      afterShow: function( instance, current ) {
+        console.info( 'Clicked element:' );
+        console.info( current.opts.$orig );
+      }
+    */
+
+    onInit: $.noop, // When instance has been initialized
+
+    beforeLoad: $.noop, // Before the content of a slide is being loaded
+    afterLoad: $.noop, // When the content of a slide is done loading
+
+    beforeShow: $.noop, // Before open animation starts
+    afterShow: $.noop, // When content is done loading and animating
+
+    beforeClose: $.noop, // Before the instance attempts to close. Return false to cancel the close.
+    afterClose: $.noop, // After instance has been closed
+
+    onActivate: $.noop, // When instance is brought to front
+    onDeactivate: $.noop, // When other instance has been activated
+
+    // Interaction
+    // ===========
+
+    // Use options below to customize taken action when user clicks or double clicks on the fancyBox area,
+    // each option can be string or method that returns value.
+    //
+    // Possible values:
+    //   "close"           - close instance
+    //   "next"            - move to next gallery item
+    //   "nextOrClose"     - move to next gallery item or close if gallery has only one item
+    //   "toggleControls"  - show/hide controls
+    //   "zoom"            - zoom image (if loaded)
+    //   false             - do nothing
+
+    // Clicked on the content
+    clickContent: function(current, event) {
+      return current.type === "image" ? "zoom" : false;
+    },
+
+    // Clicked on the slide
+    clickSlide: "close",
+
+    // Clicked on the background (backdrop) element;
+    // if you have not changed the layout, then most likely you need to use `clickSlide` option
+    clickOutside: "close",
+
+    // Same as previous two, but for double click
+    dblclickContent: false,
+    dblclickSlide: false,
+    dblclickOutside: false,
+
+    // Custom options when mobile device is detected
+    // =============================================
+
+    mobile: {
+      preventCaptionOverlap: false,
+      idleTime: false,
+      clickContent: function(current, event) {
+        return current.type === "image" ? "toggleControls" : false;
+      },
+      clickSlide: function(current, event) {
+        return current.type === "image" ? "toggleControls" : "close";
+      },
+      dblclickContent: function(current, event) {
+        return current.type === "image" ? "zoom" : false;
+      },
+      dblclickSlide: function(current, event) {
+        return current.type === "image" ? "zoom" : false;
+      }
+    },
+
+    // Internationalization
+    // ====================
+
+    lang: "en",
+    i18n: {
+      en: {
+        CLOSE: "Close",
+        NEXT: "Next",
+        PREV: "Previous",
+        ERROR: "The requested content cannot be loaded. <br/> Please try again later.",
+        PLAY_START: "Start slideshow",
+        PLAY_STOP: "Pause slideshow",
+        FULL_SCREEN: "Full screen",
+        THUMBS: "Thumbnails",
+        DOWNLOAD: "Download",
+        SHARE: "Share",
+        ZOOM: "Zoom"
+      },
+      de: {
+        CLOSE: "Schlie&szlig;en",
+        NEXT: "Weiter",
+        PREV: "Zur&uuml;ck",
+        ERROR: "Die angeforderten Daten konnten nicht geladen werden. <br/> Bitte versuchen Sie es sp&auml;ter nochmal.",
+        PLAY_START: "Diaschau starten",
+        PLAY_STOP: "Diaschau beenden",
+        FULL_SCREEN: "Vollbild",
+        THUMBS: "Vorschaubilder",
+        DOWNLOAD: "Herunterladen",
+        SHARE: "Teilen",
+        ZOOM: "Vergr&ouml;&szlig;ern"
+      }
+    }
+  };
+
+  // Few useful variables and methods
+  // ================================
+
+  var $W = $(window);
+  var $D = $(document);
+
+  var called = 0;
+
+  // Check if an object is a jQuery object and not a native JavaScript object
+  // ========================================================================
+  var isQuery = function(obj) {
+    return obj && obj.hasOwnProperty && obj instanceof $;
+  };
+
+  // Handle multiple browsers for "requestAnimationFrame" and "cancelAnimationFrame"
+  // ===============================================================================
+  var requestAFrame = (function() {
+    return (
+      window.requestAnimationFrame ||
+      window.webkitRequestAnimationFrame ||
+      window.mozRequestAnimationFrame ||
+      window.oRequestAnimationFrame ||
+      // if all else fails, use setTimeout
+      function(callback) {
+        return window.setTimeout(callback, 1000 / 60);
+      }
+    );
+  })();
+
+  var cancelAFrame = (function() {
+    return (
+      window.cancelAnimationFrame ||
+      window.webkitCancelAnimationFrame ||
+      window.mozCancelAnimationFrame ||
+      window.oCancelAnimationFrame ||
+      function(id) {
+        window.clearTimeout(id);
+      }
+    );
+  })();
+
+  // Detect the supported transition-end event property name
+  // =======================================================
+  var transitionEnd = (function() {
+    var el = document.createElement("fakeelement"),
+      t;
+
+    var transitions = {
+      transition: "transitionend",
+      OTransition: "oTransitionEnd",
+      MozTransition: "transitionend",
+      WebkitTransition: "webkitTransitionEnd"
+    };
+
+    for (t in transitions) {
+      if (el.style[t] !== undefined) {
+        return transitions[t];
+      }
+    }
+
+    return "transitionend";
+  })();
+
+  // Force redraw on an element.
+  // This helps in cases where the browser doesn't redraw an updated element properly
+  // ================================================================================
+  var forceRedraw = function($el) {
+    return $el && $el.length && $el[0].offsetHeight;
+  };
+
+  // Exclude array (`buttons`) options from deep merging
+  // ===================================================
+  var mergeOpts = function(opts1, opts2) {
+    var rez = $.extend(true, {}, opts1, opts2);
+
+    $.each(opts2, function(key, value) {
+      if ($.isArray(value)) {
+        rez[key] = value;
+      }
+    });
+
+    return rez;
+  };
+
+  // How much of an element is visible in viewport
+  // =============================================
+
+  var inViewport = function(elem) {
+    var elemCenter, rez;
+
+    if (!elem || elem.ownerDocument !== document) {
+      return false;
+    }
+
+    $(".fancybox-container").css("pointer-events", "none");
+
+    elemCenter = {
+      x: elem.getBoundingClientRect().left + elem.offsetWidth / 2,
+      y: elem.getBoundingClientRect().top + elem.offsetHeight / 2
+    };
+
+    rez = document.elementFromPoint(elemCenter.x, elemCenter.y) === elem;
+
+    $(".fancybox-container").css("pointer-events", "");
+
+    return rez;
+  };
+
+  // Class definition
+  // ================
+
+  var FancyBox = function(content, opts, index) {
+    var self = this;
+
+    self.opts = mergeOpts({index: index}, $.fancybox.defaults);
+
+    if ($.isPlainObject(opts)) {
+      self.opts = mergeOpts(self.opts, opts);
+    }
+
+    if ($.fancybox.isMobile) {
+      self.opts = mergeOpts(self.opts, self.opts.mobile);
+    }
+
+    self.id = self.opts.id || ++called;
+
+    self.currIndex = parseInt(self.opts.index, 10) || 0;
+    self.prevIndex = null;
+
+    self.prevPos = null;
+    self.currPos = 0;
+
+    self.firstRun = true;
+
+    // All group items
+    self.group = [];
+
+    // Existing slides (for current, next and previous gallery items)
+    self.slides = {};
+
+    // Create group elements
+    self.addContent(content);
+
+    if (!self.group.length) {
+      return;
+    }
+
+    self.init();
+  };
+
+  $.extend(FancyBox.prototype, {
+    // Create DOM structure
+    // ====================
+
+    init: function() {
+      var self = this,
+        firstItem = self.group[self.currIndex],
+        firstItemOpts = firstItem.opts,
+        $container,
+        buttonStr;
+
+      if (firstItemOpts.closeExisting) {
+        $.fancybox.close(true);
+      }
+
+      // Hide scrollbars
+      // ===============
+
+      $("body").addClass("fancybox-active");
+
+      if (
+        !$.fancybox.getInstance() &&
+        firstItemOpts.hideScrollbar !== false &&
+        !$.fancybox.isMobile &&
+        document.body.scrollHeight > window.innerHeight
+      ) {
+        $("head").append(
+          '<style id="fancybox-style-noscroll" type="text/css">.compensate-for-scrollbar{margin-right:' +
+            (window.innerWidth - document.documentElement.clientWidth) +
+            "px;}</style>"
+        );
+
+        $("body").addClass("compensate-for-scrollbar");
+      }
+
+      // Build html markup and set references
+      // ====================================
+
+      // Build html code for buttons and insert into main template
+      buttonStr = "";
+
+      $.each(firstItemOpts.buttons, function(index, value) {
+        buttonStr += firstItemOpts.btnTpl[value] || "";
+      });
+
+      // Create markup from base template, it will be initially hidden to
+      // avoid unnecessary work like painting while initializing is not complete
+      $container = $(
+        self.translate(
+          self,
+          firstItemOpts.baseTpl
+            .replace("{{buttons}}", buttonStr)
+            .replace("{{arrows}}", firstItemOpts.btnTpl.arrowLeft + firstItemOpts.btnTpl.arrowRight)
+        )
+      )
+        .attr("id", "fancybox-container-" + self.id)
+        .addClass(firstItemOpts.baseClass)
+        .data("FancyBox", self)
+        .appendTo(firstItemOpts.parentEl);
+
+      // Create object holding references to jQuery wrapped nodes
+      self.$refs = {
+        container: $container
+      };
+
+      ["bg", "inner", "infobar", "toolbar", "stage", "caption", "navigation"].forEach(function(item) {
+        self.$refs[item] = $container.find(".fancybox-" + item);
+      });
+
+      self.trigger("onInit");
+
+      // Enable events, deactive previous instances
+      self.activate();
+
+      // Build slides, load and reveal content
+      self.jumpTo(self.currIndex);
+    },
+
+    // Simple i18n support - replaces object keys found in template
+    // with corresponding values
+    // ============================================================
+
+    translate: function(obj, str) {
+      var arr = obj.opts.i18n[obj.opts.lang] || obj.opts.i18n.en;
+
+      return str.replace(/\{\{(\w+)\}\}/g, function(match, n) {
+        return arr[n] === undefined ? match : arr[n];
+      });
+    },
+
+    // Populate current group with fresh content
+    // Check if each object has valid type and content
+    // ===============================================
+
+    addContent: function(content) {
+      var self = this,
+        items = $.makeArray(content),
+        thumbs;
+
+      $.each(items, function(i, item) {
+        var obj = {},
+          opts = {},
+          $item,
+          type,
+          found,
+          src,
+          srcParts;
+
+        // Step 1 - Make sure we have an object
+        // ====================================
+
+        if ($.isPlainObject(item)) {
+          // We probably have manual usage here, something like
+          // $.fancybox.open( [ { src : "image.jpg", type : "image" } ] )
+
+          obj = item;
+          opts = item.opts || item;
+        } else if ($.type(item) === "object" && $(item).length) {
+          // Here we probably have jQuery collection returned by some selector
+          $item = $(item);
+
+          // Support attributes like `data-options='{"touch" : false}'` and `data-touch='false'`
+          opts = $item.data() || {};
+          opts = $.extend(true, {}, opts, opts.options);
+
+          // Here we store clicked element
+          opts.$orig = $item;
+
+          obj.src = self.opts.src || opts.src || $item.attr("href");
+
+          // Assume that simple syntax is used, for example:
+          //   `$.fancybox.open( $("#test"), {} );`
+          if (!obj.type && !obj.src) {
+            obj.type = "inline";
+            obj.src = item;
+          }
+        } else {
+          // Assume we have a simple html code, for example:
+          //   $.fancybox.open( '<div><h1>Hi!</h1></div>' );
+          obj = {
+            type: "html",
+            src: item + ""
+          };
+        }
+
+        // Each gallery object has full collection of options
+        obj.opts = $.extend(true, {}, self.opts, opts);
+
+        // Do not merge buttons array
+        if ($.isArray(opts.buttons)) {
+          obj.opts.buttons = opts.buttons;
+        }
+
+        if ($.fancybox.isMobile && obj.opts.mobile) {
+          obj.opts = mergeOpts(obj.opts, obj.opts.mobile);
+        }
+
+        // Step 2 - Make sure we have content type, if not - try to guess
+        // ==============================================================
+
+        type = obj.type || obj.opts.type;
+        src = obj.src || "";
+
+        if (!type && src) {
+          if ((found = src.match(/\.(mp4|mov|ogv|webm)((\?|#).*)?$/i))) {
+            type = "video";
+
+            if (!obj.opts.video.format) {
+              obj.opts.video.format = "video/" + (found[1] === "ogv" ? "ogg" : found[1]);
+            }
+          } else if (src.match(/(^data:image\/[a-z0-9+\/=]*,)|(\.(jp(e|g|eg)|gif|png|bmp|webp|svg|ico)((\?|#).*)?$)/i)) {
+            type = "image";
+          } else if (src.match(/\.(pdf)((\?|#).*)?$/i)) {
+            type = "iframe";
+            obj = $.extend(true, obj, {contentType: "pdf", opts: {iframe: {preload: false}}});
+          } else if (src.charAt(0) === "#") {
+            type = "inline";
+          }
+        }
+
+        if (type) {
+          obj.type = type;
+        } else {
+          self.trigger("objectNeedsType", obj);
+        }
+
+        if (!obj.contentType) {
+          obj.contentType = $.inArray(obj.type, ["html", "inline", "ajax"]) > -1 ? "html" : obj.type;
+        }
+
+        // Step 3 - Some adjustments
+        // =========================
+
+        obj.index = self.group.length;
+
+        if (obj.opts.smallBtn == "auto") {
+          obj.opts.smallBtn = $.inArray(obj.type, ["html", "inline", "ajax"]) > -1;
+        }
+
+        if (obj.opts.toolbar === "auto") {
+          obj.opts.toolbar = !obj.opts.smallBtn;
+        }
+
+        // Find thumbnail image, check if exists and if is in the viewport
+        obj.$thumb = obj.opts.$thumb || null;
+
+        if (obj.opts.$trigger && obj.index === self.opts.index) {
+          obj.$thumb = obj.opts.$trigger.find("img:first");
+
+          if (obj.$thumb.length) {
+            obj.opts.$orig = obj.opts.$trigger;
+          }
+        }
+
+        if (!(obj.$thumb && obj.$thumb.length) && obj.opts.$orig) {
+          obj.$thumb = obj.opts.$orig.find("img:first");
+        }
+
+        if (obj.$thumb && !obj.$thumb.length) {
+          obj.$thumb = null;
+        }
+
+        obj.thumb = obj.opts.thumb || (obj.$thumb ? obj.$thumb[0].src : null);
+
+        // "caption" is a "special" option, it can be used to customize caption per gallery item
+        if ($.type(obj.opts.caption) === "function") {
+          obj.opts.caption = obj.opts.caption.apply(item, [self, obj]);
+        }
+
+        if ($.type(self.opts.caption) === "function") {
+          obj.opts.caption = self.opts.caption.apply(item, [self, obj]);
+        }
+
+        // Make sure we have caption as a string or jQuery object
+        if (!(obj.opts.caption instanceof $)) {
+          obj.opts.caption = obj.opts.caption === undefined ? "" : obj.opts.caption + "";
+        }
+
+        // Check if url contains "filter" used to filter the content
+        // Example: "ajax.html #something"
+        if (obj.type === "ajax") {
+          srcParts = src.split(/\s+/, 2);
+
+          if (srcParts.length > 1) {
+            obj.src = srcParts.shift();
+
+            obj.opts.filter = srcParts.shift();
+          }
+        }
+
+        // Hide all buttons and disable interactivity for modal items
+        if (obj.opts.modal) {
+          obj.opts = $.extend(true, obj.opts, {
+            trapFocus: true,
+            // Remove buttons
+            infobar: 0,
+            toolbar: 0,
+
+            smallBtn: 0,
+
+            // Disable keyboard navigation
+            keyboard: 0,
+
+            // Disable some modules
+            slideShow: 0,
+            fullScreen: 0,
+            thumbs: 0,
+            touch: 0,
+
+            // Disable click event handlers
+            clickContent: false,
+            clickSlide: false,
+            clickOutside: false,
+            dblclickContent: false,
+            dblclickSlide: false,
+            dblclickOutside: false
+          });
+        }
+
+        // Step 4 - Add processed object to group
+        // ======================================
+
+        self.group.push(obj);
+      });
+
+      // Update controls if gallery is already opened
+      if (Object.keys(self.slides).length) {
+        self.updateControls();
+
+        // Update thumbnails, if needed
+        thumbs = self.Thumbs;
+
+        if (thumbs && thumbs.isActive) {
+          thumbs.create();
+
+          thumbs.focus();
+        }
+      }
+    },
+
+    // Attach an event handler functions for:
+    //   - navigation buttons
+    //   - browser scrolling, resizing;
+    //   - focusing
+    //   - keyboard
+    //   - detecting inactivity
+    // ======================================
+
+    addEvents: function() {
+      var self = this;
+
+      self.removeEvents();
+
+      // Make navigation elements clickable
+      // ==================================
+
+      self.$refs.container
+        .on("click.fb-close", "[data-fancybox-close]", function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+
+          self.close(e);
+        })
+        .on("touchstart.fb-prev click.fb-prev", "[data-fancybox-prev]", function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+
+          self.previous();
+        })
+        .on("touchstart.fb-next click.fb-next", "[data-fancybox-next]", function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+
+          self.next();
+        })
+        .on("click.fb", "[data-fancybox-zoom]", function(e) {
+          // Click handler for zoom button
+          self[self.isScaledDown() ? "scaleToActual" : "scaleToFit"]();
+        });
+
+      // Handle page scrolling and browser resizing
+      // ==========================================
+
+      $W.on("orientationchange.fb resize.fb", function(e) {
+        if (e && e.originalEvent && e.originalEvent.type === "resize") {
+          if (self.requestId) {
+            cancelAFrame(self.requestId);
+          }
+
+          self.requestId = requestAFrame(function() {
+            self.update(e);
+          });
+        } else {
+          if (self.current && self.current.type === "iframe") {
+            self.$refs.stage.hide();
+          }
+
+          setTimeout(
+            function() {
+              self.$refs.stage.show();
+
+              self.update(e);
+            },
+            $.fancybox.isMobile ? 600 : 250
+          );
+        }
+      });
+
+      $D.on("keydown.fb", function(e) {
+        var instance = $.fancybox ? $.fancybox.getInstance() : null,
+          current = instance.current,
+          keycode = e.keyCode || e.which;
+
+        // Trap keyboard focus inside of the modal
+        // =======================================
+
+        if (keycode == 9) {
+          if (current.opts.trapFocus) {
+            self.focus(e);
+          }
+
+          return;
+        }
+
+        // Enable keyboard navigation
+        // ==========================
+
+        if (!current.opts.keyboard || e.ctrlKey || e.altKey || e.shiftKey || $(e.target).is("input,textarea,video,audio")) {
+          return;
+        }
+
+        // Backspace and Esc keys
+        if (keycode === 8 || keycode === 27) {
+          e.preventDefault();
+
+          self.close(e);
+
+          return;
+        }
+
+        // Left arrow and Up arrow
+        if (keycode === 37 || keycode === 38) {
+          e.preventDefault();
+
+          self.previous();
+
+          return;
+        }
+
+        // Righ arrow and Down arrow
+        if (keycode === 39 || keycode === 40) {
+          e.preventDefault();
+
+          self.next();
+
+          return;
+        }
+
+        self.trigger("afterKeydown", e, keycode);
+      });
+
+      // Hide controls after some inactivity period
+      if (self.group[self.currIndex].opts.idleTime) {
+        self.idleSecondsCounter = 0;
+
+        $D.on(
+          "mousemove.fb-idle mouseleave.fb-idle mousedown.fb-idle touchstart.fb-idle touchmove.fb-idle scroll.fb-idle keydown.fb-idle",
+          function(e) {
+            self.idleSecondsCounter = 0;
+
+            if (self.isIdle) {
+              self.showControls();
+            }
+
+            self.isIdle = false;
+          }
+        );
+
+        self.idleInterval = window.setInterval(function() {
+          self.idleSecondsCounter++;
+
+          if (self.idleSecondsCounter >= self.group[self.currIndex].opts.idleTime && !self.isDragging) {
+            self.isIdle = true;
+            self.idleSecondsCounter = 0;
+
+            self.hideControls();
+          }
+        }, 1000);
+      }
+    },
+
+    // Remove events added by the core
+    // ===============================
+
+    removeEvents: function() {
+      var self = this;
+
+      $W.off("orientationchange.fb resize.fb");
+      $D.off("keydown.fb .fb-idle");
+
+      this.$refs.container.off(".fb-close .fb-prev .fb-next");
+
+      if (self.idleInterval) {
+        window.clearInterval(self.idleInterval);
+
+        self.idleInterval = null;
+      }
+    },
+
+    // Change to previous gallery item
+    // ===============================
+
+    previous: function(duration) {
+      return this.jumpTo(this.currPos - 1, duration);
+    },
+
+    // Change to next gallery item
+    // ===========================
+
+    next: function(duration) {
+      return this.jumpTo(this.currPos + 1, duration);
+    },
+
+    // Switch to selected gallery item
+    // ===============================
+
+    jumpTo: function(pos, duration) {
+      var self = this,
+        groupLen = self.group.length,
+        firstRun,
+        isMoved,
+        loop,
+        current,
+        previous,
+        slidePos,
+        stagePos,
+        prop,
+        diff;
+
+      if (self.isDragging || self.isClosing || (self.isAnimating && self.firstRun)) {
+        return;
+      }
+
+      // Should loop?
+      pos = parseInt(pos, 10);
+      loop = self.current ? self.current.opts.loop : self.opts.loop;
+
+      if (!loop && (pos < 0 || pos >= groupLen)) {
+        return false;
+      }
+
+      // Check if opening for the first time; this helps to speed things up
+      firstRun = self.firstRun = !Object.keys(self.slides).length;
+
+      // Create slides
+      previous = self.current;
+
+      self.prevIndex = self.currIndex;
+      self.prevPos = self.currPos;
+
+      current = self.createSlide(pos);
+
+      if (groupLen > 1) {
+        if (loop || current.index < groupLen - 1) {
+          self.createSlide(pos + 1);
+        }
+
+        if (loop || current.index > 0) {
+          self.createSlide(pos - 1);
+        }
+      }
+
+      self.current = current;
+      self.currIndex = current.index;
+      self.currPos = current.pos;
+
+      self.trigger("beforeShow", firstRun);
+
+      self.updateControls();
+
+      // Validate duration length
+      current.forcedDuration = undefined;
+
+      if ($.isNumeric(duration)) {
+        current.forcedDuration = duration;
+      } else {
+        duration = current.opts[firstRun ? "animationDuration" : "transitionDuration"];
+      }
+
+      duration = parseInt(duration, 10);
+
+      // Check if user has swiped the slides or if still animating
+      isMoved = self.isMoved(current);
+
+      // Make sure current slide is visible
+      current.$slide.addClass("fancybox-slide--current");
+
+      // Fresh start - reveal container, current slide and start loading content
+      if (firstRun) {
+        if (current.opts.animationEffect && duration) {
+          self.$refs.container.css("transition-duration", duration + "ms");
+        }
+
+        self.$refs.container.addClass("fancybox-is-open").trigger("focus");
+
+        // Attempt to load content into slide
+        // This will later call `afterLoad` -> `revealContent`
+        self.loadSlide(current);
+
+        self.preload("image");
+
+        return;
+      }
+
+      // Get actual slide/stage positions (before cleaning up)
+      slidePos = $.fancybox.getTranslate(previous.$slide);
+      stagePos = $.fancybox.getTranslate(self.$refs.stage);
+
+      // Clean up all slides
+      $.each(self.slides, function(index, slide) {
+        $.fancybox.stop(slide.$slide, true);
+      });
+
+      if (previous.pos !== current.pos) {
+        previous.isComplete = false;
+      }
+
+      previous.$slide.removeClass("fancybox-slide--complete fancybox-slide--current");
+
+      // If slides are out of place, then animate them to correct position
+      if (isMoved) {
+        // Calculate horizontal swipe distance
+        diff = slidePos.left - (previous.pos * slidePos.width + previous.pos * previous.opts.gutter);
+
+        $.each(self.slides, function(index, slide) {
+          slide.$slide.removeClass("fancybox-animated").removeClass(function(index, className) {
+            return (className.match(/(^|\s)fancybox-fx-\S+/g) || []).join(" ");
+          });
+
+          // Make sure that each slide is in equal distance
+          // This is mostly needed for freshly added slides, because they are not yet positioned
+          var leftPos = slide.pos * slidePos.width + slide.pos * slide.opts.gutter;
+
+          $.fancybox.setTranslate(slide.$slide, {top: 0, left: leftPos - stagePos.left + diff});
+
+          if (slide.pos !== current.pos) {
+            slide.$slide.addClass("fancybox-slide--" + (slide.pos > current.pos ? "next" : "previous"));
+          }
+
+          // Redraw to make sure that transition will start
+          forceRedraw(slide.$slide);
+
+          // Animate the slide
+          $.fancybox.animate(
+            slide.$slide,
+            {
+              top: 0,
+              left: (slide.pos - current.pos) * slidePos.width + (slide.pos - current.pos) * slide.opts.gutter
+            },
+            duration,
+            function() {
+              slide.$slide
+                .css({
+                  transform: "",
+                  opacity: ""
+                })
+                .removeClass("fancybox-slide--next fancybox-slide--previous");
+
+              if (slide.pos === self.currPos) {
+                self.complete();
+              }
+            }
+          );
+        });
+      } else if (duration && current.opts.transitionEffect) {
+        // Set transition effect for previously active slide
+        prop = "fancybox-animated fancybox-fx-" + current.opts.transitionEffect;
+
+        previous.$slide.addClass("fancybox-slide--" + (previous.pos > current.pos ? "next" : "previous"));
+
+        $.fancybox.animate(
+          previous.$slide,
+          prop,
+          duration,
+          function() {
+            previous.$slide.removeClass(prop).removeClass("fancybox-slide--next fancybox-slide--previous");
+          },
+          false
+        );
+      }
+
+      if (current.isLoaded) {
+        self.revealContent(current);
+      } else {
+        self.loadSlide(current);
+      }
+
+      self.preload("image");
+    },
+
+    // Create new "slide" element
+    // These are gallery items  that are actually added to DOM
+    // =======================================================
+
+    createSlide: function(pos) {
+      var self = this,
+        $slide,
+        index;
+
+      index = pos % self.group.length;
+      index = index < 0 ? self.group.length + index : index;
+
+      if (!self.slides[pos] && self.group[index]) {
+        $slide = $('<div class="fancybox-slide"></div>').appendTo(self.$refs.stage);
+
+        self.slides[pos] = $.extend(true, {}, self.group[index], {
+          pos: pos,
+          $slide: $slide,
+          isLoaded: false
+        });
+
+        self.updateSlide(self.slides[pos]);
+      }
+
+      return self.slides[pos];
+    },
+
+    // Scale image to the actual size of the image;
+    // x and y values should be relative to the slide
+    // ==============================================
+
+    scaleToActual: function(x, y, duration) {
+      var self = this,
+        current = self.current,
+        $content = current.$content,
+        canvasWidth = $.fancybox.getTranslate(current.$slide).width,
+        canvasHeight = $.fancybox.getTranslate(current.$slide).height,
+        newImgWidth = current.width,
+        newImgHeight = current.height,
+        imgPos,
+        posX,
+        posY,
+        scaleX,
+        scaleY;
+
+      if (self.isAnimating || self.isMoved() || !$content || !(current.type == "image" && current.isLoaded && !current.hasError)) {
+        return;
+      }
+
+      self.isAnimating = true;
+
+      $.fancybox.stop($content);
+
+      x = x === undefined ? canvasWidth * 0.5 : x;
+      y = y === undefined ? canvasHeight * 0.5 : y;
+
+      imgPos = $.fancybox.getTranslate($content);
+
+      imgPos.top -= $.fancybox.getTranslate(current.$slide).top;
+      imgPos.left -= $.fancybox.getTranslate(current.$slide).left;
+
+      scaleX = newImgWidth / imgPos.width;
+      scaleY = newImgHeight / imgPos.height;
+
+      // Get center position for original image
+      posX = canvasWidth * 0.5 - newImgWidth * 0.5;
+      posY = canvasHeight * 0.5 - newImgHeight * 0.5;
+
+      // Make sure image does not move away from edges
+      if (newImgWidth > canvasWidth) {
+        posX = imgPos.left * scaleX - (x * scaleX - x);
+
+        if (posX > 0) {
+          posX = 0;
+        }
+
+        if (posX < canvasWidth - newImgWidth) {
+          posX = canvasWidth - newImgWidth;
+        }
+      }
+
+      if (newImgHeight > canvasHeight) {
+        posY = imgPos.top * scaleY - (y * scaleY - y);
+
+        if (posY > 0) {
+          posY = 0;
+        }
+
+        if (posY < canvasHeight - newImgHeight) {
+          posY = canvasHeight - newImgHeight;
+        }
+      }
+
+      self.updateCursor(newImgWidth, newImgHeight);
+
+      $.fancybox.animate(
+        $content,
+        {
+          top: posY,
+          left: posX,
+          scaleX: scaleX,
+          scaleY: scaleY
+        },
+        duration || 366,
+        function() {
+          self.isAnimating = false;
+        }
+      );
+
+      // Stop slideshow
+      if (self.SlideShow && self.SlideShow.isActive) {
+        self.SlideShow.stop();
+      }
+    },
+
+    // Scale image to fit inside parent element
+    // ========================================
+
+    scaleToFit: function(duration) {
+      var self = this,
+        current = self.current,
+        $content = current.$content,
+        end;
+
+      if (self.isAnimating || self.isMoved() || !$content || !(current.type == "image" && current.isLoaded && !current.hasError)) {
+        return;
+      }
+
+      self.isAnimating = true;
+
+      $.fancybox.stop($content);
+
+      end = self.getFitPos(current);
+
+      self.updateCursor(end.width, end.height);
+
+      $.fancybox.animate(
+        $content,
+        {
+          top: end.top,
+          left: end.left,
+          scaleX: end.width / $content.width(),
+          scaleY: end.height / $content.height()
+        },
+        duration || 366,
+        function() {
+          self.isAnimating = false;
+        }
+      );
+    },
+
+    // Calculate image size to fit inside viewport
+    // ===========================================
+
+    getFitPos: function(slide) {
+      var self = this,
+        $content = slide.$content,
+        $slide = slide.$slide,
+        width = slide.width || slide.opts.width,
+        height = slide.height || slide.opts.height,
+        maxWidth,
+        maxHeight,
+        minRatio,
+        aspectRatio,
+        rez = {};
+
+      if (!slide.isLoaded || !$content || !$content.length) {
+        return false;
+      }
+
+      maxWidth = $.fancybox.getTranslate(self.$refs.stage).width;
+      maxHeight = $.fancybox.getTranslate(self.$refs.stage).height;
+
+      maxWidth -=
+        parseFloat($slide.css("paddingLeft")) +
+        parseFloat($slide.css("paddingRight")) +
+        parseFloat($content.css("marginLeft")) +
+        parseFloat($content.css("marginRight"));
+
+      maxHeight -=
+        parseFloat($slide.css("paddingTop")) +
+        parseFloat($slide.css("paddingBottom")) +
+        parseFloat($content.css("marginTop")) +
+        parseFloat($content.css("marginBottom"));
+
+      if (!width || !height) {
+        width = maxWidth;
+        height = maxHeight;
+      }
+
+      minRatio = Math.min(1, maxWidth / width, maxHeight / height);
+
+      width = minRatio * width;
+      height = minRatio * height;
+
+      // Adjust width/height to precisely fit into container
+      if (width > maxWidth - 0.5) {
+        width = maxWidth;
+      }
+
+      if (height > maxHeight - 0.5) {
+        height = maxHeight;
+      }
+
+      if (slide.type === "image") {
+        rez.top = Math.floor((maxHeight - height) * 0.5) + parseFloat($slide.css("paddingTop"));
+        rez.left = Math.floor((maxWidth - width) * 0.5) + parseFloat($slide.css("paddingLeft"));
+      } else if (slide.contentType === "video") {
+        // Force aspect ratio for the video
+        // "I say the whole world must learn of our peaceful ways… by force!"
+        aspectRatio = slide.opts.width && slide.opts.height ? width / height : slide.opts.ratio || 16 / 9;
+
+        if (height > width / aspectRatio) {
+          height = width / aspectRatio;
+        } else if (width > height * aspectRatio) {
+          width = height * aspectRatio;
+        }
+      }
+
+      rez.width = width;
+      rez.height = height;
+
+      return rez;
+    },
+
+    // Update content size and position for all slides
+    // ==============================================
+
+    update: function(e) {
+      var self = this;
+
+      $.each(self.slides, function(key, slide) {
+        self.updateSlide(slide, e);
+      });
+    },
+
+    // Update slide content position and size
+    // ======================================
+
+    updateSlide: function(slide, e) {
+      var self = this,
+        $content = slide && slide.$content,
+        width = slide.width || slide.opts.width,
+        height = slide.height || slide.opts.height,
+        $slide = slide.$slide;
+
+      // First, prevent caption overlap, if needed
+      self.adjustCaption(slide);
+
+      // Then resize content to fit inside the slide
+      if ($content && (width || height || slide.contentType === "video") && !slide.hasError) {
+        $.fancybox.stop($content);
+
+        $.fancybox.setTranslate($content, self.getFitPos(slide));
+
+        if (slide.pos === self.currPos) {
+          self.isAnimating = false;
+
+          self.updateCursor();
+        }
+      }
+
+      // Then some adjustments
+      self.adjustLayout(slide);
+
+      if ($slide.length) {
+        $slide.trigger("refresh");
+
+        if (slide.pos === self.currPos) {
+          self.$refs.toolbar
+            .add(self.$refs.navigation.find(".fancybox-button--arrow_right"))
+            .toggleClass("compensate-for-scrollbar", $slide.get(0).scrollHeight > $slide.get(0).clientHeight);
+        }
+      }
+
+      self.trigger("onUpdate", slide, e);
+    },
+
+    // Horizontally center slide
+    // =========================
+
+    centerSlide: function(duration) {
+      var self = this,
+        current = self.current,
+        $slide = current.$slide;
+
+      if (self.isClosing || !current) {
+        return;
+      }
+
+      $slide.siblings().css({
+        transform: "",
+        opacity: ""
+      });
+
+      $slide
+        .parent()
+        .children()
+        .removeClass("fancybox-slide--previous fancybox-slide--next");
+
+      $.fancybox.animate(
+        $slide,
+        {
+          top: 0,
+          left: 0,
+          opacity: 1
+        },
+        duration === undefined ? 0 : duration,
+        function() {
+          // Clean up
+          $slide.css({
+            transform: "",
+            opacity: ""
+          });
+
+          if (!current.isComplete) {
+            self.complete();
+          }
+        },
+        false
+      );
+    },
+
+    // Check if current slide is moved (swiped)
+    // ========================================
+
+    isMoved: function(slide) {
+      var current = slide || this.current,
+        slidePos,
+        stagePos;
+
+      if (!current) {
+        return false;
+      }
+
+      stagePos = $.fancybox.getTranslate(this.$refs.stage);
+      slidePos = $.fancybox.getTranslate(current.$slide);
+
+      return (
+        !current.$slide.hasClass("fancybox-animated") &&
+        (Math.abs(slidePos.top - stagePos.top) > 0.5 || Math.abs(slidePos.left - stagePos.left) > 0.5)
+      );
+    },
+
+    // Update cursor style depending if content can be zoomed
+    // ======================================================
+
+    updateCursor: function(nextWidth, nextHeight) {
+      var self = this,
+        current = self.current,
+        $container = self.$refs.container,
+        canPan,
+        isZoomable;
+
+      if (!current || self.isClosing || !self.Guestures) {
+        return;
+      }
+
+      $container.removeClass("fancybox-is-zoomable fancybox-can-zoomIn fancybox-can-zoomOut fancybox-can-swipe fancybox-can-pan");
+
+      canPan = self.canPan(nextWidth, nextHeight);
+
+      isZoomable = canPan ? true : self.isZoomable();
+
+      $container.toggleClass("fancybox-is-zoomable", isZoomable);
+
+      $("[data-fancybox-zoom]").prop("disabled", !isZoomable);
+
+      if (canPan) {
+        $container.addClass("fancybox-can-pan");
+      } else if (
+        isZoomable &&
+        (current.opts.clickContent === "zoom" || ($.isFunction(current.opts.clickContent) && current.opts.clickContent(current) == "zoom"))
+      ) {
+        $container.addClass("fancybox-can-zoomIn");
+      } else if (current.opts.touch && (current.opts.touch.vertical || self.group.length > 1) && current.contentType !== "video") {
+        $container.addClass("fancybox-can-swipe");
+      }
+    },
+
+    // Check if current slide is zoomable
+    // ==================================
+
+    isZoomable: function() {
+      var self = this,
+        current = self.current,
+        fitPos;
+
+      // Assume that slide is zoomable if:
+      //   - image is still loading
+      //   - actual size of the image is smaller than available area
+      if (current && !self.isClosing && current.type === "image" && !current.hasError) {
+        if (!current.isLoaded) {
+          return true;
+        }
+
+        fitPos = self.getFitPos(current);
+
+        if (fitPos && (current.width > fitPos.width || current.height > fitPos.height)) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+
+    // Check if current image dimensions are smaller than actual
+    // =========================================================
+
+    isScaledDown: function(nextWidth, nextHeight) {
+      var self = this,
+        rez = false,
+        current = self.current,
+        $content = current.$content;
+
+      if (nextWidth !== undefined && nextHeight !== undefined) {
+        rez = nextWidth < current.width && nextHeight < current.height;
+      } else if ($content) {
+        rez = $.fancybox.getTranslate($content);
+        rez = rez.width < current.width && rez.height < current.height;
+      }
+
+      return rez;
+    },
+
+    // Check if image dimensions exceed parent element
+    // ===============================================
+
+    canPan: function(nextWidth, nextHeight) {
+      var self = this,
+        current = self.current,
+        pos = null,
+        rez = false;
+
+      if (current.type === "image" && (current.isComplete || (nextWidth && nextHeight)) && !current.hasError) {
+        rez = self.getFitPos(current);
+
+        if (nextWidth !== undefined && nextHeight !== undefined) {
+          pos = {width: nextWidth, height: nextHeight};
+        } else if (current.isComplete) {
+          pos = $.fancybox.getTranslate(current.$content);
+        }
+
+        if (pos && rez) {
+          rez = Math.abs(pos.width - rez.width) > 1.5 || Math.abs(pos.height - rez.height) > 1.5;
+        }
+      }
+
+      return rez;
+    },
+
+    // Load content into the slide
+    // ===========================
+
+    loadSlide: function(slide) {
+      var self = this,
+        type,
+        $slide,
+        ajaxLoad;
+
+      if (slide.isLoading || slide.isLoaded) {
+        return;
+      }
+
+      slide.isLoading = true;
+
+      if (self.trigger("beforeLoad", slide) === false) {
+        slide.isLoading = false;
+
+        return false;
+      }
+
+      type = slide.type;
+      $slide = slide.$slide;
+
+      $slide
+        .off("refresh")
+        .trigger("onReset")
+        .addClass(slide.opts.slideClass);
+
+      // Create content depending on the type
+      switch (type) {
+        case "image":
+          self.setImage(slide);
+
+          break;
+
+        case "iframe":
+          self.setIframe(slide);
+
+          break;
+
+        case "html":
+          self.setContent(slide, slide.src || slide.content);
+
+          break;
+
+        case "video":
+          self.setContent(
+            slide,
+            slide.opts.video.tpl
+              .replace(/\{\{src\}\}/gi, slide.src)
+              .replace("{{format}}", slide.opts.videoFormat || slide.opts.video.format || "")
+              .replace("{{poster}}", slide.thumb || "")
+          );
+
+          break;
+
+        case "inline":
+          if ($(slide.src).length) {
+            self.setContent(slide, $(slide.src));
+          } else {
+            self.setError(slide);
+          }
+
+          break;
+
+        case "ajax":
+          self.showLoading(slide);
+
+          ajaxLoad = $.ajax(
+            $.extend({}, slide.opts.ajax.settings, {
+              url: slide.src,
+              success: function(data, textStatus) {
+                if (textStatus === "success") {
+                  self.setContent(slide, data);
+                }
+              },
+              error: function(jqXHR, textStatus) {
+                if (jqXHR && textStatus !== "abort") {
+                  self.setError(slide);
+                }
+              }
+            })
+          );
+
+          $slide.one("onReset", function() {
+            ajaxLoad.abort();
+          });
+
+          break;
+
+        default:
+          self.setError(slide);
+
+          break;
+      }
+
+      return true;
+    },
+
+    // Use thumbnail image, if possible
+    // ================================
+
+    setImage: function(slide) {
+      var self = this,
+        ghost;
+
+      // Check if need to show loading icon
+      setTimeout(function() {
+        var $img = slide.$image;
+
+        if (!self.isClosing && slide.isLoading && (!$img || !$img.length || !$img[0].complete) && !slide.hasError) {
+          self.showLoading(slide);
+        }
+      }, 50);
+
+      //Check if image has srcset
+      self.checkSrcset(slide);
+
+      // This will be wrapper containing both ghost and actual image
+      slide.$content = $('<div class="fancybox-content"></div>')
+        .addClass("fancybox-is-hidden")
+        .appendTo(slide.$slide.addClass("fancybox-slide--image"));
+
+      // If we have a thumbnail, we can display it while actual image is loading
+      // Users will not stare at black screen and actual image will appear gradually
+      if (slide.opts.preload !== false && slide.opts.width && slide.opts.height && slide.thumb) {
+        slide.width = slide.opts.width;
+        slide.height = slide.opts.height;
+
+        ghost = document.createElement("img");
+
+        ghost.onerror = function() {
+          $(this).remove();
+
+          slide.$ghost = null;
+        };
+
+        ghost.onload = function() {
+          self.afterLoad(slide);
+        };
+
+        slide.$ghost = $(ghost)
+          .addClass("fancybox-image")
+          .appendTo(slide.$content)
+          .attr("src", slide.thumb);
+      }
+
+      // Start loading actual image
+      self.setBigImage(slide);
+    },
+
+    // Check if image has srcset and get the source
+    // ============================================
+    checkSrcset: function(slide) {
+      var srcset = slide.opts.srcset || slide.opts.image.srcset,
+        found,
+        temp,
+        pxRatio,
+        windowWidth;
+
+      // If we have "srcset", then we need to find first matching "src" value.
+      // This is necessary, because when you set an src attribute, the browser will preload the image
+      // before any javascript or even CSS is applied.
+      if (srcset) {
+        pxRatio = window.devicePixelRatio || 1;
+        windowWidth = window.innerWidth * pxRatio;
+
+        temp = srcset.split(",").map(function(el) {
+          var ret = {};
+
+          el.trim()
+            .split(/\s+/)
+            .forEach(function(el, i) {
+              var value = parseInt(el.substring(0, el.length - 1), 10);
+
+              if (i === 0) {
+                return (ret.url = el);
+              }
+
+              if (value) {
+                ret.value = value;
+                ret.postfix = el[el.length - 1];
+              }
+            });
+
+          return ret;
+        });
+
+        // Sort by value
+        temp.sort(function(a, b) {
+          return a.value - b.value;
+        });
+
+        // Ok, now we have an array of all srcset values
+        for (var j = 0; j < temp.length; j++) {
+          var el = temp[j];
+
+          if ((el.postfix === "w" && el.value >= windowWidth) || (el.postfix === "x" && el.value >= pxRatio)) {
+            found = el;
+            break;
+          }
+        }
+
+        // If not found, take the last one
+        if (!found && temp.length) {
+          found = temp[temp.length - 1];
+        }
+
+        if (found) {
+          slide.src = found.url;
+
+          // If we have default width/height values, we can calculate height for matching source
+          if (slide.width && slide.height && found.postfix == "w") {
+            slide.height = (slide.width / slide.height) * found.value;
+            slide.width = found.value;
+          }
+
+          slide.opts.srcset = srcset;
+        }
+      }
+    },
+
+    // Create full-size image
+    // ======================
+
+    setBigImage: function(slide) {
+      var self = this,
+        img = document.createElement("img"),
+        $img = $(img);
+
+      slide.$image = $img
+        .one("error", function() {
+          self.setError(slide);
+        })
+        .one("load", function() {
+          var sizes;
+
+          if (!slide.$ghost) {
+            self.resolveImageSlideSize(slide, this.naturalWidth, this.naturalHeight);
+
+            self.afterLoad(slide);
+          }
+
+          if (self.isClosing) {
+            return;
+          }
+
+          if (slide.opts.srcset) {
+            sizes = slide.opts.sizes;
+
+            if (!sizes || sizes === "auto") {
+              sizes =
+                (slide.width / slide.height > 1 && $W.width() / $W.height() > 1 ? "100" : Math.round((slide.width / slide.height) * 100)) +
+                "vw";
+            }
+
+            $img.attr("sizes", sizes).attr("srcset", slide.opts.srcset);
+          }
+
+          // Hide temporary image after some delay
+          if (slide.$ghost) {
+            setTimeout(function() {
+              if (slide.$ghost && !self.isClosing) {
+                slide.$ghost.hide();
+              }
+            }, Math.min(300, Math.max(1000, slide.height / 1600)));
+          }
+
+          self.hideLoading(slide);
+        })
+        .addClass("fancybox-image")
+        .attr("src", slide.src)
+        .appendTo(slide.$content);
+
+      if ((img.complete || img.readyState == "complete") && $img.naturalWidth && $img.naturalHeight) {
+        $img.trigger("load");
+      } else if (img.error) {
+        $img.trigger("error");
+      }
+    },
+
+    // Computes the slide size from image size and maxWidth/maxHeight
+    // ==============================================================
+
+    resolveImageSlideSize: function(slide, imgWidth, imgHeight) {
+      var maxWidth = parseInt(slide.opts.width, 10),
+        maxHeight = parseInt(slide.opts.height, 10);
+
+      // Sets the default values from the image
+      slide.width = imgWidth;
+      slide.height = imgHeight;
+
+      if (maxWidth > 0) {
+        slide.width = maxWidth;
+        slide.height = Math.floor((maxWidth * imgHeight) / imgWidth);
+      }
+
+      if (maxHeight > 0) {
+        slide.width = Math.floor((maxHeight * imgWidth) / imgHeight);
+        slide.height = maxHeight;
+      }
+    },
+
+    // Create iframe wrapper, iframe and bindings
+    // ==========================================
+
+    setIframe: function(slide) {
+      var self = this,
+        opts = slide.opts.iframe,
+        $slide = slide.$slide,
+        $iframe;
+
+      slide.$content = $('<div class="fancybox-content' + (opts.preload ? " fancybox-is-hidden" : "") + '"></div>')
+        .css(opts.css)
+        .appendTo($slide);
+
+      $slide.addClass("fancybox-slide--" + slide.contentType);
+
+      slide.$iframe = $iframe = $(opts.tpl.replace(/\{rnd\}/g, new Date().getTime()))
+        .attr(opts.attr)
+        .appendTo(slide.$content);
+
+      if (opts.preload) {
+        self.showLoading(slide);
+
+        // Unfortunately, it is not always possible to determine if iframe is successfully loaded
+        // (due to browser security policy)
+
+        $iframe.on("load.fb error.fb", function(e) {
+          this.isReady = 1;
+
+          slide.$slide.trigger("refresh");
+
+          self.afterLoad(slide);
+        });
+
+        // Recalculate iframe content size
+        // ===============================
+
+        $slide.on("refresh.fb", function() {
+          var $content = slide.$content,
+            frameWidth = opts.css.width,
+            frameHeight = opts.css.height,
+            $contents,
+            $body;
+
+          if ($iframe[0].isReady !== 1) {
+            return;
+          }
+
+          try {
+            $contents = $iframe.contents();
+            $body = $contents.find("body");
+          } catch (ignore) {}
+
+          // Calculate content dimensions, if it is accessible
+          if ($body && $body.length && $body.children().length) {
+            // Avoid scrolling to top (if multiple instances)
+            $slide.css("overflow", "visible");
+
+            $content.css({
+              width: "100%",
+              "max-width": "100%",
+              height: "9999px"
+            });
+
+            if (frameWidth === undefined) {
+              frameWidth = Math.ceil(Math.max($body[0].clientWidth, $body.outerWidth(true)));
+            }
+
+            $content.css("width", frameWidth ? frameWidth : "").css("max-width", "");
+
+            if (frameHeight === undefined) {
+              frameHeight = Math.ceil(Math.max($body[0].clientHeight, $body.outerHeight(true)));
+            }
+
+            $content.css("height", frameHeight ? frameHeight : "");
+
+            $slide.css("overflow", "auto");
+          }
+
+          $content.removeClass("fancybox-is-hidden");
+        });
+      } else {
+        self.afterLoad(slide);
+      }
+
+      $iframe.attr("src", slide.src);
+
+      // Remove iframe if closing or changing gallery item
+      $slide.one("onReset", function() {
+        // This helps IE not to throw errors when closing
+        try {
+          $(this)
+            .find("iframe")
+            .hide()
+            .unbind()
+            .attr("src", "//about:blank");
+        } catch (ignore) {}
+
+        $(this)
+          .off("refresh.fb")
+          .empty();
+
+        slide.isLoaded = false;
+        slide.isRevealed = false;
+      });
+    },
+
+    // Wrap and append content to the slide
+    // ======================================
+
+    setContent: function(slide, content) {
+      var self = this;
+
+      if (self.isClosing) {
+        return;
+      }
+
+      self.hideLoading(slide);
+
+      if (slide.$content) {
+        $.fancybox.stop(slide.$content);
+      }
+
+      slide.$slide.empty();
+
+      // If content is a jQuery object, then it will be moved to the slide.
+      // The placeholder is created so we will know where to put it back.
+      if (isQuery(content) && content.parent().length) {
+        // Make sure content is not already moved to fancyBox
+        if (content.hasClass("fancybox-content") || content.parent().hasClass("fancybox-content")) {
+          content.parents(".fancybox-slide").trigger("onReset");
+        }
+
+        // Create temporary element marking original place of the content
+        slide.$placeholder = $("<div>")
+          .hide()
+          .insertAfter(content);
+
+        // Make sure content is visible
+        content.css("display", "inline-block");
+      } else if (!slide.hasError) {
+        // If content is just a plain text, try to convert it to html
+        if ($.type(content) === "string") {
+          content = $("<div>")
+            .append($.trim(content))
+            .contents();
+        }
+
+        // If "filter" option is provided, then filter content
+        if (slide.opts.filter) {
+          content = $("<div>")
+            .html(content)
+            .find(slide.opts.filter);
+        }
+      }
+
+      slide.$slide.one("onReset", function() {
+        // Pause all html5 video/audio
+        $(this)
+          .find("video,audio")
+          .trigger("pause");
+
+        // Put content back
+        if (slide.$placeholder) {
+          slide.$placeholder.after(content.removeClass("fancybox-content").hide()).remove();
+
+          slide.$placeholder = null;
+        }
+
+        // Remove custom close button
+        if (slide.$smallBtn) {
+          slide.$smallBtn.remove();
+
+          slide.$smallBtn = null;
+        }
+
+        // Remove content and mark slide as not loaded
+        if (!slide.hasError) {
+          $(this).empty();
+
+          slide.isLoaded = false;
+          slide.isRevealed = false;
+        }
+      });
+
+      $(content).appendTo(slide.$slide);
+
+      if ($(content).is("video,audio")) {
+        $(content).addClass("fancybox-video");
+
+        $(content).wrap("<div></div>");
+
+        slide.contentType = "video";
+
+        slide.opts.width = slide.opts.width || $(content).attr("width");
+        slide.opts.height = slide.opts.height || $(content).attr("height");
+      }
+
+      slide.$content = slide.$slide
+        .children()
+        .filter("div,form,main,video,audio,article,.fancybox-content")
+        .first();
+
+      slide.$content.siblings().hide();
+
+      // Re-check if there is a valid content
+      // (in some cases, ajax response can contain various elements or plain text)
+      if (!slide.$content.length) {
+        slide.$content = slide.$slide
+          .wrapInner("<div></div>")
+          .children()
+          .first();
+      }
+
+      slide.$content.addClass("fancybox-content");
+
+      slide.$slide.addClass("fancybox-slide--" + slide.contentType);
+
+      self.afterLoad(slide);
+    },
+
+    // Display error message
+    // =====================
+
+    setError: function(slide) {
+      slide.hasError = true;
+
+      slide.$slide
+        .trigger("onReset")
+        .removeClass("fancybox-slide--" + slide.contentType)
+        .addClass("fancybox-slide--error");
+
+      slide.contentType = "html";
+
+      this.setContent(slide, this.translate(slide, slide.opts.errorTpl));
+
+      if (slide.pos === this.currPos) {
+        this.isAnimating = false;
+      }
+    },
+
+    // Show loading icon inside the slide
+    // ==================================
+
+    showLoading: function(slide) {
+      var self = this;
+
+      slide = slide || self.current;
+
+      if (slide && !slide.$spinner) {
+        slide.$spinner = $(self.translate(self, self.opts.spinnerTpl))
+          .appendTo(slide.$slide)
+          .hide()
+          .fadeIn("fast");
+      }
+    },
+
+    // Remove loading icon from the slide
+    // ==================================
+
+    hideLoading: function(slide) {
+      var self = this;
+
+      slide = slide || self.current;
+
+      if (slide && slide.$spinner) {
+        slide.$spinner.stop().remove();
+
+        delete slide.$spinner;
+      }
+    },
+
+    // Adjustments after slide content has been loaded
+    // ===============================================
+
+    afterLoad: function(slide) {
+      var self = this;
+
+      if (self.isClosing) {
+        return;
+      }
+
+      slide.isLoading = false;
+      slide.isLoaded = true;
+
+      self.trigger("afterLoad", slide);
+
+      self.hideLoading(slide);
+
+      // Add small close button
+      if (slide.opts.smallBtn && (!slide.$smallBtn || !slide.$smallBtn.length)) {
+        slide.$smallBtn = $(self.translate(slide, slide.opts.btnTpl.smallBtn)).appendTo(slide.$content);
+      }
+
+      // Disable right click
+      if (slide.opts.protect && slide.$content && !slide.hasError) {
+        slide.$content.on("contextmenu.fb", function(e) {
+          if (e.button == 2) {
+            e.preventDefault();
+          }
+
+          return true;
+        });
+
+        // Add fake element on top of the image
+        // This makes a bit harder for user to select image
+        if (slide.type === "image") {
+          $('<div class="fancybox-spaceball"></div>').appendTo(slide.$content);
+        }
+      }
+
+      self.adjustCaption(slide);
+
+      self.adjustLayout(slide);
+
+      if (slide.pos === self.currPos) {
+        self.updateCursor();
+      }
+
+      self.revealContent(slide);
+    },
+
+    // Prevent caption overlap,
+    // fix css inconsistency across browsers
+    // =====================================
+
+    adjustCaption: function(slide) {
+      var self = this,
+        current = slide || self.current,
+        caption = current.opts.caption,
+        preventOverlap = current.opts.preventCaptionOverlap,
+        $caption = self.$refs.caption,
+        $clone,
+        captionH = false;
+
+      $caption.toggleClass("fancybox-caption--separate", preventOverlap);
+
+      if (preventOverlap && caption && caption.length) {
+        if (current.pos !== self.currPos) {
+          $clone = $caption.clone().appendTo($caption.parent());
+
+          $clone
+            .children()
+            .eq(0)
+            .empty()
+            .html(caption);
+
+          captionH = $clone.outerHeight(true);
+
+          $clone.empty().remove();
+        } else if (self.$caption) {
+          captionH = self.$caption.outerHeight(true);
+        }
+
+        current.$slide.css("padding-bottom", captionH || "");
+      }
+    },
+
+    // Simple hack to fix inconsistency across browsers, described here (affects Edge, too):
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=748518
+    // ====================================================================================
+
+    adjustLayout: function(slide) {
+      var self = this,
+        current = slide || self.current,
+        scrollHeight,
+        marginBottom,
+        inlinePadding,
+        actualPadding;
+
+      if (current.isLoaded && current.opts.disableLayoutFix !== true) {
+        current.$content.css("margin-bottom", "");
+
+        // If we would always set margin-bottom for the content,
+        // then it would potentially break vertical align
+        if (current.$content.outerHeight() > current.$slide.height() + 0.5) {
+          inlinePadding = current.$slide[0].style["padding-bottom"];
+          actualPadding = current.$slide.css("padding-bottom");
+
+          if (parseFloat(actualPadding) > 0) {
+            scrollHeight = current.$slide[0].scrollHeight;
+
+            current.$slide.css("padding-bottom", 0);
+
+            if (Math.abs(scrollHeight - current.$slide[0].scrollHeight) < 1) {
+              marginBottom = actualPadding;
+            }
+
+            current.$slide.css("padding-bottom", inlinePadding);
+          }
+        }
+
+        current.$content.css("margin-bottom", marginBottom);
+      }
+    },
+
+    // Make content visible
+    // This method is called right after content has been loaded or
+    // user navigates gallery and transition should start
+    // ============================================================
+
+    revealContent: function(slide) {
+      var self = this,
+        $slide = slide.$slide,
+        end = false,
+        start = false,
+        isMoved = self.isMoved(slide),
+        isRevealed = slide.isRevealed,
+        effect,
+        effectClassName,
+        duration,
+        opacity;
+
+      slide.isRevealed = true;
+
+      effect = slide.opts[self.firstRun ? "animationEffect" : "transitionEffect"];
+      duration = slide.opts[self.firstRun ? "animationDuration" : "transitionDuration"];
+
+      duration = parseInt(slide.forcedDuration === undefined ? duration : slide.forcedDuration, 10);
+
+      if (isMoved || slide.pos !== self.currPos || !duration) {
+        effect = false;
+      }
+
+      // Check if can zoom
+      if (effect === "zoom") {
+        if (slide.pos === self.currPos && duration && slide.type === "image" && !slide.hasError && (start = self.getThumbPos(slide))) {
+          end = self.getFitPos(slide);
+        } else {
+          effect = "fade";
+        }
+      }
+
+      // Zoom animation
+      // ==============
+      if (effect === "zoom") {
+        self.isAnimating = true;
+
+        end.scaleX = end.width / start.width;
+        end.scaleY = end.height / start.height;
+
+        // Check if we need to animate opacity
+        opacity = slide.opts.zoomOpacity;
+
+        if (opacity == "auto") {
+          opacity = Math.abs(slide.width / slide.height - start.width / start.height) > 0.1;
+        }
+
+        if (opacity) {
+          start.opacity = 0.1;
+          end.opacity = 1;
+        }
+
+        // Draw image at start position
+        $.fancybox.setTranslate(slide.$content.removeClass("fancybox-is-hidden"), start);
+
+        forceRedraw(slide.$content);
+
+        // Start animation
+        $.fancybox.animate(slide.$content, end, duration, function() {
+          self.isAnimating = false;
+
+          self.complete();
+        });
+
+        return;
+      }
+
+      self.updateSlide(slide);
+
+      // Simply show content if no effect
+      // ================================
+      if (!effect) {
+        slide.$content.removeClass("fancybox-is-hidden");
+
+        if (!isRevealed && isMoved && slide.type === "image" && !slide.hasError) {
+          slide.$content.hide().fadeIn("fast");
+        }
+
+        if (slide.pos === self.currPos) {
+          self.complete();
+        }
+
+        return;
+      }
+
+      // Prepare for CSS transiton
+      // =========================
+      $.fancybox.stop($slide);
+
+      //effectClassName = "fancybox-animated fancybox-slide--" + (slide.pos >= self.prevPos ? "next" : "previous") + " fancybox-fx-" + effect;
+      effectClassName = "fancybox-slide--" + (slide.pos >= self.prevPos ? "next" : "previous") + " fancybox-animated fancybox-fx-" + effect;
+
+      $slide.addClass(effectClassName).removeClass("fancybox-slide--current"); //.addClass(effectClassName);
+
+      slide.$content.removeClass("fancybox-is-hidden");
+
+      // Force reflow
+      forceRedraw($slide);
+
+      if (slide.type !== "image") {
+        slide.$content.hide().show(0);
+      }
+
+      $.fancybox.animate(
+        $slide,
+        "fancybox-slide--current",
+        duration,
+        function() {
+          $slide.removeClass(effectClassName).css({
+            transform: "",
+            opacity: ""
+          });
+
+          if (slide.pos === self.currPos) {
+            self.complete();
+          }
+        },
+        true
+      );
+    },
+
+    // Check if we can and have to zoom from thumbnail
+    //================================================
+
+    getThumbPos: function(slide) {
+      var rez = false,
+        $thumb = slide.$thumb,
+        thumbPos,
+        btw,
+        brw,
+        bbw,
+        blw;
+
+      if (!$thumb || !inViewport($thumb[0])) {
+        return false;
+      }
+
+      thumbPos = $.fancybox.getTranslate($thumb);
+
+      btw = parseFloat($thumb.css("border-top-width") || 0);
+      brw = parseFloat($thumb.css("border-right-width") || 0);
+      bbw = parseFloat($thumb.css("border-bottom-width") || 0);
+      blw = parseFloat($thumb.css("border-left-width") || 0);
+
+      rez = {
+        top: thumbPos.top + btw,
+        left: thumbPos.left + blw,
+        width: thumbPos.width - brw - blw,
+        height: thumbPos.height - btw - bbw,
+        scaleX: 1,
+        scaleY: 1
+      };
+
+      return thumbPos.width > 0 && thumbPos.height > 0 ? rez : false;
+    },
+
+    // Final adjustments after current gallery item is moved to position
+    // and it`s content is loaded
+    // ==================================================================
+
+    complete: function() {
+      var self = this,
+        current = self.current,
+        slides = {},
+        $el;
+
+      if (self.isMoved() || !current.isLoaded) {
+        return;
+      }
+
+      if (!current.isComplete) {
+        current.isComplete = true;
+
+        current.$slide.siblings().trigger("onReset");
+
+        self.preload("inline");
+
+        // Trigger any CSS transiton inside the slide
+        forceRedraw(current.$slide);
+
+        current.$slide.addClass("fancybox-slide--complete");
+
+        // Remove unnecessary slides
+        $.each(self.slides, function(key, slide) {
+          if (slide.pos >= self.currPos - 1 && slide.pos <= self.currPos + 1) {
+            slides[slide.pos] = slide;
+          } else if (slide) {
+            $.fancybox.stop(slide.$slide);
+
+            slide.$slide.off().remove();
+          }
+        });
+
+        self.slides = slides;
+      }
+
+      self.isAnimating = false;
+
+      self.updateCursor();
+
+      self.trigger("afterShow");
+
+      // Autoplay first html5 video/audio
+      if (!!current.opts.video.autoStart) {
+        current.$slide
+          .find("video,audio")
+          .filter(":visible:first")
+          .trigger("play")
+          .one("ended", function() {
+            if (this.webkitExitFullscreen) {
+              this.webkitExitFullscreen();
+            }
+
+            self.next();
+          });
+      }
+
+      // Try to focus on the first focusable element
+      if (current.opts.autoFocus && current.contentType === "html") {
+        // Look for the first input with autofocus attribute
+        $el = current.$content.find("input[autofocus]:enabled:visible:first");
+
+        if ($el.length) {
+          $el.trigger("focus");
+        } else {
+          self.focus(null, true);
+        }
+      }
+
+      // Avoid jumping
+      current.$slide.scrollTop(0).scrollLeft(0);
+    },
+
+    // Preload next and previous slides
+    // ================================
+
+    preload: function(type) {
+      var self = this,
+        prev,
+        next;
+
+      if (self.group.length < 2) {
+        return;
+      }
+
+      next = self.slides[self.currPos + 1];
+      prev = self.slides[self.currPos - 1];
+
+      if (prev && prev.type === type) {
+        self.loadSlide(prev);
+      }
+
+      if (next && next.type === type) {
+        self.loadSlide(next);
+      }
+    },
+
+    // Try to find and focus on the first focusable element
+    // ====================================================
+
+    focus: function(e, firstRun) {
+      var self = this,
+        focusableStr = [
+          "a[href]",
+          "area[href]",
+          'input:not([disabled]):not([type="hidden"]):not([aria-hidden])',
+          "select:not([disabled]):not([aria-hidden])",
+          "textarea:not([disabled]):not([aria-hidden])",
+          "button:not([disabled]):not([aria-hidden])",
+          "iframe",
+          "object",
+          "embed",
+          "video",
+          "audio",
+          "[contenteditable]",
+          '[tabindex]:not([tabindex^="-"])'
+        ].join(","),
+        focusableItems,
+        focusedItemIndex;
+
+      if (self.isClosing) {
+        return;
+      }
+
+      if (e || !self.current || !self.current.isComplete) {
+        // Focus on any element inside fancybox
+        focusableItems = self.$refs.container.find("*:visible");
+      } else {
+        // Focus inside current slide
+        focusableItems = self.current.$slide.find("*:visible" + (firstRun ? ":not(.fancybox-close-small)" : ""));
+      }
+
+      focusableItems = focusableItems.filter(focusableStr).filter(function() {
+        return $(this).css("visibility") !== "hidden" && !$(this).hasClass("disabled");
+      });
+
+      if (focusableItems.length) {
+        focusedItemIndex = focusableItems.index(document.activeElement);
+
+        if (e && e.shiftKey) {
+          // Back tab
+          if (focusedItemIndex < 0 || focusedItemIndex == 0) {
+            e.preventDefault();
+
+            focusableItems.eq(focusableItems.length - 1).trigger("focus");
+          }
+        } else {
+          // Outside or Forward tab
+          if (focusedItemIndex < 0 || focusedItemIndex == focusableItems.length - 1) {
+            if (e) {
+              e.preventDefault();
+            }
+
+            focusableItems.eq(0).trigger("focus");
+          }
+        }
+      } else {
+        self.$refs.container.trigger("focus");
+      }
+    },
+
+    // Activates current instance - brings container to the front and enables keyboard,
+    // notifies other instances about deactivating
+    // =================================================================================
+
+    activate: function() {
+      var self = this;
+
+      // Deactivate all instances
+      $(".fancybox-container").each(function() {
+        var instance = $(this).data("FancyBox");
+
+        // Skip self and closing instances
+        if (instance && instance.id !== self.id && !instance.isClosing) {
+          instance.trigger("onDeactivate");
+
+          instance.removeEvents();
+
+          instance.isVisible = false;
+        }
+      });
+
+      self.isVisible = true;
+
+      if (self.current || self.isIdle) {
+        self.update();
+
+        self.updateControls();
+      }
+
+      self.trigger("onActivate");
+
+      self.addEvents();
+    },
+
+    // Start closing procedure
+    // This will start "zoom-out" animation if needed and clean everything up afterwards
+    // =================================================================================
+
+    close: function(e, d) {
+      var self = this,
+        current = self.current,
+        effect,
+        duration,
+        $content,
+        domRect,
+        opacity,
+        start,
+        end;
+
+      var done = function() {
+        self.cleanUp(e);
+      };
+
+      if (self.isClosing) {
+        return false;
+      }
+
+      self.isClosing = true;
+
+      // If beforeClose callback prevents closing, make sure content is centered
+      if (self.trigger("beforeClose", e) === false) {
+        self.isClosing = false;
+
+        requestAFrame(function() {
+          self.update();
+        });
+
+        return false;
+      }
+
+      // Remove all events
+      // If there are multiple instances, they will be set again by "activate" method
+      self.removeEvents();
+
+      $content = current.$content;
+      effect = current.opts.animationEffect;
+      duration = $.isNumeric(d) ? d : effect ? current.opts.animationDuration : 0;
+
+      current.$slide.removeClass("fancybox-slide--complete fancybox-slide--next fancybox-slide--previous fancybox-animated");
+
+      if (e !== true) {
+        $.fancybox.stop(current.$slide);
+      } else {
+        effect = false;
+      }
+
+      // Remove other slides
+      current.$slide
+        .siblings()
+        .trigger("onReset")
+        .remove();
+
+      // Trigger animations
+      if (duration) {
+        self.$refs.container
+          .removeClass("fancybox-is-open")
+          .addClass("fancybox-is-closing")
+          .css("transition-duration", duration + "ms");
+      }
+
+      // Clean up
+      self.hideLoading(current);
+
+      self.hideControls(true);
+
+      self.updateCursor();
+
+      // Check if possible to zoom-out
+      if (
+        effect === "zoom" &&
+        !($content && duration && current.type === "image" && !self.isMoved() && !current.hasError && (end = self.getThumbPos(current)))
+      ) {
+        effect = "fade";
+      }
+
+      if (effect === "zoom") {
+        $.fancybox.stop($content);
+
+        domRect = $.fancybox.getTranslate($content);
+
+        start = {
+          top: domRect.top,
+          left: domRect.left,
+          scaleX: domRect.width / end.width,
+          scaleY: domRect.height / end.height,
+          width: end.width,
+          height: end.height
+        };
+
+        // Check if we need to animate opacity
+        opacity = current.opts.zoomOpacity;
+
+        if (opacity == "auto") {
+          opacity = Math.abs(current.width / current.height - end.width / end.height) > 0.1;
+        }
+
+        if (opacity) {
+          end.opacity = 0;
+        }
+
+        $.fancybox.setTranslate($content, start);
+
+        forceRedraw($content);
+
+        $.fancybox.animate($content, end, duration, done);
+
+        return true;
+      }
+
+      if (effect && duration) {
+        $.fancybox.animate(
+          current.$slide.addClass("fancybox-slide--previous").removeClass("fancybox-slide--current"),
+          "fancybox-animated fancybox-fx-" + effect,
+          duration,
+          done
+        );
+      } else {
+        // If skip animation
+        if (e === true) {
+          setTimeout(done, duration);
+        } else {
+          done();
+        }
+      }
+
+      return true;
+    },
+
+    // Final adjustments after removing the instance
+    // =============================================
+
+    cleanUp: function(e) {
+      var self = this,
+        instance,
+        $focus = self.current.opts.$orig,
+        x,
+        y;
+
+      self.current.$slide.trigger("onReset");
+
+      self.$refs.container.empty().remove();
+
+      self.trigger("afterClose", e);
+
+      // Place back focus
+      if (!!self.current.opts.backFocus) {
+        if (!$focus || !$focus.length || !$focus.is(":visible")) {
+          $focus = self.$trigger;
+        }
+
+        if ($focus && $focus.length) {
+          x = window.scrollX;
+          y = window.scrollY;
+
+          $focus.trigger("focus");
+
+          $("html, body")
+            .scrollTop(y)
+            .scrollLeft(x);
+        }
+      }
+
+      self.current = null;
+
+      // Check if there are other instances
+      instance = $.fancybox.getInstance();
+
+      if (instance) {
+        instance.activate();
+      } else {
+        $("body").removeClass("fancybox-active compensate-for-scrollbar");
+
+        $("#fancybox-style-noscroll").remove();
+      }
+    },
+
+    // Call callback and trigger an event
+    // ==================================
+
+    trigger: function(name, slide) {
+      var args = Array.prototype.slice.call(arguments, 1),
+        self = this,
+        obj = slide && slide.opts ? slide : self.current,
+        rez;
+
+      if (obj) {
+        args.unshift(obj);
+      } else {
+        obj = self;
+      }
+
+      args.unshift(self);
+
+      if ($.isFunction(obj.opts[name])) {
+        rez = obj.opts[name].apply(obj, args);
+      }
+
+      if (rez === false) {
+        return rez;
+      }
+
+      if (name === "afterClose" || !self.$refs) {
+        $D.trigger(name + ".fb", args);
+      } else {
+        self.$refs.container.trigger(name + ".fb", args);
+      }
+    },
+
+    // Update infobar values, navigation button states and reveal caption
+    // ==================================================================
+
+    updateControls: function() {
+      var self = this,
+        current = self.current,
+        index = current.index,
+        $container = self.$refs.container,
+        $caption = self.$refs.caption,
+        caption = current.opts.caption;
+
+      // Recalculate content dimensions
+      current.$slide.trigger("refresh");
+
+      // Set caption
+      if (caption && caption.length) {
+        self.$caption = $caption;
+
+        $caption
+          .children()
+          .eq(0)
+          .html(caption);
+      } else {
+        self.$caption = null;
+      }
+
+      if (!self.hasHiddenControls && !self.isIdle) {
+        self.showControls();
+      }
+
+      // Update info and navigation elements
+      $container.find("[data-fancybox-count]").html(self.group.length);
+      $container.find("[data-fancybox-index]").html(index + 1);
+
+      $container.find("[data-fancybox-prev]").prop("disabled", !current.opts.loop && index <= 0);
+      $container.find("[data-fancybox-next]").prop("disabled", !current.opts.loop && index >= self.group.length - 1);
+
+      if (current.type === "image") {
+        // Re-enable buttons; update download button source
+        $container
+          .find("[data-fancybox-zoom]")
+          .show()
+          .end()
+          .find("[data-fancybox-download]")
+          .attr("href", current.opts.image.src || current.src)
+          .show();
+      } else if (current.opts.toolbar) {
+        $container.find("[data-fancybox-download],[data-fancybox-zoom]").hide();
+      }
+
+      // Make sure focus is not on disabled button/element
+      if ($(document.activeElement).is(":hidden,[disabled]")) {
+        self.$refs.container.trigger("focus");
+      }
+    },
+
+    // Hide toolbar and caption
+    // ========================
+
+    hideControls: function(andCaption) {
+      var self = this,
+        arr = ["infobar", "toolbar", "nav"];
+
+      if (andCaption || !self.current.opts.preventCaptionOverlap) {
+        arr.push("caption");
+      }
+
+      this.$refs.container.removeClass(
+        arr
+          .map(function(i) {
+            return "fancybox-show-" + i;
+          })
+          .join(" ")
+      );
+
+      this.hasHiddenControls = true;
+    },
+
+    showControls: function() {
+      var self = this,
+        opts = self.current ? self.current.opts : self.opts,
+        $container = self.$refs.container;
+
+      self.hasHiddenControls = false;
+      self.idleSecondsCounter = 0;
+
+      $container
+        .toggleClass("fancybox-show-toolbar", !!(opts.toolbar && opts.buttons))
+        .toggleClass("fancybox-show-infobar", !!(opts.infobar && self.group.length > 1))
+        .toggleClass("fancybox-show-caption", !!self.$caption)
+        .toggleClass("fancybox-show-nav", !!(opts.arrows && self.group.length > 1))
+        .toggleClass("fancybox-is-modal", !!opts.modal);
+    },
+
+    // Toggle toolbar and caption
+    // ==========================
+
+    toggleControls: function() {
+      if (this.hasHiddenControls) {
+        this.showControls();
+      } else {
+        this.hideControls();
+      }
+    }
+  });
+
+  $.fancybox = {
+    version: "3.5.6",
+    defaults: defaults,
+
+    // Get current instance and execute a command.
+    //
+    // Examples of usage:
+    //
+    //   $instance = $.fancybox.getInstance();
+    //   $.fancybox.getInstance().jumpTo( 1 );
+    //   $.fancybox.getInstance( 'jumpTo', 1 );
+    //   $.fancybox.getInstance( function() {
+    //       console.info( this.currIndex );
+    //   });
+    // ======================================================
+
+    getInstance: function(command) {
+      var instance = $('.fancybox-container:not(".fancybox-is-closing"):last').data("FancyBox"),
+        args = Array.prototype.slice.call(arguments, 1);
+
+      if (instance instanceof FancyBox) {
+        if ($.type(command) === "string") {
+          instance[command].apply(instance, args);
+        } else if ($.type(command) === "function") {
+          command.apply(instance, args);
+        }
+
+        return instance;
+      }
+
+      return false;
+    },
+
+    // Create new instance
+    // ===================
+
+    open: function(items, opts, index) {
+      return new FancyBox(items, opts, index);
+    },
+
+    // Close current or all instances
+    // ==============================
+
+    close: function(all) {
+      var instance = this.getInstance();
+
+      if (instance) {
+        instance.close();
+
+        // Try to find and close next instance
+        if (all === true) {
+          this.close(all);
+        }
+      }
+    },
+
+    // Close all instances and unbind all events
+    // =========================================
+
+    destroy: function() {
+      this.close(true);
+
+      $D.add("body").off("click.fb-start", "**");
+    },
+
+    // Try to detect mobile devices
+    // ============================
+
+    isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+
+    // Detect if 'translate3d' support is available
+    // ============================================
+
+    use3d: (function() {
+      var div = document.createElement("div");
+
+      return (
+        window.getComputedStyle &&
+        window.getComputedStyle(div) &&
+        window.getComputedStyle(div).getPropertyValue("transform") &&
+        !(document.documentMode && document.documentMode < 11)
+      );
+    })(),
+
+    // Helper function to get current visual state of an element
+    // returns array[ top, left, horizontal-scale, vertical-scale, opacity ]
+    // =====================================================================
+
+    getTranslate: function($el) {
+      var domRect;
+
+      if (!$el || !$el.length) {
+        return false;
+      }
+
+      domRect = $el[0].getBoundingClientRect();
+
+      return {
+        top: domRect.top || 0,
+        left: domRect.left || 0,
+        width: domRect.width,
+        height: domRect.height,
+        opacity: parseFloat($el.css("opacity"))
+      };
+    },
+
+    // Shortcut for setting "translate3d" properties for element
+    // Can set be used to set opacity, too
+    // ========================================================
+
+    setTranslate: function($el, props) {
+      var str = "",
+        css = {};
+
+      if (!$el || !props) {
+        return;
+      }
+
+      if (props.left !== undefined || props.top !== undefined) {
+        str =
+          (props.left === undefined ? $el.position().left : props.left) +
+          "px, " +
+          (props.top === undefined ? $el.position().top : props.top) +
+          "px";
+
+        if (this.use3d) {
+          str = "translate3d(" + str + ", 0px)";
+        } else {
+          str = "translate(" + str + ")";
+        }
+      }
+
+      if (props.scaleX !== undefined && props.scaleY !== undefined) {
+        str += " scale(" + props.scaleX + ", " + props.scaleY + ")";
+      } else if (props.scaleX !== undefined) {
+        str += " scaleX(" + props.scaleX + ")";
+      }
+
+      if (str.length) {
+        css.transform = str;
+      }
+
+      if (props.opacity !== undefined) {
+        css.opacity = props.opacity;
+      }
+
+      if (props.width !== undefined) {
+        css.width = props.width;
+      }
+
+      if (props.height !== undefined) {
+        css.height = props.height;
+      }
+
+      return $el.css(css);
+    },
+
+    // Simple CSS transition handler
+    // =============================
+
+    animate: function($el, to, duration, callback, leaveAnimationName) {
+      var self = this,
+        from;
+
+      if ($.isFunction(duration)) {
+        callback = duration;
+        duration = null;
+      }
+
+      self.stop($el);
+
+      from = self.getTranslate($el);
+
+      $el.on(transitionEnd, function(e) {
+        // Skip events from child elements and z-index change
+        if (e && e.originalEvent && (!$el.is(e.originalEvent.target) || e.originalEvent.propertyName == "z-index")) {
+          return;
+        }
+
+        self.stop($el);
+
+        if ($.isNumeric(duration)) {
+          $el.css("transition-duration", "");
+        }
+
+        if ($.isPlainObject(to)) {
+          if (to.scaleX !== undefined && to.scaleY !== undefined) {
+            self.setTranslate($el, {
+              top: to.top,
+              left: to.left,
+              width: from.width * to.scaleX,
+              height: from.height * to.scaleY,
+              scaleX: 1,
+              scaleY: 1
+            });
+          }
+        } else if (leaveAnimationName !== true) {
+          $el.removeClass(to);
+        }
+
+        if ($.isFunction(callback)) {
+          callback(e);
+        }
+      });
+
+      if ($.isNumeric(duration)) {
+        $el.css("transition-duration", duration + "ms");
+      }
+
+      // Start animation by changing CSS properties or class name
+      if ($.isPlainObject(to)) {
+        if (to.scaleX !== undefined && to.scaleY !== undefined) {
+          delete to.width;
+          delete to.height;
+
+          if ($el.parent().hasClass("fancybox-slide--image")) {
+            $el.parent().addClass("fancybox-is-scaling");
+          }
+        }
+
+        $.fancybox.setTranslate($el, to);
+      } else {
+        $el.addClass(to);
+      }
+
+      // Make sure that `transitionend` callback gets fired
+      $el.data(
+        "timer",
+        setTimeout(function() {
+          $el.trigger(transitionEnd);
+        }, duration + 33)
+      );
+    },
+
+    stop: function($el, callCallback) {
+      if ($el && $el.length) {
+        clearTimeout($el.data("timer"));
+
+        if (callCallback) {
+          $el.trigger(transitionEnd);
+        }
+
+        $el.off(transitionEnd).css("transition-duration", "");
+
+        $el.parent().removeClass("fancybox-is-scaling");
+      }
+    }
+  };
+
+  // Default click handler for "fancyboxed" links
+  // ============================================
+
+  function _run(e, opts) {
+    var items = [],
+      index = 0,
+      $target,
+      value,
+      instance;
+
+    // Avoid opening multiple times
+    if (e && e.isDefaultPrevented()) {
+      return;
+    }
+
+    e.preventDefault();
+
+    opts = opts || {};
+
+    if (e && e.data) {
+      opts = mergeOpts(e.data.options, opts);
+    }
+
+    $target = opts.$target || $(e.currentTarget).trigger("blur");
+    instance = $.fancybox.getInstance();
+
+    if (instance && instance.$trigger && instance.$trigger.is($target)) {
+      return;
+    }
+
+    if (opts.selector) {
+      items = $(opts.selector);
+    } else {
+      // Get all related items and find index for clicked one
+      value = $target.attr("data-fancybox") || "";
+
+      if (value) {
+        items = e.data ? e.data.items : [];
+        items = items.length ? items.filter('[data-fancybox="' + value + '"]') : $('[data-fancybox="' + value + '"]');
+      } else {
+        items = [$target];
+      }
+    }
+
+    index = $(items).index($target);
+
+    // Sometimes current item can not be found
+    if (index < 0) {
+      index = 0;
+    }
+
+    instance = $.fancybox.open(items, opts, index);
+
+    // Save last active element
+    instance.$trigger = $target;
+  }
+
+  // Create a jQuery plugin
+  // ======================
+
+  $.fn.fancybox = function(options) {
+    var selector;
+
+    options = options || {};
+    selector = options.selector || false;
+
+    if (selector) {
+      // Use body element instead of document so it executes first
+      $("body")
+        .off("click.fb-start", selector)
+        .on("click.fb-start", selector, {options: options}, _run);
+    } else {
+      this.off("click.fb-start").on(
+        "click.fb-start",
+        {
+          items: this,
+          options: options
+        },
+        _run
+      );
+    }
+
+    return this;
+  };
+
+  // Self initializing plugin for all elements having `data-fancybox` attribute
+  // ==========================================================================
+
+  $D.on("click.fb-start", "[data-fancybox]", _run);
+
+  // Enable "trigger elements"
+  // =========================
+
+  $D.on("click.fb-start", "[data-fancybox-trigger]", function(e) {
+    $('[data-fancybox="' + $(this).attr("data-fancybox-trigger") + '"]')
+      .eq($(this).attr("data-fancybox-index") || 0)
+      .trigger("click.fb-start", {
+        $trigger: $(this)
+      });
+  });
+
+  // Track focus event for better accessibility styling
+  // ==================================================
+  (function() {
+    var buttonStr = ".fancybox-button",
+      focusStr = "fancybox-focus",
+      $pressed = null;
+
+    $D.on("mousedown mouseup focus blur", buttonStr, function(e) {
+      switch (e.type) {
+        case "mousedown":
+          $pressed = $(this);
+          break;
+        case "mouseup":
+          $pressed = null;
+          break;
+        case "focusin":
+          $(buttonStr).removeClass(focusStr);
+
+          if (!$(this).is($pressed) && !$(this).is("[disabled]")) {
+            $(this).addClass(focusStr);
+          }
+          break;
+        case "focusout":
+          $(buttonStr).removeClass(focusStr);
+          break;
+      }
+    });
+  })();
+})(window, document, jQuery);
+
+// ==========================================================================
+//
+// Media
+// Adds additional media type support
+//
+// ==========================================================================
+(function($) {
+  "use strict";
+
+  // Object containing properties for each media type
+  var defaults = {
+    youtube: {
+      matcher: /(youtube\.com|youtu\.be|youtube\-nocookie\.com)\/(watch\?(.*&)?v=|v\/|u\/|embed\/?)?(videoseries\?list=(.*)|[\w-]{11}|\?listType=(.*)&list=(.*))(.*)/i,
+      params: {
+        autoplay: 1,
+        autohide: 1,
+        fs: 1,
+        rel: 0,
+        hd: 1,
+        wmode: "transparent",
+        enablejsapi: 1,
+        html5: 1
+      },
+      paramPlace: 8,
+      type: "iframe",
+      url: "https://www.youtube-nocookie.com/embed/$4",
+      thumb: "https://img.youtube.com/vi/$4/hqdefault.jpg"
+    },
+
+    vimeo: {
+      matcher: /^.+vimeo.com\/(.*\/)?([\d]+)(.*)?/,
+      params: {
+        autoplay: 1,
+        hd: 1,
+        show_title: 1,
+        show_byline: 1,
+        show_portrait: 0,
+        fullscreen: 1
+      },
+      paramPlace: 3,
+      type: "iframe",
+      url: "//player.vimeo.com/video/$2"
+    },
+
+    instagram: {
+      matcher: /(instagr\.am|instagram\.com)\/p\/([a-zA-Z0-9_\-]+)\/?/i,
+      type: "image",
+      url: "//$1/p/$2/media/?size=l"
+    },
+
+    // Examples:
+    // http://maps.google.com/?ll=48.857995,2.294297&spn=0.007666,0.021136&t=m&z=16
+    // https://www.google.com/maps/@37.7852006,-122.4146355,14.65z
+    // https://www.google.com/maps/@52.2111123,2.9237542,6.61z?hl=en
+    // https://www.google.com/maps/place/Googleplex/@37.4220041,-122.0833494,17z/data=!4m5!3m4!1s0x0:0x6c296c66619367e0!8m2!3d37.4219998!4d-122.0840572
+    gmap_place: {
+      matcher: /(maps\.)?google\.([a-z]{2,3}(\.[a-z]{2})?)\/(((maps\/(place\/(.*)\/)?\@(.*),(\d+.?\d+?)z))|(\?ll=))(.*)?/i,
+      type: "iframe",
+      url: function(rez) {
+        return (
+          "//maps.google." +
+          rez[2] +
+          "/?ll=" +
+          (rez[9] ? rez[9] + "&z=" + Math.floor(rez[10]) + (rez[12] ? rez[12].replace(/^\//, "&") : "") : rez[12] + "").replace(/\?/, "&") +
+          "&output=" +
+          (rez[12] && rez[12].indexOf("layer=c") > 0 ? "svembed" : "embed")
+        );
+      }
+    },
+
+    // Examples:
+    // https://www.google.com/maps/search/Empire+State+Building/
+    // https://www.google.com/maps/search/?api=1&query=centurylink+field
+    // https://www.google.com/maps/search/?api=1&query=47.5951518,-122.3316393
+    gmap_search: {
+      matcher: /(maps\.)?google\.([a-z]{2,3}(\.[a-z]{2})?)\/(maps\/search\/)(.*)/i,
+      type: "iframe",
+      url: function(rez) {
+        return "//maps.google." + rez[2] + "/maps?q=" + rez[5].replace("query=", "q=").replace("api=1", "") + "&output=embed";
+      }
+    }
+  };
+
+  // Formats matching url to final form
+  var format = function(url, rez, params) {
+    if (!url) {
+      return;
+    }
+
+    params = params || "";
+
+    if ($.type(params) === "object") {
+      params = $.param(params, true);
+    }
+
+    $.each(rez, function(key, value) {
+      url = url.replace("$" + key, value || "");
+    });
+
+    if (params.length) {
+      url += (url.indexOf("?") > 0 ? "&" : "?") + params;
+    }
+
+    return url;
+  };
+
+  $(document).on("objectNeedsType.fb", function(e, instance, item) {
+    var url = item.src || "",
+      type = false,
+      media,
+      thumb,
+      rez,
+      params,
+      urlParams,
+      paramObj,
+      provider;
+
+    media = $.extend(true, {}, defaults, item.opts.media);
+
+    // Look for any matching media type
+    $.each(media, function(providerName, providerOpts) {
+      rez = url.match(providerOpts.matcher);
+
+      if (!rez) {
+        return;
+      }
+
+      type = providerOpts.type;
+      provider = providerName;
+      paramObj = {};
+
+      if (providerOpts.paramPlace && rez[providerOpts.paramPlace]) {
+        urlParams = rez[providerOpts.paramPlace];
+
+        if (urlParams[0] == "?") {
+          urlParams = urlParams.substring(1);
+        }
+
+        urlParams = urlParams.split("&");
+
+        for (var m = 0; m < urlParams.length; ++m) {
+          var p = urlParams[m].split("=", 2);
+
+          if (p.length == 2) {
+            paramObj[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+          }
+        }
+      }
+
+      params = $.extend(true, {}, providerOpts.params, item.opts[providerName], paramObj);
+
+      url =
+        $.type(providerOpts.url) === "function" ? providerOpts.url.call(this, rez, params, item) : format(providerOpts.url, rez, params);
+
+      thumb =
+        $.type(providerOpts.thumb) === "function" ? providerOpts.thumb.call(this, rez, params, item) : format(providerOpts.thumb, rez);
+
+      if (providerName === "youtube") {
+        url = url.replace(/&t=((\d+)m)?(\d+)s/, function(match, p1, m, s) {
+          return "&start=" + ((m ? parseInt(m, 10) * 60 : 0) + parseInt(s, 10));
+        });
+      } else if (providerName === "vimeo") {
+        url = url.replace("&%23", "#");
+      }
+
+      return false;
+    });
+
+    // If it is found, then change content type and update the url
+
+    if (type) {
+      if (!item.opts.thumb && !(item.opts.$thumb && item.opts.$thumb.length)) {
+        item.opts.thumb = thumb;
+      }
+
+      if (type === "iframe") {
+        item.opts = $.extend(true, item.opts, {
+          iframe: {
+            preload: false,
+            attr: {
+              scrolling: "no"
+            }
+          }
+        });
+      }
+
+      $.extend(item, {
+        type: type,
+        src: url,
+        origSrc: item.src,
+        contentSource: provider,
+        contentType: type === "image" ? "image" : provider == "gmap_place" || provider == "gmap_search" ? "map" : "video"
+      });
+    } else if (url) {
+      item.type = item.opts.defaultType;
+    }
+  });
+
+  // Load YouTube/Video API on request to detect when video finished playing
+  var VideoAPILoader = {
+    youtube: {
+      src: "https://www.youtube.com/iframe_api",
+      class: "YT",
+      loading: false,
+      loaded: false
+    },
+
+    vimeo: {
+      src: "https://player.vimeo.com/api/player.js",
+      class: "Vimeo",
+      loading: false,
+      loaded: false
+    },
+
+    load: function(vendor) {
+      var _this = this,
+        script;
+
+      if (this[vendor].loaded) {
+        setTimeout(function() {
+          _this.done(vendor);
+        });
+        return;
+      }
+
+      if (this[vendor].loading) {
+        return;
+      }
+
+      this[vendor].loading = true;
+
+      script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src = this[vendor].src;
+
+      if (vendor === "youtube") {
+        window.onYouTubeIframeAPIReady = function() {
+          _this[vendor].loaded = true;
+          _this.done(vendor);
+        };
+      } else {
+        script.onload = function() {
+          _this[vendor].loaded = true;
+          _this.done(vendor);
+        };
+      }
+
+      document.body.appendChild(script);
+    },
+    done: function(vendor) {
+      var instance, $el, player;
+
+      if (vendor === "youtube") {
+        delete window.onYouTubeIframeAPIReady;
+      }
+
+      instance = $.fancybox.getInstance();
+
+      if (instance) {
+        $el = instance.current.$content.find("iframe");
+
+        if (vendor === "youtube" && YT !== undefined && YT) {
+          player = new YT.Player($el.attr("id"), {
+            events: {
+              onStateChange: function(e) {
+                if (e.data == 0) {
+                  instance.next();
+                }
+              }
+            }
+          });
+        } else if (vendor === "vimeo" && Vimeo !== undefined && Vimeo) {
+          player = new Vimeo.Player($el);
+
+          player.on("ended", function() {
+            instance.next();
+          });
+        }
+      }
+    }
+  };
+
+  $(document).on({
+    "afterShow.fb": function(e, instance, current) {
+      if (instance.group.length > 1 && (current.contentSource === "youtube" || current.contentSource === "vimeo")) {
+        VideoAPILoader.load(current.contentSource);
+      }
+    }
+  });
+})(jQuery);
+
+// ==========================================================================
+//
+// Guestures
+// Adds touch guestures, handles click and tap events
+//
+// ==========================================================================
+(function(window, document, $) {
+  "use strict";
+
+  var requestAFrame = (function() {
+    return (
+      window.requestAnimationFrame ||
+      window.webkitRequestAnimationFrame ||
+      window.mozRequestAnimationFrame ||
+      window.oRequestAnimationFrame ||
+      // if all else fails, use setTimeout
+      function(callback) {
+        return window.setTimeout(callback, 1000 / 60);
+      }
+    );
+  })();
+
+  var cancelAFrame = (function() {
+    return (
+      window.cancelAnimationFrame ||
+      window.webkitCancelAnimationFrame ||
+      window.mozCancelAnimationFrame ||
+      window.oCancelAnimationFrame ||
+      function(id) {
+        window.clearTimeout(id);
+      }
+    );
+  })();
+
+  var getPointerXY = function(e) {
+    var result = [];
+
+    e = e.originalEvent || e || window.e;
+    e = e.touches && e.touches.length ? e.touches : e.changedTouches && e.changedTouches.length ? e.changedTouches : [e];
+
+    for (var key in e) {
+      if (e[key].pageX) {
+        result.push({
+          x: e[key].pageX,
+          y: e[key].pageY
+        });
+      } else if (e[key].clientX) {
+        result.push({
+          x: e[key].clientX,
+          y: e[key].clientY
+        });
+      }
+    }
+
+    return result;
+  };
+
+  var distance = function(point2, point1, what) {
+    if (!point1 || !point2) {
+      return 0;
+    }
+
+    if (what === "x") {
+      return point2.x - point1.x;
+    } else if (what === "y") {
+      return point2.y - point1.y;
+    }
+
+    return Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
+  };
+
+  var isClickable = function($el) {
+    if (
+      $el.is('a,area,button,[role="button"],input,label,select,summary,textarea,video,audio,iframe') ||
+      $.isFunction($el.get(0).onclick) ||
+      $el.data("selectable")
+    ) {
+      return true;
+    }
+
+    // Check for attributes like data-fancybox-next or data-fancybox-close
+    for (var i = 0, atts = $el[0].attributes, n = atts.length; i < n; i++) {
+      if (atts[i].nodeName.substr(0, 14) === "data-fancybox-") {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  var hasScrollbars = function(el) {
+    var overflowY = window.getComputedStyle(el)["overflow-y"],
+      overflowX = window.getComputedStyle(el)["overflow-x"],
+      vertical = (overflowY === "scroll" || overflowY === "auto") && el.scrollHeight > el.clientHeight,
+      horizontal = (overflowX === "scroll" || overflowX === "auto") && el.scrollWidth > el.clientWidth;
+
+    return vertical || horizontal;
+  };
+
+  var isScrollable = function($el) {
+    var rez = false;
+
+    while (true) {
+      rez = hasScrollbars($el.get(0));
+
+      if (rez) {
+        break;
+      }
+
+      $el = $el.parent();
+
+      if (!$el.length || $el.hasClass("fancybox-stage") || $el.is("body")) {
+        break;
+      }
+    }
+
+    return rez;
+  };
+
+  var Guestures = function(instance) {
+    var self = this;
+
+    self.instance = instance;
+
+    self.$bg = instance.$refs.bg;
+    self.$stage = instance.$refs.stage;
+    self.$container = instance.$refs.container;
+
+    self.destroy();
+
+    self.$container.on("touchstart.fb.touch mousedown.fb.touch", $.proxy(self, "ontouchstart"));
+  };
+
+  Guestures.prototype.destroy = function() {
+    var self = this;
+
+    self.$container.off(".fb.touch");
+
+    $(document).off(".fb.touch");
+
+    if (self.requestId) {
+      cancelAFrame(self.requestId);
+      self.requestId = null;
+    }
+
+    if (self.tapped) {
+      clearTimeout(self.tapped);
+      self.tapped = null;
+    }
+  };
+
+  Guestures.prototype.ontouchstart = function(e) {
+    var self = this,
+      $target = $(e.target),
+      instance = self.instance,
+      current = instance.current,
+      $slide = current.$slide,
+      $content = current.$content,
+      isTouchDevice = e.type == "touchstart";
+
+    // Do not respond to both (touch and mouse) events
+    if (isTouchDevice) {
+      self.$container.off("mousedown.fb.touch");
+    }
+
+    // Ignore right click
+    if (e.originalEvent && e.originalEvent.button == 2) {
+      return;
+    }
+
+    // Ignore taping on links, buttons, input elements
+    if (!$slide.length || !$target.length || isClickable($target) || isClickable($target.parent())) {
+      return;
+    }
+    // Ignore clicks on the scrollbar
+    if (!$target.is("img") && e.originalEvent.clientX > $target[0].clientWidth + $target.offset().left) {
+      return;
+    }
+
+    // Ignore clicks while zooming or closing
+    if (!current || instance.isAnimating || current.$slide.hasClass("fancybox-animated")) {
+      e.stopPropagation();
+      e.preventDefault();
+
+      return;
+    }
+
+    self.realPoints = self.startPoints = getPointerXY(e);
+
+    if (!self.startPoints.length) {
+      return;
+    }
+
+    // Allow other scripts to catch touch event if "touch" is set to false
+    if (current.touch) {
+      e.stopPropagation();
+    }
+
+    self.startEvent = e;
+
+    self.canTap = true;
+    self.$target = $target;
+    self.$content = $content;
+    self.opts = current.opts.touch;
+
+    self.isPanning = false;
+    self.isSwiping = false;
+    self.isZooming = false;
+    self.isScrolling = false;
+    self.canPan = instance.canPan();
+
+    self.startTime = new Date().getTime();
+    self.distanceX = self.distanceY = self.distance = 0;
+
+    self.canvasWidth = Math.round($slide[0].clientWidth);
+    self.canvasHeight = Math.round($slide[0].clientHeight);
+
+    self.contentLastPos = null;
+    self.contentStartPos = $.fancybox.getTranslate(self.$content) || {top: 0, left: 0};
+    self.sliderStartPos = $.fancybox.getTranslate($slide);
+
+    // Since position will be absolute, but we need to make it relative to the stage
+    self.stagePos = $.fancybox.getTranslate(instance.$refs.stage);
+
+    self.sliderStartPos.top -= self.stagePos.top;
+    self.sliderStartPos.left -= self.stagePos.left;
+
+    self.contentStartPos.top -= self.stagePos.top;
+    self.contentStartPos.left -= self.stagePos.left;
+
+    $(document)
+      .off(".fb.touch")
+      .on(isTouchDevice ? "touchend.fb.touch touchcancel.fb.touch" : "mouseup.fb.touch mouseleave.fb.touch", $.proxy(self, "ontouchend"))
+      .on(isTouchDevice ? "touchmove.fb.touch" : "mousemove.fb.touch", $.proxy(self, "ontouchmove"));
+
+    if ($.fancybox.isMobile) {
+      document.addEventListener("scroll", self.onscroll, true);
+    }
+
+    // Skip if clicked outside the sliding area
+    if (!(self.opts || self.canPan) || !($target.is(self.$stage) || self.$stage.find($target).length)) {
+      if ($target.is(".fancybox-image")) {
+        e.preventDefault();
+      }
+
+      if (!($.fancybox.isMobile && $target.parents(".fancybox-caption").length)) {
+        return;
+      }
+    }
+
+    self.isScrollable = isScrollable($target) || isScrollable($target.parent());
+
+    // Check if element is scrollable and try to prevent default behavior (scrolling)
+    if (!($.fancybox.isMobile && self.isScrollable)) {
+      e.preventDefault();
+    }
+
+    // One finger or mouse click - swipe or pan an image
+    if (self.startPoints.length === 1 || current.hasError) {
+      if (self.canPan) {
+        $.fancybox.stop(self.$content);
+
+        self.isPanning = true;
+      } else {
+        self.isSwiping = true;
+      }
+
+      self.$container.addClass("fancybox-is-grabbing");
+    }
+
+    // Two fingers - zoom image
+    if (self.startPoints.length === 2 && current.type === "image" && (current.isLoaded || current.$ghost)) {
+      self.canTap = false;
+      self.isSwiping = false;
+      self.isPanning = false;
+
+      self.isZooming = true;
+
+      $.fancybox.stop(self.$content);
+
+      self.centerPointStartX = (self.startPoints[0].x + self.startPoints[1].x) * 0.5 - $(window).scrollLeft();
+      self.centerPointStartY = (self.startPoints[0].y + self.startPoints[1].y) * 0.5 - $(window).scrollTop();
+
+      self.percentageOfImageAtPinchPointX = (self.centerPointStartX - self.contentStartPos.left) / self.contentStartPos.width;
+      self.percentageOfImageAtPinchPointY = (self.centerPointStartY - self.contentStartPos.top) / self.contentStartPos.height;
+
+      self.startDistanceBetweenFingers = distance(self.startPoints[0], self.startPoints[1]);
+    }
+  };
+
+  Guestures.prototype.onscroll = function(e) {
+    var self = this;
+
+    self.isScrolling = true;
+
+    document.removeEventListener("scroll", self.onscroll, true);
+  };
+
+  Guestures.prototype.ontouchmove = function(e) {
+    var self = this;
+
+    // Make sure user has not released over iframe or disabled element
+    if (e.originalEvent.buttons !== undefined && e.originalEvent.buttons === 0) {
+      self.ontouchend(e);
+      return;
+    }
+
+    if (self.isScrolling) {
+      self.canTap = false;
+      return;
+    }
+
+    self.newPoints = getPointerXY(e);
+
+    if (!(self.opts || self.canPan) || !self.newPoints.length || !self.newPoints.length) {
+      return;
+    }
+
+    if (!(self.isSwiping && self.isSwiping === true)) {
+      e.preventDefault();
+    }
+
+    self.distanceX = distance(self.newPoints[0], self.startPoints[0], "x");
+    self.distanceY = distance(self.newPoints[0], self.startPoints[0], "y");
+
+    self.distance = distance(self.newPoints[0], self.startPoints[0]);
+
+    // Skip false ontouchmove events (Chrome)
+    if (self.distance > 0) {
+      if (self.isSwiping) {
+        self.onSwipe(e);
+      } else if (self.isPanning) {
+        self.onPan();
+      } else if (self.isZooming) {
+        self.onZoom();
+      }
+    }
+  };
+
+  Guestures.prototype.onSwipe = function(e) {
+    var self = this,
+      instance = self.instance,
+      swiping = self.isSwiping,
+      left = self.sliderStartPos.left || 0,
+      angle;
+
+    // If direction is not yet determined
+    if (swiping === true) {
+      // We need at least 10px distance to correctly calculate an angle
+      if (Math.abs(self.distance) > 10) {
+        self.canTap = false;
+
+        if (instance.group.length < 2 && self.opts.vertical) {
+          self.isSwiping = "y";
+        } else if (instance.isDragging || self.opts.vertical === false || (self.opts.vertical === "auto" && $(window).width() > 800)) {
+          self.isSwiping = "x";
+        } else {
+          angle = Math.abs((Math.atan2(self.distanceY, self.distanceX) * 180) / Math.PI);
+
+          self.isSwiping = angle > 45 && angle < 135 ? "y" : "x";
+        }
+
+        if (self.isSwiping === "y" && $.fancybox.isMobile && self.isScrollable) {
+          self.isScrolling = true;
+
+          return;
+        }
+
+        instance.isDragging = self.isSwiping;
+
+        // Reset points to avoid jumping, because we dropped first swipes to calculate the angle
+        self.startPoints = self.newPoints;
+
+        $.each(instance.slides, function(index, slide) {
+          var slidePos, stagePos;
+
+          $.fancybox.stop(slide.$slide);
+
+          slidePos = $.fancybox.getTranslate(slide.$slide);
+          stagePos = $.fancybox.getTranslate(instance.$refs.stage);
+
+          slide.$slide
+            .css({
+              transform: "",
+              opacity: "",
+              "transition-duration": ""
+            })
+            .removeClass("fancybox-animated")
+            .removeClass(function(index, className) {
+              return (className.match(/(^|\s)fancybox-fx-\S+/g) || []).join(" ");
+            });
+
+          if (slide.pos === instance.current.pos) {
+            self.sliderStartPos.top = slidePos.top - stagePos.top;
+            self.sliderStartPos.left = slidePos.left - stagePos.left;
+          }
+
+          $.fancybox.setTranslate(slide.$slide, {
+            top: slidePos.top - stagePos.top,
+            left: slidePos.left - stagePos.left
+          });
+        });
+
+        // Stop slideshow
+        if (instance.SlideShow && instance.SlideShow.isActive) {
+          instance.SlideShow.stop();
+        }
+      }
+
+      return;
+    }
+
+    // Sticky edges
+    if (swiping == "x") {
+      if (
+        self.distanceX > 0 &&
+        (self.instance.group.length < 2 || (self.instance.current.index === 0 && !self.instance.current.opts.loop))
+      ) {
+        left = left + Math.pow(self.distanceX, 0.8);
+      } else if (
+        self.distanceX < 0 &&
+        (self.instance.group.length < 2 ||
+          (self.instance.current.index === self.instance.group.length - 1 && !self.instance.current.opts.loop))
+      ) {
+        left = left - Math.pow(-self.distanceX, 0.8);
+      } else {
+        left = left + self.distanceX;
+      }
+    }
+
+    self.sliderLastPos = {
+      top: swiping == "x" ? 0 : self.sliderStartPos.top + self.distanceY,
+      left: left
+    };
+
+    if (self.requestId) {
+      cancelAFrame(self.requestId);
+
+      self.requestId = null;
+    }
+
+    self.requestId = requestAFrame(function() {
+      if (self.sliderLastPos) {
+        $.each(self.instance.slides, function(index, slide) {
+          var pos = slide.pos - self.instance.currPos;
+
+          $.fancybox.setTranslate(slide.$slide, {
+            top: self.sliderLastPos.top,
+            left: self.sliderLastPos.left + pos * self.canvasWidth + pos * slide.opts.gutter
+          });
+        });
+
+        self.$container.addClass("fancybox-is-sliding");
+      }
+    });
+  };
+
+  Guestures.prototype.onPan = function() {
+    var self = this;
+
+    // Prevent accidental movement (sometimes, when tapping casually, finger can move a bit)
+    if (distance(self.newPoints[0], self.realPoints[0]) < ($.fancybox.isMobile ? 10 : 5)) {
+      self.startPoints = self.newPoints;
+      return;
+    }
+
+    self.canTap = false;
+
+    self.contentLastPos = self.limitMovement();
+
+    if (self.requestId) {
+      cancelAFrame(self.requestId);
+    }
+
+    self.requestId = requestAFrame(function() {
+      $.fancybox.setTranslate(self.$content, self.contentLastPos);
+    });
+  };
+
+  // Make panning sticky to the edges
+  Guestures.prototype.limitMovement = function() {
+    var self = this;
+
+    var canvasWidth = self.canvasWidth;
+    var canvasHeight = self.canvasHeight;
+
+    var distanceX = self.distanceX;
+    var distanceY = self.distanceY;
+
+    var contentStartPos = self.contentStartPos;
+
+    var currentOffsetX = contentStartPos.left;
+    var currentOffsetY = contentStartPos.top;
+
+    var currentWidth = contentStartPos.width;
+    var currentHeight = contentStartPos.height;
+
+    var minTranslateX, minTranslateY, maxTranslateX, maxTranslateY, newOffsetX, newOffsetY;
+
+    if (currentWidth > canvasWidth) {
+      newOffsetX = currentOffsetX + distanceX;
+    } else {
+      newOffsetX = currentOffsetX;
+    }
+
+    newOffsetY = currentOffsetY + distanceY;
+
+    // Slow down proportionally to traveled distance
+    minTranslateX = Math.max(0, canvasWidth * 0.5 - currentWidth * 0.5);
+    minTranslateY = Math.max(0, canvasHeight * 0.5 - currentHeight * 0.5);
+
+    maxTranslateX = Math.min(canvasWidth - currentWidth, canvasWidth * 0.5 - currentWidth * 0.5);
+    maxTranslateY = Math.min(canvasHeight - currentHeight, canvasHeight * 0.5 - currentHeight * 0.5);
+
+    //   ->
+    if (distanceX > 0 && newOffsetX > minTranslateX) {
+      newOffsetX = minTranslateX - 1 + Math.pow(-minTranslateX + currentOffsetX + distanceX, 0.8) || 0;
+    }
+
+    //    <-
+    if (distanceX < 0 && newOffsetX < maxTranslateX) {
+      newOffsetX = maxTranslateX + 1 - Math.pow(maxTranslateX - currentOffsetX - distanceX, 0.8) || 0;
+    }
+
+    //   \/
+    if (distanceY > 0 && newOffsetY > minTranslateY) {
+      newOffsetY = minTranslateY - 1 + Math.pow(-minTranslateY + currentOffsetY + distanceY, 0.8) || 0;
+    }
+
+    //   /\
+    if (distanceY < 0 && newOffsetY < maxTranslateY) {
+      newOffsetY = maxTranslateY + 1 - Math.pow(maxTranslateY - currentOffsetY - distanceY, 0.8) || 0;
+    }
+
+    return {
+      top: newOffsetY,
+      left: newOffsetX
+    };
+  };
+
+  Guestures.prototype.limitPosition = function(newOffsetX, newOffsetY, newWidth, newHeight) {
+    var self = this;
+
+    var canvasWidth = self.canvasWidth;
+    var canvasHeight = self.canvasHeight;
+
+    if (newWidth > canvasWidth) {
+      newOffsetX = newOffsetX > 0 ? 0 : newOffsetX;
+      newOffsetX = newOffsetX < canvasWidth - newWidth ? canvasWidth - newWidth : newOffsetX;
+    } else {
+      // Center horizontally
+      newOffsetX = Math.max(0, canvasWidth / 2 - newWidth / 2);
+    }
+
+    if (newHeight > canvasHeight) {
+      newOffsetY = newOffsetY > 0 ? 0 : newOffsetY;
+      newOffsetY = newOffsetY < canvasHeight - newHeight ? canvasHeight - newHeight : newOffsetY;
+    } else {
+      // Center vertically
+      newOffsetY = Math.max(0, canvasHeight / 2 - newHeight / 2);
+    }
+
+    return {
+      top: newOffsetY,
+      left: newOffsetX
+    };
+  };
+
+  Guestures.prototype.onZoom = function() {
+    var self = this;
+
+    // Calculate current distance between points to get pinch ratio and new width and height
+    var contentStartPos = self.contentStartPos;
+
+    var currentWidth = contentStartPos.width;
+    var currentHeight = contentStartPos.height;
+
+    var currentOffsetX = contentStartPos.left;
+    var currentOffsetY = contentStartPos.top;
+
+    var endDistanceBetweenFingers = distance(self.newPoints[0], self.newPoints[1]);
+
+    var pinchRatio = endDistanceBetweenFingers / self.startDistanceBetweenFingers;
+
+    var newWidth = Math.floor(currentWidth * pinchRatio);
+    var newHeight = Math.floor(currentHeight * pinchRatio);
+
+    // This is the translation due to pinch-zooming
+    var translateFromZoomingX = (currentWidth - newWidth) * self.percentageOfImageAtPinchPointX;
+    var translateFromZoomingY = (currentHeight - newHeight) * self.percentageOfImageAtPinchPointY;
+
+    // Point between the two touches
+    var centerPointEndX = (self.newPoints[0].x + self.newPoints[1].x) / 2 - $(window).scrollLeft();
+    var centerPointEndY = (self.newPoints[0].y + self.newPoints[1].y) / 2 - $(window).scrollTop();
+
+    // And this is the translation due to translation of the centerpoint
+    // between the two fingers
+    var translateFromTranslatingX = centerPointEndX - self.centerPointStartX;
+    var translateFromTranslatingY = centerPointEndY - self.centerPointStartY;
+
+    // The new offset is the old/current one plus the total translation
+    var newOffsetX = currentOffsetX + (translateFromZoomingX + translateFromTranslatingX);
+    var newOffsetY = currentOffsetY + (translateFromZoomingY + translateFromTranslatingY);
+
+    var newPos = {
+      top: newOffsetY,
+      left: newOffsetX,
+      scaleX: pinchRatio,
+      scaleY: pinchRatio
+    };
+
+    self.canTap = false;
+
+    self.newWidth = newWidth;
+    self.newHeight = newHeight;
+
+    self.contentLastPos = newPos;
+
+    if (self.requestId) {
+      cancelAFrame(self.requestId);
+    }
+
+    self.requestId = requestAFrame(function() {
+      $.fancybox.setTranslate(self.$content, self.contentLastPos);
+    });
+  };
+
+  Guestures.prototype.ontouchend = function(e) {
+    var self = this;
+
+    var swiping = self.isSwiping;
+    var panning = self.isPanning;
+    var zooming = self.isZooming;
+    var scrolling = self.isScrolling;
+
+    self.endPoints = getPointerXY(e);
+    self.dMs = Math.max(new Date().getTime() - self.startTime, 1);
+
+    self.$container.removeClass("fancybox-is-grabbing");
+
+    $(document).off(".fb.touch");
+
+    document.removeEventListener("scroll", self.onscroll, true);
+
+    if (self.requestId) {
+      cancelAFrame(self.requestId);
+
+      self.requestId = null;
+    }
+
+    self.isSwiping = false;
+    self.isPanning = false;
+    self.isZooming = false;
+    self.isScrolling = false;
+
+    self.instance.isDragging = false;
+
+    if (self.canTap) {
+      return self.onTap(e);
+    }
+
+    self.speed = 100;
+
+    // Speed in px/ms
+    self.velocityX = (self.distanceX / self.dMs) * 0.5;
+    self.velocityY = (self.distanceY / self.dMs) * 0.5;
+
+    if (panning) {
+      self.endPanning();
+    } else if (zooming) {
+      self.endZooming();
+    } else {
+      self.endSwiping(swiping, scrolling);
+    }
+
+    return;
+  };
+
+  Guestures.prototype.endSwiping = function(swiping, scrolling) {
+    var self = this,
+      ret = false,
+      len = self.instance.group.length,
+      distanceX = Math.abs(self.distanceX),
+      canAdvance = swiping == "x" && len > 1 && ((self.dMs > 130 && distanceX > 10) || distanceX > 50),
+      speedX = 300;
+
+    self.sliderLastPos = null;
+
+    // Close if swiped vertically / navigate if horizontally
+    if (swiping == "y" && !scrolling && Math.abs(self.distanceY) > 50) {
+      // Continue vertical movement
+      $.fancybox.animate(
+        self.instance.current.$slide,
+        {
+          top: self.sliderStartPos.top + self.distanceY + self.velocityY * 150,
+          opacity: 0
+        },
+        200
+      );
+      ret = self.instance.close(true, 250);
+    } else if (canAdvance && self.distanceX > 0) {
+      ret = self.instance.previous(speedX);
+    } else if (canAdvance && self.distanceX < 0) {
+      ret = self.instance.next(speedX);
+    }
+
+    if (ret === false && (swiping == "x" || swiping == "y")) {
+      self.instance.centerSlide(200);
+    }
+
+    self.$container.removeClass("fancybox-is-sliding");
+  };
+
+  // Limit panning from edges
+  // ========================
+  Guestures.prototype.endPanning = function() {
+    var self = this,
+      newOffsetX,
+      newOffsetY,
+      newPos;
+
+    if (!self.contentLastPos) {
+      return;
+    }
+
+    if (self.opts.momentum === false || self.dMs > 350) {
+      newOffsetX = self.contentLastPos.left;
+      newOffsetY = self.contentLastPos.top;
+    } else {
+      // Continue movement
+      newOffsetX = self.contentLastPos.left + self.velocityX * 500;
+      newOffsetY = self.contentLastPos.top + self.velocityY * 500;
+    }
+
+    newPos = self.limitPosition(newOffsetX, newOffsetY, self.contentStartPos.width, self.contentStartPos.height);
+
+    newPos.width = self.contentStartPos.width;
+    newPos.height = self.contentStartPos.height;
+
+    $.fancybox.animate(self.$content, newPos, 366);
+  };
+
+  Guestures.prototype.endZooming = function() {
+    var self = this;
+
+    var current = self.instance.current;
+
+    var newOffsetX, newOffsetY, newPos, reset;
+
+    var newWidth = self.newWidth;
+    var newHeight = self.newHeight;
+
+    if (!self.contentLastPos) {
+      return;
+    }
+
+    newOffsetX = self.contentLastPos.left;
+    newOffsetY = self.contentLastPos.top;
+
+    reset = {
+      top: newOffsetY,
+      left: newOffsetX,
+      width: newWidth,
+      height: newHeight,
+      scaleX: 1,
+      scaleY: 1
+    };
+
+    // Reset scalex/scaleY values; this helps for perfomance and does not break animation
+    $.fancybox.setTranslate(self.$content, reset);
+
+    if (newWidth < self.canvasWidth && newHeight < self.canvasHeight) {
+      self.instance.scaleToFit(150);
+    } else if (newWidth > current.width || newHeight > current.height) {
+      self.instance.scaleToActual(self.centerPointStartX, self.centerPointStartY, 150);
+    } else {
+      newPos = self.limitPosition(newOffsetX, newOffsetY, newWidth, newHeight);
+
+      $.fancybox.animate(self.$content, newPos, 150);
+    }
+  };
+
+  Guestures.prototype.onTap = function(e) {
+    var self = this;
+    var $target = $(e.target);
+
+    var instance = self.instance;
+    var current = instance.current;
+
+    var endPoints = (e && getPointerXY(e)) || self.startPoints;
+
+    var tapX = endPoints[0] ? endPoints[0].x - $(window).scrollLeft() - self.stagePos.left : 0;
+    var tapY = endPoints[0] ? endPoints[0].y - $(window).scrollTop() - self.stagePos.top : 0;
+
+    var where;
+
+    var process = function(prefix) {
+      var action = current.opts[prefix];
+
+      if ($.isFunction(action)) {
+        action = action.apply(instance, [current, e]);
+      }
+
+      if (!action) {
+        return;
+      }
+
+      switch (action) {
+        case "close":
+          instance.close(self.startEvent);
+
+          break;
+
+        case "toggleControls":
+          instance.toggleControls();
+
+          break;
+
+        case "next":
+          instance.next();
+
+          break;
+
+        case "nextOrClose":
+          if (instance.group.length > 1) {
+            instance.next();
+          } else {
+            instance.close(self.startEvent);
+          }
+
+          break;
+
+        case "zoom":
+          if (current.type == "image" && (current.isLoaded || current.$ghost)) {
+            if (instance.canPan()) {
+              instance.scaleToFit();
+            } else if (instance.isScaledDown()) {
+              instance.scaleToActual(tapX, tapY);
+            } else if (instance.group.length < 2) {
+              instance.close(self.startEvent);
+            }
+          }
+
+          break;
+      }
+    };
+
+    // Ignore right click
+    if (e.originalEvent && e.originalEvent.button == 2) {
+      return;
+    }
+
+    // Skip if clicked on the scrollbar
+    if (!$target.is("img") && tapX > $target[0].clientWidth + $target.offset().left) {
+      return;
+    }
+
+    // Check where is clicked
+    if ($target.is(".fancybox-bg,.fancybox-inner,.fancybox-outer,.fancybox-container")) {
+      where = "Outside";
+    } else if ($target.is(".fancybox-slide")) {
+      where = "Slide";
+    } else if (
+      instance.current.$content &&
+      instance.current.$content
+        .find($target)
+        .addBack()
+        .filter($target).length
+    ) {
+      where = "Content";
+    } else {
+      return;
+    }
+
+    // Check if this is a double tap
+    if (self.tapped) {
+      // Stop previously created single tap
+      clearTimeout(self.tapped);
+      self.tapped = null;
+
+      // Skip if distance between taps is too big
+      if (Math.abs(tapX - self.tapX) > 50 || Math.abs(tapY - self.tapY) > 50) {
+        return this;
+      }
+
+      // OK, now we assume that this is a double-tap
+      process("dblclick" + where);
+    } else {
+      // Single tap will be processed if user has not clicked second time within 300ms
+      // or there is no need to wait for double-tap
+      self.tapX = tapX;
+      self.tapY = tapY;
+
+      if (current.opts["dblclick" + where] && current.opts["dblclick" + where] !== current.opts["click" + where]) {
+        self.tapped = setTimeout(function() {
+          self.tapped = null;
+
+          if (!instance.isAnimating) {
+            process("click" + where);
+          }
+        }, 500);
+      } else {
+        process("click" + where);
+      }
+    }
+
+    return this;
+  };
+
+  $(document)
+    .on("onActivate.fb", function(e, instance) {
+      if (instance && !instance.Guestures) {
+        instance.Guestures = new Guestures(instance);
+      }
+    })
+    .on("beforeClose.fb", function(e, instance) {
+      if (instance && instance.Guestures) {
+        instance.Guestures.destroy();
+      }
+    });
+})(window, document, jQuery);
+
+// ==========================================================================
+//
+// SlideShow
+// Enables slideshow functionality
+//
+// Example of usage:
+// $.fancybox.getInstance().SlideShow.start()
+//
+// ==========================================================================
+(function(document, $) {
+  "use strict";
+
+  $.extend(true, $.fancybox.defaults, {
+    btnTpl: {
+      slideShow:
+        '<button data-fancybox-play class="fancybox-button fancybox-button--play" title="{{PLAY_START}}">' +
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 5.4v13.2l11-6.6z"/></svg>' +
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.33 5.75h2.2v12.5h-2.2V5.75zm5.15 0h2.2v12.5h-2.2V5.75z"/></svg>' +
+        "</button>"
+    },
+    slideShow: {
+      autoStart: false,
+      speed: 3000,
+      progress: true
+    }
+  });
+
+  var SlideShow = function(instance) {
+    this.instance = instance;
+    this.init();
+  };
+
+  $.extend(SlideShow.prototype, {
+    timer: null,
+    isActive: false,
+    $button: null,
+
+    init: function() {
+      var self = this,
+        instance = self.instance,
+        opts = instance.group[instance.currIndex].opts.slideShow;
+
+      self.$button = instance.$refs.toolbar.find("[data-fancybox-play]").on("click", function() {
+        self.toggle();
+      });
+
+      if (instance.group.length < 2 || !opts) {
+        self.$button.hide();
+      } else if (opts.progress) {
+        self.$progress = $('<div class="fancybox-progress"></div>').appendTo(instance.$refs.inner);
+      }
+    },
+
+    set: function(force) {
+      var self = this,
+        instance = self.instance,
+        current = instance.current;
+
+      // Check if reached last element
+      if (current && (force === true || current.opts.loop || instance.currIndex < instance.group.length - 1)) {
+        if (self.isActive && current.contentType !== "video") {
+          if (self.$progress) {
+            $.fancybox.animate(self.$progress.show(), {scaleX: 1}, current.opts.slideShow.speed);
+          }
+
+          self.timer = setTimeout(function() {
+            if (!instance.current.opts.loop && instance.current.index == instance.group.length - 1) {
+              instance.jumpTo(0);
+            } else {
+              instance.next();
+            }
+          }, current.opts.slideShow.speed);
+        }
+      } else {
+        self.stop();
+        instance.idleSecondsCounter = 0;
+        instance.showControls();
+      }
+    },
+
+    clear: function() {
+      var self = this;
+
+      clearTimeout(self.timer);
+
+      self.timer = null;
+
+      if (self.$progress) {
+        self.$progress.removeAttr("style").hide();
+      }
+    },
+
+    start: function() {
+      var self = this,
+        current = self.instance.current;
+
+      if (current) {
+        self.$button
+          .attr("title", (current.opts.i18n[current.opts.lang] || current.opts.i18n.en).PLAY_STOP)
+          .removeClass("fancybox-button--play")
+          .addClass("fancybox-button--pause");
+
+        self.isActive = true;
+
+        if (current.isComplete) {
+          self.set(true);
+        }
+
+        self.instance.trigger("onSlideShowChange", true);
+      }
+    },
+
+    stop: function() {
+      var self = this,
+        current = self.instance.current;
+
+      self.clear();
+
+      self.$button
+        .attr("title", (current.opts.i18n[current.opts.lang] || current.opts.i18n.en).PLAY_START)
+        .removeClass("fancybox-button--pause")
+        .addClass("fancybox-button--play");
+
+      self.isActive = false;
+
+      self.instance.trigger("onSlideShowChange", false);
+
+      if (self.$progress) {
+        self.$progress.removeAttr("style").hide();
+      }
+    },
+
+    toggle: function() {
+      var self = this;
+
+      if (self.isActive) {
+        self.stop();
+      } else {
+        self.start();
+      }
+    }
+  });
+
+  $(document).on({
+    "onInit.fb": function(e, instance) {
+      if (instance && !instance.SlideShow) {
+        instance.SlideShow = new SlideShow(instance);
+      }
+    },
+
+    "beforeShow.fb": function(e, instance, current, firstRun) {
+      var SlideShow = instance && instance.SlideShow;
+
+      if (firstRun) {
+        if (SlideShow && current.opts.slideShow.autoStart) {
+          SlideShow.start();
+        }
+      } else if (SlideShow && SlideShow.isActive) {
+        SlideShow.clear();
+      }
+    },
+
+    "afterShow.fb": function(e, instance, current) {
+      var SlideShow = instance && instance.SlideShow;
+
+      if (SlideShow && SlideShow.isActive) {
+        SlideShow.set();
+      }
+    },
+
+    "afterKeydown.fb": function(e, instance, current, keypress, keycode) {
+      var SlideShow = instance && instance.SlideShow;
+
+      // "P" or Spacebar
+      if (SlideShow && current.opts.slideShow && (keycode === 80 || keycode === 32) && !$(document.activeElement).is("button,a,input")) {
+        keypress.preventDefault();
+
+        SlideShow.toggle();
+      }
+    },
+
+    "beforeClose.fb onDeactivate.fb": function(e, instance) {
+      var SlideShow = instance && instance.SlideShow;
+
+      if (SlideShow) {
+        SlideShow.stop();
+      }
+    }
+  });
+
+  // Page Visibility API to pause slideshow when window is not active
+  $(document).on("visibilitychange", function() {
+    var instance = $.fancybox.getInstance(),
+      SlideShow = instance && instance.SlideShow;
+
+    if (SlideShow && SlideShow.isActive) {
+      if (document.hidden) {
+        SlideShow.clear();
+      } else {
+        SlideShow.set();
+      }
+    }
+  });
+})(document, jQuery);
+
+// ==========================================================================
+//
+// FullScreen
+// Adds fullscreen functionality
+//
+// ==========================================================================
+(function(document, $) {
+  "use strict";
+
+  // Collection of methods supported by user browser
+  var fn = (function() {
+    var fnMap = [
+      ["requestFullscreen", "exitFullscreen", "fullscreenElement", "fullscreenEnabled", "fullscreenchange", "fullscreenerror"],
+      // new WebKit
+      [
+        "webkitRequestFullscreen",
+        "webkitExitFullscreen",
+        "webkitFullscreenElement",
+        "webkitFullscreenEnabled",
+        "webkitfullscreenchange",
+        "webkitfullscreenerror"
+      ],
+      // old WebKit (Safari 5.1)
+      [
+        "webkitRequestFullScreen",
+        "webkitCancelFullScreen",
+        "webkitCurrentFullScreenElement",
+        "webkitCancelFullScreen",
+        "webkitfullscreenchange",
+        "webkitfullscreenerror"
+      ],
+      [
+        "mozRequestFullScreen",
+        "mozCancelFullScreen",
+        "mozFullScreenElement",
+        "mozFullScreenEnabled",
+        "mozfullscreenchange",
+        "mozfullscreenerror"
+      ],
+      ["msRequestFullscreen", "msExitFullscreen", "msFullscreenElement", "msFullscreenEnabled", "MSFullscreenChange", "MSFullscreenError"]
+    ];
+
+    var ret = {};
+
+    for (var i = 0; i < fnMap.length; i++) {
+      var val = fnMap[i];
+
+      if (val && val[1] in document) {
+        for (var j = 0; j < val.length; j++) {
+          ret[fnMap[0][j]] = val[j];
+        }
+
+        return ret;
+      }
+    }
+
+    return false;
+  })();
+
+  if (fn) {
+    var FullScreen = {
+      request: function(elem) {
+        elem = elem || document.documentElement;
+
+        elem[fn.requestFullscreen](elem.ALLOW_KEYBOARD_INPUT);
+      },
+      exit: function() {
+        document[fn.exitFullscreen]();
+      },
+      toggle: function(elem) {
+        elem = elem || document.documentElement;
+
+        if (this.isFullscreen()) {
+          this.exit();
+        } else {
+          this.request(elem);
+        }
+      },
+      isFullscreen: function() {
+        return Boolean(document[fn.fullscreenElement]);
+      },
+      enabled: function() {
+        return Boolean(document[fn.fullscreenEnabled]);
+      }
+    };
+
+    $.extend(true, $.fancybox.defaults, {
+      btnTpl: {
+        fullScreen:
+          '<button data-fancybox-fullscreen class="fancybox-button fancybox-button--fsenter" title="{{FULL_SCREEN}}">' +
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>' +
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 16h3v3h2v-5H5zm3-8H5v2h5V5H8zm6 11h2v-3h3v-2h-5zm2-11V5h-2v5h5V8z"/></svg>' +
+          "</button>"
+      },
+      fullScreen: {
+        autoStart: false
+      }
+    });
+
+    $(document).on(fn.fullscreenchange, function() {
+      var isFullscreen = FullScreen.isFullscreen(),
+        instance = $.fancybox.getInstance();
+
+      if (instance) {
+        // If image is zooming, then force to stop and reposition properly
+        if (instance.current && instance.current.type === "image" && instance.isAnimating) {
+          instance.isAnimating = false;
+
+          instance.update(true, true, 0);
+
+          if (!instance.isComplete) {
+            instance.complete();
+          }
+        }
+
+        instance.trigger("onFullscreenChange", isFullscreen);
+
+        instance.$refs.container.toggleClass("fancybox-is-fullscreen", isFullscreen);
+
+        instance.$refs.toolbar
+          .find("[data-fancybox-fullscreen]")
+          .toggleClass("fancybox-button--fsenter", !isFullscreen)
+          .toggleClass("fancybox-button--fsexit", isFullscreen);
+      }
+    });
+  }
+
+  $(document).on({
+    "onInit.fb": function(e, instance) {
+      var $container;
+
+      if (!fn) {
+        instance.$refs.toolbar.find("[data-fancybox-fullscreen]").remove();
+
+        return;
+      }
+
+      if (instance && instance.group[instance.currIndex].opts.fullScreen) {
+        $container = instance.$refs.container;
+
+        $container.on("click.fb-fullscreen", "[data-fancybox-fullscreen]", function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+
+          FullScreen.toggle();
+        });
+
+        if (instance.opts.fullScreen && instance.opts.fullScreen.autoStart === true) {
+          FullScreen.request();
+        }
+
+        // Expose API
+        instance.FullScreen = FullScreen;
+      } else if (instance) {
+        instance.$refs.toolbar.find("[data-fancybox-fullscreen]").hide();
+      }
+    },
+
+    "afterKeydown.fb": function(e, instance, current, keypress, keycode) {
+      // "F"
+      if (instance && instance.FullScreen && keycode === 70) {
+        keypress.preventDefault();
+
+        instance.FullScreen.toggle();
+      }
+    },
+
+    "beforeClose.fb": function(e, instance) {
+      if (instance && instance.FullScreen && instance.$refs.container.hasClass("fancybox-is-fullscreen")) {
+        FullScreen.exit();
+      }
+    }
+  });
+})(document, jQuery);
+
+// ==========================================================================
+//
+// Thumbs
+// Displays thumbnails in a grid
+//
+// ==========================================================================
+(function(document, $) {
+  "use strict";
+
+  var CLASS = "fancybox-thumbs",
+    CLASS_ACTIVE = CLASS + "-active";
+
+  // Make sure there are default values
+  $.fancybox.defaults = $.extend(
+    true,
+    {
+      btnTpl: {
+        thumbs:
+          '<button data-fancybox-thumbs class="fancybox-button fancybox-button--thumbs" title="{{THUMBS}}">' +
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.59 14.59h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76H5.65v-3.76zm8.94-4.47h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76h-3.76v-3.76zm-4.47 0h3.76v3.76H5.65v-3.76zm8.94-4.47h3.76v3.76h-3.76V5.65zm-4.47 0h3.76v3.76h-3.76V5.65zm-4.47 0h3.76v3.76H5.65V5.65z"/></svg>' +
+          "</button>"
+      },
+      thumbs: {
+        autoStart: false, // Display thumbnails on opening
+        hideOnClose: true, // Hide thumbnail grid when closing animation starts
+        parentEl: ".fancybox-container", // Container is injected into this element
+        axis: "y" // Vertical (y) or horizontal (x) scrolling
+      }
+    },
+    $.fancybox.defaults
+  );
+
+  var FancyThumbs = function(instance) {
+    this.init(instance);
+  };
+
+  $.extend(FancyThumbs.prototype, {
+    $button: null,
+    $grid: null,
+    $list: null,
+    isVisible: false,
+    isActive: false,
+
+    init: function(instance) {
+      var self = this,
+        group = instance.group,
+        enabled = 0;
+
+      self.instance = instance;
+      self.opts = group[instance.currIndex].opts.thumbs;
+
+      instance.Thumbs = self;
+
+      self.$button = instance.$refs.toolbar.find("[data-fancybox-thumbs]");
+
+      // Enable thumbs if at least two group items have thumbnails
+      for (var i = 0, len = group.length; i < len; i++) {
+        if (group[i].thumb) {
+          enabled++;
+        }
+
+        if (enabled > 1) {
+          break;
+        }
+      }
+
+      if (enabled > 1 && !!self.opts) {
+        self.$button.removeAttr("style").on("click", function() {
+          self.toggle();
+        });
+
+        self.isActive = true;
+      } else {
+        self.$button.hide();
+      }
+    },
+
+    create: function() {
+      var self = this,
+        instance = self.instance,
+        parentEl = self.opts.parentEl,
+        list = [],
+        src;
+
+      if (!self.$grid) {
+        // Create main element
+        self.$grid = $('<div class="' + CLASS + " " + CLASS + "-" + self.opts.axis + '"></div>').appendTo(
+          instance.$refs.container
+            .find(parentEl)
+            .addBack()
+            .filter(parentEl)
+        );
+
+        // Add "click" event that performs gallery navigation
+        self.$grid.on("click", "a", function() {
+          instance.jumpTo($(this).attr("data-index"));
+        });
+      }
+
+      // Build the list
+      if (!self.$list) {
+        self.$list = $('<div class="' + CLASS + '__list">').appendTo(self.$grid);
+      }
+
+      $.each(instance.group, function(i, item) {
+        src = item.thumb;
+
+        if (!src && item.type === "image") {
+          src = item.src;
+        }
+
+        list.push(
+          '<a href="javascript:;" tabindex="0" data-index="' +
+            i +
+            '"' +
+            (src && src.length ? ' style="background-image:url(' + src + ')"' : 'class="fancybox-thumbs-missing"') +
+            "></a>"
+        );
+      });
+
+      self.$list[0].innerHTML = list.join("");
+
+      if (self.opts.axis === "x") {
+        // Set fixed width for list element to enable horizontal scrolling
+        self.$list.width(
+          parseInt(self.$grid.css("padding-right"), 10) +
+            instance.group.length *
+              self.$list
+                .children()
+                .eq(0)
+                .outerWidth(true)
+        );
+      }
+    },
+
+    focus: function(duration) {
+      var self = this,
+        $list = self.$list,
+        $grid = self.$grid,
+        thumb,
+        thumbPos;
+
+      if (!self.instance.current) {
+        return;
+      }
+
+      thumb = $list
+        .children()
+        .removeClass(CLASS_ACTIVE)
+        .filter('[data-index="' + self.instance.current.index + '"]')
+        .addClass(CLASS_ACTIVE);
+
+      thumbPos = thumb.position();
+
+      // Check if need to scroll to make current thumb visible
+      if (self.opts.axis === "y" && (thumbPos.top < 0 || thumbPos.top > $list.height() - thumb.outerHeight())) {
+        $list.stop().animate(
+          {
+            scrollTop: $list.scrollTop() + thumbPos.top
+          },
+          duration
+        );
+      } else if (
+        self.opts.axis === "x" &&
+        (thumbPos.left < $grid.scrollLeft() || thumbPos.left > $grid.scrollLeft() + ($grid.width() - thumb.outerWidth()))
+      ) {
+        $list
+          .parent()
+          .stop()
+          .animate(
+            {
+              scrollLeft: thumbPos.left
+            },
+            duration
+          );
+      }
+    },
+
+    update: function() {
+      var that = this;
+      that.instance.$refs.container.toggleClass("fancybox-show-thumbs", this.isVisible);
+
+      if (that.isVisible) {
+        if (!that.$grid) {
+          that.create();
+        }
+
+        that.instance.trigger("onThumbsShow");
+
+        that.focus(0);
+      } else if (that.$grid) {
+        that.instance.trigger("onThumbsHide");
+      }
+
+      // Update content position
+      that.instance.update();
+    },
+
+    hide: function() {
+      this.isVisible = false;
+      this.update();
+    },
+
+    show: function() {
+      this.isVisible = true;
+      this.update();
+    },
+
+    toggle: function() {
+      this.isVisible = !this.isVisible;
+      this.update();
+    }
+  });
+
+  $(document).on({
+    "onInit.fb": function(e, instance) {
+      var Thumbs;
+
+      if (instance && !instance.Thumbs) {
+        Thumbs = new FancyThumbs(instance);
+
+        if (Thumbs.isActive && Thumbs.opts.autoStart === true) {
+          Thumbs.show();
+        }
+      }
+    },
+
+    "beforeShow.fb": function(e, instance, item, firstRun) {
+      var Thumbs = instance && instance.Thumbs;
+
+      if (Thumbs && Thumbs.isVisible) {
+        Thumbs.focus(firstRun ? 0 : 250);
+      }
+    },
+
+    "afterKeydown.fb": function(e, instance, current, keypress, keycode) {
+      var Thumbs = instance && instance.Thumbs;
+
+      // "G"
+      if (Thumbs && Thumbs.isActive && keycode === 71) {
+        keypress.preventDefault();
+
+        Thumbs.toggle();
+      }
+    },
+
+    "beforeClose.fb": function(e, instance) {
+      var Thumbs = instance && instance.Thumbs;
+
+      if (Thumbs && Thumbs.isVisible && Thumbs.opts.hideOnClose !== false) {
+        Thumbs.$grid.hide();
+      }
+    }
+  });
+})(document, jQuery);
+
+//// ==========================================================================
+//
+// Share
+// Displays simple form for sharing current url
+//
+// ==========================================================================
+(function(document, $) {
+  "use strict";
+
+  $.extend(true, $.fancybox.defaults, {
+    btnTpl: {
+      share:
+        '<button data-fancybox-share class="fancybox-button fancybox-button--share" title="{{SHARE}}">' +
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2.55 19c1.4-8.4 9.1-9.8 11.9-9.8V5l7 7-7 6.3v-3.5c-2.8 0-10.5 2.1-11.9 4.2z"/></svg>' +
+        "</button>"
+    },
+    share: {
+      url: function(instance, item) {
+        return (
+          (!instance.currentHash && !(item.type === "inline" || item.type === "html") ? item.origSrc || item.src : false) || window.location
+        );
+      },
+      tpl:
+        '<div class="fancybox-share">' +
+        "<h1>{{SHARE}}</h1>" +
+        "<p>" +
+        '<a class="fancybox-share__button fancybox-share__button--fb" href="https://www.facebook.com/sharer/sharer.php?u={{url}}">' +
+        '<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="m287 456v-299c0-21 6-35 35-35h38v-63c-7-1-29-3-55-3-54 0-91 33-91 94v306m143-254h-205v72h196" /></svg>' +
+        "<span>Facebook</span>" +
+        "</a>" +
+        '<a class="fancybox-share__button fancybox-share__button--tw" href="https://twitter.com/intent/tweet?url={{url}}&text={{descr}}">' +
+        '<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="m456 133c-14 7-31 11-47 13 17-10 30-27 37-46-15 10-34 16-52 20-61-62-157-7-141 75-68-3-129-35-169-85-22 37-11 86 26 109-13 0-26-4-37-9 0 39 28 72 65 80-12 3-25 4-37 2 10 33 41 57 77 57-42 30-77 38-122 34 170 111 378-32 359-208 16-11 30-25 41-42z" /></svg>' +
+        "<span>Twitter</span>" +
+        "</a>" +
+        '<a class="fancybox-share__button fancybox-share__button--pt" href="https://www.pinterest.com/pin/create/button/?url={{url}}&description={{descr}}&media={{media}}">' +
+        '<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="m265 56c-109 0-164 78-164 144 0 39 15 74 47 87 5 2 10 0 12-5l4-19c2-6 1-8-3-13-9-11-15-25-15-45 0-58 43-110 113-110 62 0 96 38 96 88 0 67-30 122-73 122-24 0-42-19-36-44 6-29 20-60 20-81 0-19-10-35-31-35-25 0-44 26-44 60 0 21 7 36 7 36l-30 125c-8 37-1 83 0 87 0 3 4 4 5 2 2-3 32-39 42-75l16-64c8 16 31 29 56 29 74 0 124-67 124-157 0-69-58-132-146-132z" fill="#fff"/></svg>' +
+        "<span>Pinterest</span>" +
+        "</a>" +
+        "</p>" +
+        '<p><input class="fancybox-share__input" type="text" value="{{url_raw}}" onclick="select()" /></p>' +
+        "</div>"
+    }
+  });
+
+  function escapeHtml(string) {
+    var entityMap = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+      "/": "&#x2F;",
+      "`": "&#x60;",
+      "=": "&#x3D;"
+    };
+
+    return String(string).replace(/[&<>"'`=\/]/g, function(s) {
+      return entityMap[s];
+    });
+  }
+
+  $(document).on("click", "[data-fancybox-share]", function() {
+    var instance = $.fancybox.getInstance(),
+      current = instance.current || null,
+      url,
+      tpl;
+
+    if (!current) {
+      return;
+    }
+
+    if ($.type(current.opts.share.url) === "function") {
+      url = current.opts.share.url.apply(current, [instance, current]);
+    }
+
+    tpl = current.opts.share.tpl
+      .replace(/\{\{media\}\}/g, current.type === "image" ? encodeURIComponent(current.src) : "")
+      .replace(/\{\{url\}\}/g, encodeURIComponent(url))
+      .replace(/\{\{url_raw\}\}/g, escapeHtml(url))
+      .replace(/\{\{descr\}\}/g, instance.$caption ? encodeURIComponent(instance.$caption.text()) : "");
+
+    $.fancybox.open({
+      src: instance.translate(instance, tpl),
+      type: "html",
+      opts: {
+        touch: false,
+        animationEffect: false,
+        afterLoad: function(shareInstance, shareCurrent) {
+          // Close self if parent instance is closing
+          instance.$refs.container.one("beforeClose.fb", function() {
+            shareInstance.close(null, 0);
+          });
+
+          // Opening links in a popup window
+          shareCurrent.$content.find(".fancybox-share__button").click(function() {
+            window.open(this.href, "Share", "width=550, height=450");
+            return false;
+          });
+        },
+        mobile: {
+          autoFocus: false
+        }
+      }
+    });
+  });
+})(document, jQuery);
+
+// ==========================================================================
+//
+// Hash
+// Enables linking to each modal
+//
+// ==========================================================================
+(function(window, document, $) {
+  "use strict";
+
+  // Simple $.escapeSelector polyfill (for jQuery prior v3)
+  if (!$.escapeSelector) {
+    $.escapeSelector = function(sel) {
+      var rcssescape = /([\0-\x1f\x7f]|^-?\d)|^-$|[^\x80-\uFFFF\w-]/g;
+      var fcssescape = function(ch, asCodePoint) {
+        if (asCodePoint) {
+          // U+0000 NULL becomes U+FFFD REPLACEMENT CHARACTER
+          if (ch === "\0") {
+            return "\uFFFD";
+          }
+
+          // Control characters and (dependent upon position) numbers get escaped as code points
+          return ch.slice(0, -1) + "\\" + ch.charCodeAt(ch.length - 1).toString(16) + " ";
+        }
+
+        // Other potentially-special ASCII characters get backslash-escaped
+        return "\\" + ch;
+      };
+
+      return (sel + "").replace(rcssescape, fcssescape);
+    };
+  }
+
+  // Get info about gallery name and current index from url
+  function parseUrl() {
+    var hash = window.location.hash.substr(1),
+      rez = hash.split("-"),
+      index = rez.length > 1 && /^\+?\d+$/.test(rez[rez.length - 1]) ? parseInt(rez.pop(-1), 10) || 1 : 1,
+      gallery = rez.join("-");
+
+    return {
+      hash: hash,
+      /* Index is starting from 1 */
+      index: index < 1 ? 1 : index,
+      gallery: gallery
+    };
+  }
+
+  // Trigger click evnt on links to open new fancyBox instance
+  function triggerFromUrl(url) {
+    if (url.gallery !== "") {
+      // If we can find element matching 'data-fancybox' atribute,
+      // then triggering click event should start fancyBox
+      $("[data-fancybox='" + $.escapeSelector(url.gallery) + "']")
+        .eq(url.index - 1)
+        .focus()
+        .trigger("click.fb-start");
+    }
+  }
+
+  // Get gallery name from current instance
+  function getGalleryID(instance) {
+    var opts, ret;
+
+    if (!instance) {
+      return false;
+    }
+
+    opts = instance.current ? instance.current.opts : instance.opts;
+    ret = opts.hash || (opts.$orig ? opts.$orig.data("fancybox") || opts.$orig.data("fancybox-trigger") : "");
+
+    return ret === "" ? false : ret;
+  }
+
+  // Start when DOM becomes ready
+  $(function() {
+    // Check if user has disabled this module
+    if ($.fancybox.defaults.hash === false) {
+      return;
+    }
+
+    // Update hash when opening/closing fancyBox
+    $(document).on({
+      "onInit.fb": function(e, instance) {
+        var url, gallery;
+
+        if (instance.group[instance.currIndex].opts.hash === false) {
+          return;
+        }
+
+        url = parseUrl();
+        gallery = getGalleryID(instance);
+
+        // Make sure gallery start index matches index from hash
+        if (gallery && url.gallery && gallery == url.gallery) {
+          instance.currIndex = url.index - 1;
+        }
+      },
+
+      "beforeShow.fb": function(e, instance, current, firstRun) {
+        var gallery;
+
+        if (!current || current.opts.hash === false) {
+          return;
+        }
+
+        // Check if need to update window hash
+        gallery = getGalleryID(instance);
+
+        if (!gallery) {
+          return;
+        }
+
+        // Variable containing last hash value set by fancyBox
+        // It will be used to determine if fancyBox needs to close after hash change is detected
+        instance.currentHash = gallery + (instance.group.length > 1 ? "-" + (current.index + 1) : "");
+
+        // If current hash is the same (this instance most likely is opened by hashchange), then do nothing
+        if (window.location.hash === "#" + instance.currentHash) {
+          return;
+        }
+
+        if (firstRun && !instance.origHash) {
+          instance.origHash = window.location.hash;
+        }
+
+        if (instance.hashTimer) {
+          clearTimeout(instance.hashTimer);
+        }
+
+        // Update hash
+        instance.hashTimer = setTimeout(function() {
+          if ("replaceState" in window.history) {
+            window.history[firstRun ? "pushState" : "replaceState"](
+              {},
+              document.title,
+              window.location.pathname + window.location.search + "#" + instance.currentHash
+            );
+
+            if (firstRun) {
+              instance.hasCreatedHistory = true;
+            }
+          } else {
+            window.location.hash = instance.currentHash;
+          }
+
+          instance.hashTimer = null;
+        }, 300);
+      },
+
+      "beforeClose.fb": function(e, instance, current) {
+        if (!current || current.opts.hash === false) {
+          return;
+        }
+
+        clearTimeout(instance.hashTimer);
+
+        // Goto previous history entry
+        if (instance.currentHash && instance.hasCreatedHistory) {
+          window.history.back();
+        } else if (instance.currentHash) {
+          if ("replaceState" in window.history) {
+            window.history.replaceState({}, document.title, window.location.pathname + window.location.search + (instance.origHash || ""));
+          } else {
+            window.location.hash = instance.origHash;
+          }
+        }
+
+        instance.currentHash = null;
+      }
+    });
+
+    // Check if need to start/close after url has changed
+    $(window).on("hashchange.fb", function() {
+      var url = parseUrl(),
+        fb = null;
+
+      // Find last fancyBox instance that has "hash"
+      $.each(
+        $(".fancybox-container")
+          .get()
+          .reverse(),
+        function(index, value) {
+          var tmp = $(value).data("FancyBox");
+
+          if (tmp && tmp.currentHash) {
+            fb = tmp;
+            return false;
+          }
+        }
+      );
+
+      if (fb) {
+        // Now, compare hash values
+        if (fb.currentHash !== url.gallery + "-" + url.index && !(url.index === 1 && fb.currentHash == url.gallery)) {
+          fb.currentHash = null;
+
+          fb.close();
+        }
+      } else if (url.gallery !== "") {
+        triggerFromUrl(url);
+      }
+    });
+
+    // Check current hash and trigger click event on matching element to start fancyBox, if needed
+    setTimeout(function() {
+      if (!$.fancybox.getInstance()) {
+        triggerFromUrl(parseUrl());
+      }
+    }, 50);
+  });
+})(window, document, jQuery);
+
+// ==========================================================================
+//
+// Wheel
+// Basic mouse weheel support for gallery navigation
+//
+// ==========================================================================
+(function(document, $) {
+  "use strict";
+
+  var prevTime = new Date().getTime();
+
+  $(document).on({
+    "onInit.fb": function(e, instance, current) {
+      instance.$refs.stage.on("mousewheel DOMMouseScroll wheel MozMousePixelScroll", function(e) {
+        var current = instance.current,
+          currTime = new Date().getTime();
+
+        if (instance.group.length < 2 || current.opts.wheel === false || (current.opts.wheel === "auto" && current.type !== "image")) {
+          return;
+        }
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (current.$slide.hasClass("fancybox-animated")) {
+          return;
+        }
+
+        e = e.originalEvent || e;
+
+        if (currTime - prevTime < 250) {
+          return;
+        }
+
+        prevTime = currTime;
+
+        instance[(-e.deltaY || -e.deltaX || e.wheelDelta || -e.detail) < 0 ? "next" : "previous"]();
+      });
+    }
+  });
+})(document, jQuery);
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(20);
+
+/***/ }),
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35094,7 +46954,7 @@ module.exports = __webpack_require__(18);
 
 var utils = __webpack_require__(0);
 var bind = __webpack_require__(5);
-var Axios = __webpack_require__(20);
+var Axios = __webpack_require__(22);
 var defaults = __webpack_require__(2);
 
 /**
@@ -35129,14 +46989,14 @@ axios.create = function create(instanceConfig) {
 
 // Expose Cancel & CancelToken
 axios.Cancel = __webpack_require__(10);
-axios.CancelToken = __webpack_require__(34);
+axios.CancelToken = __webpack_require__(36);
 axios.isCancel = __webpack_require__(9);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(35);
+axios.spread = __webpack_require__(37);
 
 module.exports = axios;
 
@@ -35145,7 +47005,7 @@ module.exports.default = axios;
 
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports) {
 
 /*!
@@ -35172,7 +47032,7 @@ function isSlowBuffer (obj) {
 
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35180,8 +47040,8 @@ function isSlowBuffer (obj) {
 
 var defaults = __webpack_require__(2);
 var utils = __webpack_require__(0);
-var InterceptorManager = __webpack_require__(29);
-var dispatchRequest = __webpack_require__(30);
+var InterceptorManager = __webpack_require__(31);
+var dispatchRequest = __webpack_require__(32);
 
 /**
  * Create a new instance of Axios
@@ -35258,7 +47118,7 @@ module.exports = Axios;
 
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35277,7 +47137,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35310,7 +47170,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35338,7 +47198,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
 
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35411,7 +47271,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35471,7 +47331,7 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35546,7 +47406,7 @@ module.exports = (
 
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35589,7 +47449,7 @@ module.exports = btoa;
 
 
 /***/ }),
-/* 28 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35649,7 +47509,7 @@ module.exports = (
 
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35708,18 +47568,18 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var transformData = __webpack_require__(31);
+var transformData = __webpack_require__(33);
 var isCancel = __webpack_require__(9);
 var defaults = __webpack_require__(2);
-var isAbsoluteURL = __webpack_require__(32);
-var combineURLs = __webpack_require__(33);
+var isAbsoluteURL = __webpack_require__(34);
+var combineURLs = __webpack_require__(35);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -35801,7 +47661,7 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35828,7 +47688,7 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-/* 32 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35849,7 +47709,7 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35870,7 +47730,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35934,7 +47794,7 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35968,7 +47828,7 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46931,10 +58791,10 @@ Vue.compile = compileToFunctions;
 
 module.exports = Vue;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(37).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(39).setImmediate))
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {var scope = (typeof global !== "undefined" && global) ||
@@ -46990,7 +58850,7 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(38);
+__webpack_require__(40);
 // On some exotic environments, it's not clear which object `setimmediate` was
 // able to install onto.  Search each possibility in the same order as the
 // `setimmediate` library.
@@ -47004,7 +58864,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -47197,15 +59057,15 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(6)))
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(40)
+var normalizeComponent = __webpack_require__(42)
 /* script */
-var __vue_script__ = __webpack_require__(41)
+var __vue_script__ = __webpack_require__(43)
 /* template */
-var __vue_template__ = __webpack_require__(42)
+var __vue_template__ = __webpack_require__(44)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -47244,7 +59104,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports) {
 
 /* globals __VUE_SSR_CONTEXT__ */
@@ -47353,7 +59213,7 @@ module.exports = function normalizeComponent (
 
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -47382,7 +59242,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -47425,10 +59285,31 @@ if (false) {
 }
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 46 */,
+/* 47 */,
+/* 48 */,
+/* 49 */,
+/* 50 */,
+/* 51 */,
+/* 52 */,
+/* 53 */,
+/* 54 */,
+/* 55 */
+/***/ (function(module, exports) {
+
+$('#exp-slider').sliderPro({
+			width: "100%",
+			height: 500,
+			arrows: true,
+			buttons: false
+
+});
 
 /***/ })
 /******/ ]);

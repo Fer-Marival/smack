@@ -12,6 +12,9 @@ try {
     window.$ = window.jQuery = require('jquery');
 
     require('bootstrap');
+    window.sliderPro = require('slider-pro').default;
+    window.fancyBox = require('@fancyapps/fancybox').default;
+
 } catch (e) {}
 
 /**

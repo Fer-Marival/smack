@@ -23,3 +23,6 @@ Route::get('/tours-terrestres', function () {
 Route::get('/cameras', function () {
     return view('frontend.camaras');
 });
+Route::get('/trips/snorkel', function () {
+    return view('frontend.single-experience');
+});

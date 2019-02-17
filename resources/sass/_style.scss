@@ -242,3 +242,27 @@ footer{
 		}
 	}
 }
+#sin-exp{
+	.exp-header{
+		width: 100%;
+		height: 550px;
+	}
+	section{
+		margin: 1.5em auto;
+	}
+	.exp-gallery{
+		@extend .row;
+		a{
+			@extend .col;
+		}
+	}
+	h3{
+		font-size: 22pt;
+		color: #232323;
+		line-height: 1.5;
+	}
+	h6{
+		font-size: 20pt;
+		color: #232323;
+	}
+}

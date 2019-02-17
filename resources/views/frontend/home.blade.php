@@ -24,18 +24,18 @@
               <div class="col shadow-flow">
               	 <img src="{!!asset('img/snorkel2.jpeg')!!}" class="img-fluid" alt="">
                 <div class="content">   
-                  Trips Acuaticos<br />
+                  Trips<br />
                   <a href="/tours-acuaticos" class="btn rounder">See details</a>
                 </div>
               </div>
-              <div class="col shadow-flow">
+              {{-- <div class="col shadow-flow">
               	 <img src="{!!asset('img/hikings.jpeg')!!}" class="img-fluid" alt="">
                 <div class="content">
          
                   Trips Terrestres <br />
                   <a href="/tours-terrestres" class="btn rounder">See details</a>
                 </div>
-              </div>
+              </div> --}}
               <div class="col shadow-flow">
               	<img src="{!!asset('img/transport.jpeg')!!}" class="img-fluid" alt="">
                 <div class="content">
