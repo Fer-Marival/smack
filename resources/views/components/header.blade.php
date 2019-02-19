@@ -3,7 +3,7 @@
 		<div class="row align-items-center justify-content-between">
 			<div class="col-md-2">
 				<div class="logo">
-		
+					<img src="{!!asset('img/logo.svg')!!}" alt="">
 				</div>
 			</div>
 			<div class="col-md-8">

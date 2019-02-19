@@ -26,3 +26,6 @@ Route::get('/cameras', function () {
 Route::get('/trips/snorkel', function () {
     return view('frontend.single-experience');
 });
+Route::get('/trips', function () {
+    return view('frontend.trips');
+});

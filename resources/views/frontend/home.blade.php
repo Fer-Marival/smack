@@ -11,7 +11,7 @@
                 </div>
            </div>
        </div>
-       <div class="container-fluid">
+       <div class="container-fluid bg-1">
         <h2 class="title m4">Servicios de Calidad</h2>
           <div class="row" id="services">
               <div class="col shadow-flow">
@@ -50,7 +50,7 @@
           <div class="container">
              <div class="row align-items-center">
                <div class="col-md-6">
-                 <span>Capture a beautifull moments</span>
+                 <span class="title">Capture a beautifull moments</span>
                  <p>Rent a Camera,</p>
                </div>
              </div>
@@ -88,6 +88,7 @@
           </div>
        </div>
        <div class="container-fluid" id="coach">
+        <div class="gradient-bar"></div>
          <div class="container">
            <div class="row">
             <div class="col-md-12">

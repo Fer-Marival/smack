@@ -3,8 +3,18 @@ body, html{
 	font-size: 14pt;
 	line-height: 1.5;
 }
+.bg-1{
+	background-image: url('/img/bg-1.jpg');
+	background-repeat: no-repeat;
+	background-position: bottom right;
+}
+.bg-2{
+	background-image: url('/img/bg-2.jpg');
+	background-repeat: no-repeat;
+	background-position: top left;
+}
 .gradient{
-    background-image: linear-gradient( 135deg, #7ce2f1 10%, #098fe0 100%);
+    background-image: $vd-gradient;
     padding-bottom: 190px;
 	margin-bottom: -190px;
 	.row .col {
@@ -46,8 +56,7 @@ body, html{
     }
 }
 #services{
-	max-width: 1800px;
-	width: 100%;
+	@extend .container;
 	margin: 1em auto;
 	.col{
 		background-color: white;
@@ -63,19 +72,36 @@ body, html{
 	}
 }
 #products{
-	max-width: 1800px;
-	width: 100%;
-	margin: 1em auto;
+	@extend .row;
+	margin: 3em auto;
 	.col{
+		@extend .shadow-flow;
 		background-color: white;
 		margin: 10px;
 		text-align: center;
 		border-radius: 4px;
 		.content{
-			margin-top: 10px;
 			color: #232323;
 			font-size: 14pt;
+			height: 80%;
 		}
+		.row{
+			height: 15%;
+			a{
+				@extend .col;
+				@extend .rounder;
+				text-align: center;
+				border-radius:0!important;
+				height: 100%;
+				padding-top: 14px !important;
+				&:nth-child(2){
+					background-image: none;
+					background: $vd-gradient;
+					-webkit-background-clip: text;
+					-webkit-text-fill-color: transparent
+				}
+			}
+		} 
 	}
 }
 #forget{
@@ -87,7 +113,7 @@ body, html{
 	padding-bottom: 190px;
 	margin-bottom: -190px;
 	.container{
-		padding: 15% 0;
+		padding: 7% 0;
 		span{
 			font-size: 40pt;
 			color: white;
@@ -100,6 +126,7 @@ body, html{
 	}
 }
 #acuatics{
+	background-color: white;
 	#video{
 	  width:100%;
 	  height:65vh;
@@ -130,8 +157,10 @@ body, html{
 	}
 }
 .rounder{
+	@extend .btn;
 	border-radius: 28px;
-	background-image: linear-gradient( 135deg, #7ce2f1 10%, #098fe0 100%);
+	padding: 5px 20px;
+	background-image: $vd-gradient;
 	color:white;
 	border: 0!important;
 	margin: 1em auto;
@@ -143,7 +172,7 @@ body, html{
     }
 }
 footer{
-	background-color:#0a4787;
+	background-color:#606060;
 	color: #dadae1;
 	text-align: center;
 	padding: 2em 0;
@@ -152,7 +181,11 @@ footer{
 
 #coach{
 	margin:2em auto;
-	background-color: #f9f9f9;
+	.gradient-bar{
+		background-image: $vd-gradient;
+		padding-bottom: 300px;
+		margin-bottom: -300px;
+	}
 	p{
 		text-align: center;
 		font-size: 12pt;
@@ -187,9 +220,11 @@ footer{
 	}
 }
 .title{
-	font-size: 2rem;
+	font-size: 2vw;
 	text-align: center;
-	color: black;
+	background: $vd-gradient;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent
 }
 .tour{
 	margin: 2em auto;
@@ -213,6 +248,7 @@ footer{
 .bicycle{ background-image: url('/img/bicycle.jpeg'); }
 .paddle{background-image: url('/img/paddle.jpeg');}
 .snorkel{background-image: url('/img/snorkel2.jpeg');}
+.kayak{background-image: url('/img/kayak.jpeg');}
 
 .gradient-left{
 	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#000000+0,000000+100&0.65+0,0+100;Neutral+Density */ /* FF3.6-15 */ /* Chrome10-25,Safari5.1-6 */
@@ -226,6 +262,13 @@ footer{
     background: -webkit-linear-gradient(left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%);
     background: -o-linear-gradient(left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%);
     background: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=1 ); /* IE6-9 */
+}
+.gradient-up{
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#000000+0,000000+100&0.65+0,0+100;Neutral+Density */ /* FF3.6-15 */ /* Chrome10-25,Safari5.1-6 */
+    background: -webkit-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%);
+    background: -o-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%);
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=1 ); /* IE6-9 */
 }
 .m4{
@@ -264,5 +307,22 @@ footer{
 	h6{
 		font-size: 20pt;
 		color: #232323;
+	}
+}
+.trips{
+	@extend #products;
+	@extend .row;
+	.col{
+		padding:0;
+		background-size: cover;
+		background-position: center center;
+		background-repeat: no-repeat;
+		.content{
+			@extend .gradient-up;
+			color: white!important;
+			font-size: 20pt!important;
+			padding-top: 220px;
+			height: 100%;
+		}
 	}
 }
