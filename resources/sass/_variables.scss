@@ -21,5 +21,12 @@ $cyan: #6cb2eb;
 
 $gradient-blue: linear-gradient( 135deg, #7ce2f1 10%, #098fe0 100%);
 $flow-shadow: 0px 0px 51px 0px rgba(0, 0, 0, 0.08), 0px 6px 18px 0px rgba(0, 0, 0, 0.05);
-$vd-gradient:linear-gradient( 135deg, #43CBFF 10%, #9708CC 100%);
+$vd-gradient-2:linear-gradient( 135deg, #43CBFF 10%, #9708CC 100%);
+$vd-gradient:linear-gradient(135deg, #93278f 0%,#2e3192 50%,#00ffff 100%); 
 
+.gradient-tre{
+	background: #93278f;
+	background: -moz-linear-gradient(-45deg, #93278f 0%, #2e3192 50%, #00ffff 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(-45deg, #93278f 0%,#2e3192 50%,#00ffff 100%); 
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#93278f', endColorstr='#00ffff',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
