@@ -3,8 +3,18 @@ body, html{
 	font-size: 14pt;
 	line-height: 1.5;
 }
+.bg-1{
+	background-image: url('/img/bg-1.jpg');
+	background-repeat: no-repeat;
+	background-position: bottom right;
+}
+.bg-2{
+	background-image: url('/img/bg-2.jpg');
+	background-repeat: no-repeat;
+	background-position: top left;
+}
 .gradient{
-    background-image: linear-gradient( 135deg, #7ce2f1 10%, #098fe0 100%);
+    background-image: $vd-gradient;
     padding-bottom: 190px;
 	margin-bottom: -190px;
 	.row .col {
@@ -26,6 +36,7 @@ body, html{
     background-position:top center;
     //padding-bottom: 190px;
 	//margin-bottom: -190px;
+	overflow: hidden;
 	.row .col {
 		p{
 			font-size: 28pt; 
@@ -46,36 +57,63 @@ body, html{
     }
 }
 #services{
-	max-width: 1800px;
-	width: 100%;
+	@extend .container;
 	margin: 1em auto;
 	.col{
 		background-color: white;
-		margin: 10px;
+		margin: 14px;
 		text-align: center;
 		padding: 0;
 		border-radius: 4px;
+		overflow: hidden;
+		.card{
+			overflow: hidden;
+		}
 		.content{
-			margin-top: 10px;
-			color: #232323;
-			font-size: 14pt;
+			color: white;
+			font-size: 18pt;
+			font-weight: 900;
+			text-transform: uppercase;
+			letter-spacing: 2px;
+			position: absolute;
+		    bottom: 0;
+		    height: 131px;
+		    width: 100%;
 		}
 	}
 }
 #products{
-	max-width: 1800px;
-	width: 100%;
-	margin: 1em auto;
+	@extend .row;
+	@extend .container;
+	margin: 3em auto;
 	.col{
+		@extend .shadow-flow;
 		background-color: white;
 		margin: 10px;
 		text-align: center;
 		border-radius: 4px;
 		.content{
-			margin-top: 10px;
 			color: #232323;
 			font-size: 14pt;
+			height: 80%;
 		}
+		.row{
+			height: 15%;
+			a{
+				@extend .col;
+				@extend .rounder;
+				text-align: center;
+				border-radius:0!important;
+				height: 100%;
+				padding-top: 14px !important;
+				&:nth-child(2){
+					background-image: none;
+					background: $vd-gradient;
+					-webkit-background-clip: text;
+					-webkit-text-fill-color: transparent
+				}
+			}
+		} 
 	}
 }
 #forget{
@@ -87,7 +125,7 @@ body, html{
 	padding-bottom: 190px;
 	margin-bottom: -190px;
 	.container{
-		padding: 15% 0;
+		padding: 7% 0;
 		span{
 			font-size: 40pt;
 			color: white;
@@ -100,9 +138,12 @@ body, html{
 	}
 }
 #acuatics{
+	background-color: white;
 	#video{
 	  width:100%;
-	  height:65vh;
+	  height:80vh;
+	  overflow: hidden;
+	  background: $vd-gradient;
 	  .video-container{
 	  	max-width: 1400px;
 	  	position: absolute;
@@ -120,18 +161,32 @@ body, html{
 	  }
 	}
 	#video-background{
-		position: absolute;
-	  right:0;
-	  bottom:0;
 	  min-width:100%;
 	  width:100%;
 	  height:auto;
-	  top: 0;
+	  opacity: .38;
 	}
 }
+#slider{
+	div{
+		border-right: 2px solid rgba(255,255,255, .3);
+		float: right;
+		padding-right: 40px;
+	}
+	.title{
+		font-size: 10vmin;
+		background-color: white;
+	}
+}
+#slider-right div p{
+	font-size: 7vmin!important;
+	padding-top: 15px;
+}
 .rounder{
+	@extend .btn;
 	border-radius: 28px;
-	background-image: linear-gradient( 135deg, #7ce2f1 10%, #098fe0 100%);
+	padding: 5px 20px;
+	background-image: $vd-gradient;
 	color:white;
 	border: 0!important;
 	margin: 1em auto;
@@ -140,19 +195,25 @@ body, html{
 	&:hover{
 		box-shadow: 0px 0px 114px 0px rgba(0, 0, 0, 0.08), 0px 30px 25px 0px rgba(0, 0, 0, 0.05);
     	transform: translateY(-5px);
+    	a{
+    		color: white;
+    		text-decoration: none;
+    	}
     }
 }
 footer{
-	background-color:#0a4787;
+	background-color:#606060;
 	color: #dadae1;
 	text-align: center;
 	padding: 2em 0;
 }
 .clear{height: 100px;}
 
+.gradient-bar{
+	background-image: $vd-gradient;
+}
 #coach{
 	margin:2em auto;
-	background-color: #f9f9f9;
 	p{
 		text-align: center;
 		font-size: 12pt;
@@ -187,9 +248,12 @@ footer{
 	}
 }
 .title{
-	font-size: 2rem;
+	font-size: 2vw;
 	text-align: center;
-	color: black;
+	background: $vd-gradient;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	font-weight: bold;
 }
 .tour{
 	margin: 2em auto;
@@ -213,6 +277,7 @@ footer{
 .bicycle{ background-image: url('/img/bicycle.jpeg'); }
 .paddle{background-image: url('/img/paddle.jpeg');}
 .snorkel{background-image: url('/img/snorkel2.jpeg');}
+.kayak{background-image: url('/img/kayak.jpeg');}
 
 .gradient-left{
 	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#000000+0,000000+100&0.65+0,0+100;Neutral+Density */ /* FF3.6-15 */ /* Chrome10-25,Safari5.1-6 */
@@ -226,6 +291,13 @@ footer{
     background: -webkit-linear-gradient(left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%);
     background: -o-linear-gradient(left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%);
     background: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=1 ); /* IE6-9 */
+}
+.gradient-up{
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#000000+0,000000+100&0.65+0,0+100;Neutral+Density */ /* FF3.6-15 */ /* Chrome10-25,Safari5.1-6 */
+    background: -webkit-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%);
+    background: -o-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%);
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=1 ); /* IE6-9 */
 }
 .m4{
@@ -242,3 +314,144 @@ footer{
 		}
 	}
 }
+#sin-exp{
+	.exp-header{
+		width: 100%;
+		height: 550px;
+	}
+	section{
+		margin: 1.5em auto;
+	}
+	.exp-gallery{
+		@extend .row;
+		a{
+			@extend .col;
+		}
+	}
+	h3{
+		font-size: 22pt;
+		color: #232323;
+		line-height: 1.5;
+	}
+	h6{
+		font-size: 20pt;
+		color: #232323;
+	}
+}
+.trips{
+	@extend #products;
+	@extend .row;
+	.col{
+		padding:0;
+		background-size: cover;
+		background-position: center center;
+		background-repeat: no-repeat;
+		.content{
+			@extend .gradient-up;
+			color: white!important;
+			font-size: 20pt!important;
+			padding-top: 220px;
+			height: 100%;
+		}
+	}
+}
+#brages{
+	img{
+		width: 150px;
+		display: block;
+		margin: auto;
+	}
+	.row{
+		padding: 25px 0;
+		p{
+			color: white;
+			font-size: 14pt;
+			line-height: 1.5;
+		}
+	}
+}
+.reviews{
+	margin: 2em auto;
+	p, h3{
+		text-align: center;
+		display: block;
+		margin: 1em auto;
+	}
+	hr{
+		width: 5%;
+		border:0;
+		height: 1.5px;
+		background: $vd-gradient;
+	}
+	img{
+		display: block;
+		width: 80px;
+		height: 80px;
+		border-radius: 50%;
+		border:2px solid white;
+		margin: 1em auto;
+	}
+	.sp-slide .row{
+		@extend .container;
+		@extend .align-items-center;
+		.title{
+			font-size:20vmin;
+		}
+	}
+	.sp-button{
+		border:.5px solid #c1c1c1;
+		background-color: #fff;
+		width: 20px;
+		height: 20px;
+	}
+	.sp-selected-button{
+		background: $vd-gradient;
+		@extend .shadow-flow;
+	}
+}
+
+#destiny{
+	background-color: white;
+	margin: 1em auto;
+	padding: 2em 0;
+	#destiny-slide{
+		@extend .container;
+		.title{
+			font-size: 4vmax;
+		    font-size: 7vmin;
+		    position: absolute;
+		    bottom: 48px;
+		    color: white;
+		    text-shadow: -1px 1px 20px rgba(0,0,0,.3);
+		    font-family: sans-serif;
+		    background: none;
+			-webkit-text-fill-color: white;
+			left: 0;
+    		right: 0;
+		}
+	}
+}
+.suscribe{
+	background: $vd-gradient;
+	padding: 50px 0;
+	form{
+		@extend .container;
+		.row{
+			@extend .justify-content-center;
+			@extend .align-items-center;
+		}
+		input{
+			width: 100%;
+			border: 0;
+			border-radius: 28px;
+			padding: 5px 10px;
+		}
+		label{
+			color: white;
+			text-align: right;
+			font-size: 17pt;
+			display: block;
+		}
+	}
+}
+

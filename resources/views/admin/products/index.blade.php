@@ -45,7 +45,7 @@
 		      <td>
 		      	<div class="row">
 			      	<a href="{{ route('products.edit', $product->id) }}" type="button" class="btn btn-primary"><i class="far fa-edit"></i></a>
-					<button type="button" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
+			      	<a href="{{ route('products.destroy', $product->id) }}" type="button" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
 				</div>
 		      </td>
 		    </tr>

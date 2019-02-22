@@ -1,13 +1,16 @@
 
-// Fonts
-@import url('https://fonts.googleapis.com/css?family=Nunito');
+
 
 // Variables
 @import 'variables';
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+@import '~slider-pro/dist/css/slider-pro.min.css';
+@import '~@fancyapps/fancybox/dist/jquery.fancybox.min.css';
+@import '~animate.css/animate.min.css';
 @import '_style';
+@import '_styles';
 
 header{
   background-color: #fff;

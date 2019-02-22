@@ -1,5 +1,6 @@
-  @extends('layout')
-  @section('content')     
+ 
+   @extends('layout')
+   @section('content')     
   <div class="container-fluid" id="acuatics">
       <div id="video">
         <video autoplay loop muted autoplay id="video-background" plays-inline>

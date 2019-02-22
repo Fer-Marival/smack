@@ -16,35 +16,32 @@
    </div>
   </div>
   <div class="clear"></div>
-  <div class="clear"></div>
   <div class="container">
       <div class="row" id="products">
-          <div class="col shadow">
+        @foreach($articulos as $articulo)
+          <div class="col-md-4 col-sm-6 shadow">
               <div class="content">
-                <img src="{!!asset('img/snorkel.png')!!}" class="img-fluid" alt="">
-                One of three columns <br />
-                <a href="#" class="btn rounder">Add to my adveture</a>
+                <h4 class="card-title-article">{{ $articulo->name }}</h4>
+                <img src="{{ asset($articulo->image) }}" class="img-fluid" alt="">
+                <p>{{ $articulo->description }}</p>
+                <div class="links-items">
+                  <a href="{{ route('cameras.show', $articulo->id) }}" class="btn rounder">Ver</a>
+                  <a href="#" class="btn rounder">Add to my adveture</a>
+                </div>
               </div>
           </div>
-          <div class="col shadow">
-            <div class="content">
-              <img src="{!!asset('img/snorkel2.png')!!}" class="img-fluid" alt="">
-              One of three columns <br />
-              <a href="#" class="btn rounder">Add to my adveture</a>
-            </div>
-          </div>
-          <div class="col shadow">
-            <div class="content">
-              <img src="{!!asset('img/kayak1.jpeg')!!}" class="img-fluid" alt="">
-              One of three columns <br />
-              <a href="#" class="btn rounder">Add to my adventure</a>
-            </div>
-          </div>
+        @endforeach
+      </div>
+      <div class="row">
+        <ul>
+          <p>Ver Más</p> </span>{{ $articulos->links() }}
+        </ul>
       </div>
   </div>
-  <div class="clear"></div>
+
 <section class="complements">
   <div class="container">
+    <h1 class="complements">Complementos</h1>
     <div class="row">
           <div class="col">
             <div class="complement">

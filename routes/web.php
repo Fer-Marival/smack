@@ -20,12 +20,18 @@ Route::get('/tours-acuaticos', function () {
 Route::get('/tours-terrestres', function () {
     return view('frontend.terrestres');
 });
-Route::get('/cameras', function () {
-    return view('frontend.camaras');
+
+Route::resource('/cameras', 'Frontend\ArticlesController');
+
+Route::get('/trips/snorkel', function () {
+    return view('frontend.single-experience');
+});
+Route::get('/trips', function () {
+    return view('frontend.trips');
 });
 
+//Route::get('/articulos', 'Frontend\ArticlesController@index');
 
-// ============= Admin Routes ================= //
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
@@ -37,4 +43,5 @@ Route::group(['prefix' => 'admin',  'middleware' => 'auth'], function()
 	Route::resource('/products', 'ProductController');
 
 });
+
 
