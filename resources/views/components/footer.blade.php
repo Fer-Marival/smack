@@ -1,5 +1,6 @@
   <div class="suscribe">
-    <form class="form">
+    <form class="form" method="post" action="{{ route('newslater.store') }}">
+      @csrf
     	<div class="row">
     		<div class="col">
     			<label for="email">Recibe nuestras promociones  y actividades :</label>
