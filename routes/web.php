@@ -23,3 +23,18 @@ Route::get('/tours-terrestres', function () {
 Route::get('/cameras', function () {
     return view('frontend.camaras');
 });
+
+
+// ============= Admin Routes ================= //
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
+
+Route::group(['prefix' => 'admin',  'middleware' => 'auth'], function()
+{
+
+
+	Route::resource('/products', 'ProductController');
+
+});
+
