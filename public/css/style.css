@@ -16,3 +16,24 @@
 h1.complements{
 	text-align: center;
 }
+
+span.price {
+	font-size: 35px;
+}
+
+p.price{
+	font-size: 50px;
+}
+
+div.dates-product{
+	margin-top: 15px;
+}
+
+h1.form-title{
+	text-align: center;
+}
+
+p.description-complement{
+	font-size: 16px;
+	
+}

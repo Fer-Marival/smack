@@ -22,11 +22,16 @@
           <div class="col-md-4 col-sm-6 shadow">
               <div class="content">
                 <h4 class="card-title-article">{{ $articulo->name }}</h4>
-                <img src="{{ asset($articulo->image) }}" class="img-fluid" alt="">
+                <img src="{{ asset($articulo->image) }}" height="300px" class="img-fluid" alt="">
+                <div class="row container dates-product">
+                  <span class="badge badge-light col-6">Price: $ {{ $articulo->price }}</span>
+                  <span class="badge badge-warning col-6">Disponibles: {{ $articulo->available }}</span>
+                </div>
+                <br>
                 <p>{{ $articulo->description }}</p>
                 <div class="links-items">
-                  <a href="{{ route('cameras.show', $articulo->id) }}" class="btn rounder">Ver</a>
-                  <a href="#" class="btn rounder">Add to my adveture</a>
+                  <a href="{{ route('cameras.show', $articulo->id) }}" class="btn rounder">Ver Más</a>
+                  <!--<a href="#" class="btn rounder">Add to my adveture</a>-->
                 </div>
               </div>
           </div>
@@ -43,45 +48,16 @@
   <div class="container">
     <h1 class="complements">Complementos</h1>
     <div class="row">
+        @foreach($complements as $complement)
           <div class="col">
             <div class="complement">
-              <img src="{!!asset('img/kayak1.jpeg')!!}" class="img-fluid" alt="">
-              <p>Float Sticky</p>
+              <img src="{{ $complement->image }} " class="img-fluid" alt="">
+              <p> {{ $complement->name }} </p>
               <a href="#" class="btn rounder">+ add complements</a>
             </div>
           </div>
-          <div class="col">
-            <div class="complement">
-              <img src="{!!asset('img/kayak1.jpeg')!!}" class="img-fluid" alt="">
-              <p>Float Sticky</p>
-              <a href="#" class="btn rounder">+ add complements</a>
-            </div>
-          </div>
-          <div class="col">
-            <div class="complement">
-              <img src="{!!asset('img/kayak1.jpeg')!!}" class="img-fluid" alt="">
-              <p>Float Sticky</p>
-              <a href="#" class="btn rounder">+ add complements</a>
-            </div>
-          </div>
-          <div class="col">
-            <div class="complement">
-              <img src="{!!asset('img/kayak1.jpeg')!!}" class="img-fluid" alt="">
-              <p>Float Sticky</p>
-              <a href="#" class="btn rounder">+ add complements</a>
-            </div>
-          </div>
-          <div class="col">
-            <div class="complement">
-              <img src="{!!asset('img/kayak1.jpeg')!!}" class="img-fluid" alt="">
-              <p>Float Sticky</p>
-              <a href="#" class="btn rounder">+ add complements</a>
-            </div>
-
-            
-          </div>
-          
-      </div>
+        @endforeach 
+    </div>
   </div>
 </section>
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Product;
+use App\Accessories;
 
 class ArticlesController extends Controller
 {
@@ -14,9 +15,11 @@ class ArticlesController extends Controller
      * @return \Illuminate\Http\Response
      */
     protected $product;
+    protected $accessories;
 
-    function __construct(Product $product){
+    function __construct(Product $product, Accessories $accessories){
         $this->product = $product;
+        $this->accessories = $accessories;
     }
 
 
@@ -24,8 +27,9 @@ class ArticlesController extends Controller
     {
 
          $articulos = $this->product->paginate(10);
+         $complements = $this->accessories->all();
          //dd($articulos);
-         return view('frontend.cameras.index', compact('articulos'));
+         return view('frontend.cameras.index', compact('articulos', 'complements'));
     }
 
     /**
