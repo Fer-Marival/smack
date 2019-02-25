@@ -26,3 +26,7 @@ Route::get('/trips/snorkel', function () {
 Route::get('/trips', function () {
     return view('frontend.trips');
 });
+
+Route::get('frontend.home','NewsletterController@create');
+Route::post('frontend.home','NewsletterController@store')->name('newsletter');
+
