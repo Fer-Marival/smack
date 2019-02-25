@@ -11,9 +11,10 @@
 |
 */
 
-Route::get('/', function () {
-    return view('frontend.home');
-});
+// Route::get('/', 'PageController@home');
+
+Route::resource('/', 'PageController');
+
 Route::get('/tours-acuaticos', function () {
     return view('frontend.acuaticos');
 });
