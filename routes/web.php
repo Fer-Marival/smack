@@ -24,6 +24,9 @@ Route::get('/tours-terrestres', function () {
 Route::get('/cameras', function () {
     return view('frontend.camaras');
 });
+Route::get('/cameras/book', function () {
+    return view('frontend.camera-form');
+});
 Route::get('/trips/snorkel', function () {
     return view('frontend.single-experience');
 });
@@ -33,3 +36,4 @@ Route::get('/trips', function () {
 
 Route::get('frontend.home','NewsletterController@create');
 Route::post('frontend.home','NewsletterController@store')->name('newsletter');
+
