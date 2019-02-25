@@ -14,14 +14,11 @@
 Route::get('/', function () {
     return view('frontend.home');
 });
-Route::get('/tours-acuaticos', function () {
-    return view('frontend.acuaticos');
-});
-Route::get('/tours-terrestres', function () {
-    return view('frontend.terrestres');
-});
 Route::get('/cameras', function () {
     return view('frontend.camaras');
+});
+Route::get('/cameras/book', function () {
+    return view('frontend.camera-form');
 });
 Route::get('/trips/snorkel', function () {
     return view('frontend.single-experience');

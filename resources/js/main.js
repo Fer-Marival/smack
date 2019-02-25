@@ -25,6 +25,17 @@ $( '#destiny-slide' ).sliderPro({
     autoplay: true,
 });
 
+$( '#combo-slide' ).sliderPro({
+	width: "80%",
+	height: 400,
+	arrows: true,
+	buttons: true,
+	thumbnailsPosition: 'left',	
+	slideDistance: 50,
+    visibleSize: '100%',
+    autoplay: true,
+});
+
 $(function(){
     $('#slider div:gt(0)').hide();
     setInterval(function(){
