@@ -1,0 +1,25 @@
+@media (max-width: 414px) {
+  .logo {
+    width: 200px;
+    margin: 1em auto;
+  }
+  #video{
+  	height: 230px!important;
+  }
+  #services .col{
+  	min-width: 350px;
+  }
+  .title{
+  	font-size: 6vmin;
+  	margin:1em auto!important;
+  }
+  .suscribe form .col{
+  	width: 100%;
+  	display: block;
+  	flex-basis: auto;
+    -webkit-box-flex: 0;
+    -ms-flex-positive: 1;
+    flex-grow: 0;
+    max-width: 100%;
+  }
+}

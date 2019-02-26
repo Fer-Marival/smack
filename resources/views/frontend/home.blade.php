@@ -7,7 +7,7 @@
             </video>
             <div class="video-container">
              <div class="row justify-content-center align-items-center">
-                 <div class="col-md-6">
+                 <div class="col">
                      <div id="slider">
                         <div><section class="title">Rent<section></div>
                         <div><section class="title">Enjoy<section></div>
@@ -15,7 +15,7 @@
                         <div><section class="title">Confort</section></div>
                     </div>
                  </div>
-                  <div class="col-md-6">
+                  <div class="col">
                      <div id="slider-right">
                         <div><p>a camera</p></div>
                         <div><p>beautifull moments</p></div>
@@ -27,7 +27,7 @@
           </div>
        </div>
      </div>      
-     <!--   <div class="gradient-home">
+     {{--   <div class="gradient-home">
            <div class="row align-items-end">
                 <div class="col">
                   <div class="container text-center">
@@ -37,7 +37,7 @@
                   </div>
                 </div>
            </div>
-       </div> -->
+       </div> --}}
        <div class="container-fluid bg-1">
         <h2 class="title m4">Servicios de Calidad</h2>
           <div class="row" id="services">
