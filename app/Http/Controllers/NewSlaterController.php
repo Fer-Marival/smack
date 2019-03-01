@@ -1,37 +1,24 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Frontend;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Product;
-use App\Accessories;
+use App\Mail\NewSlater;
+use Illuminate\Support\Facades\Mail;
 
-class PageController extends Controller
+class NewSlaterController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-
-    protected $product;
-    protected $accessories;
-
-    function __construct(Product $product, Accessories $accessories){
-        $this->product = $product;
-        $this->accessories = $accessories;
-    }
-
-
     public function index()
     {
-
-         $articulos = $this->product->paginate(10);
-         $complements = $this->accessories->all();
-         //dd($articulos);
-         return view('frontend.cameras.index', compact('articulos', 'complements'));
+        //
     }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -39,7 +26,7 @@ class PageController extends Controller
      */
     public function create()
     {
-        return "crear";
+        //
     }
 
     /**
@@ -50,7 +37,11 @@ class PageController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //dd($request->email);
+        Mail::to($request->email)
+        ->cc('gparedes@marivalaccess.com')
+        ->send(new NewSlater($request));
+        return back();
     }
 
     /**

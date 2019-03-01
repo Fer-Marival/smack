@@ -1,16 +1,6 @@
   
   <div class="suscribe">
-     @if (\Session::has('success'))
-      <div class="alert alert-success">
-        <p>{{ \Session::get('success') }}</p>
-      </div><br />
-     @endif
-     @if (\Session::has('failure'))
-      <div class="alert alert-danger">
-        <p>{{ \Session::get('failure') }}</p>
-      </div><br />
-     @endif
-    <form class="form" method="post" action="{{route('newsletter')}}">
+    <form class="form" method="post" action="{{ route('newslater.store') }}">
       @csrf
     	<div class="row">
     		<div class="col">

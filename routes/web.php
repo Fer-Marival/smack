@@ -27,6 +27,11 @@ Route::get('/cameras', function () {
 Route::get('/cameras/book', function () {
     return view('frontend.camera-form');
 });
+
+Route::resource('/cameras', 'Frontend\ArticlesController');
+
+Route::resource('/newslater', 'Frontend\NewSlaterController');
+
 Route::get('/trips/snorkel', function () {
     return view('frontend.single-experience');
 });
