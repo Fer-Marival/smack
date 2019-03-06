@@ -37,11 +37,6 @@
           </div>
         @endforeach
       </div>
-      <div class="row">
-        <ul>
-          <p>Ver Más</p> </span>{{ $articulos->links() }}
-        </ul>
-      </div>
   </div>
 
 <section class="complements">

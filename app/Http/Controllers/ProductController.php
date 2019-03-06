@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use App\Product;
 use App\Category;
 
@@ -20,11 +21,9 @@ class ProductController extends Controller
     {
         $products_total = $this->product->all();
         $total = count($products_total);
-        $products = $this->product->paginate(10);
-        $categories = $this->category->all();
+        $products = $this->product->all();
         //dd($products);
-        return view('admin.products.index', compact('products', 'total', 'categories'));
-        //dd($products);
+        return view('admin.products.index', compact('products', 'total'));
     }
 
     /**
@@ -45,8 +44,20 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $products = $this->product->all();
-        Product::create($product);
+        $file = $request->file('image');
+        $name = $file->getClientOriginalName();
+        $path = public_path('/img/uploads/').$name;
+        $fileStorage = $file->move(public_path().'/img/uploads/', $name);
+        $this->product->create([
+            'name' => $request->name,
+            'path' => $path,
+            'content' => $request->content,
+            'description' => $request->description,
+            'price' => $request->price,
+            'available' => $request->available,
+            'locale' => $request->locale,
+            'category_id' => $request->category_id
+        ]);
         return back()->with('success', 'Producto creado!');
     }
 

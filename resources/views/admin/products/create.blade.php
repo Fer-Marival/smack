@@ -8,7 +8,8 @@
 	        </button>
 	      </div>
 	      <div class="modal-body">
-	        <form action="{{ route('products.store') }}" method="post">
+
+	        <form action="{{ route('products.store') }}" method="post" enctype="multipart/form-data">
 	        	@csrf
 	          <div class="form-group">
 			    <label for="name">Name</label>
@@ -23,6 +24,10 @@
 			    <textarea class="form-control" id="description" name="description" rows="3"></textarea>
 			  </div>
 			  <div class="form-group">
+			    <label for="content">Content</label> 
+			    <textarea class="form-control" id="content" name="content" rows="5"></textarea>
+			  </div>
+			  <div class="form-group">
 			    <label for="price">Price</label>
 			    <input type="text" class="form-control" id="price" name="price" placeholder="Price">
 			  </div>
@@ -31,11 +36,11 @@
 			    <input type="text" class="form-control" id="available" name="available" placeholder="Price">
 			  </div>
 			  <div class="form-group col-md-4">
-		      <label for="category">Category</label>
-			      <select id="category" name="category" class="form-control">
-			        <option value="1" selected>Artículos</option>
-			        <option value="2">Tour Acuaticos</option>
-			        <option value="3">Tour Terrestre</option>
+		      <label for="category_id">Category</label>
+			      <select id="category_id" name="category_id" class="form-control">
+			        <option value="1" selected>Productos</option>
+			        <option value="2">Tours</option>
+			        <option value="3">Traslados</option>
 			      </select>
 		      </div>
 		      <div class="form-group">

@@ -4,7 +4,7 @@
 
 	<div class="container">
 		@include('admin.products.create')
-		{{ $products->links() }}
+		
 		@if(session()->has('success'))
 		    <div class="alert alert-success">
 		        {{ session()->get('success') }}
@@ -24,6 +24,7 @@
 		      <th scope="col"><strong>Name<strong></th>
 		      <th scope="col"><strong>Image<strong></th>
 		      <th scope="col"><strong>Description<strong></th>
+		      <th scope="col"><strong>Content<strong></th>
 		      <th scope="col"><strong>Price<strong></th>
 		      <th scope="col"><strong>Available<strong></th>
 		      <th scope="col"><strong>Category<strong></th>
@@ -36,11 +37,12 @@
 		    <tr>
 		      <th scope="row">{{ $product->id }}</th>
 		      <td>{{ $product->name }}</td>
-		      <td><img width="100px" height="50px" src="{{ $product->image }}" alt=""></td>
+		      <td><img width="100px" height="50px" src="{{ asset($product->image) }}" alt=""></td>
 		      <td>{{ $product->description }}</td>
+		      <td>{{ $product->content }}</td>
 		      <td>{{ $product->price }}</td>
 		      <td>{{ $product->available }}</td>
-		      <td>{{ $product->category }}</td>
+		      <td>{{ $product->category_id }}</td>
 		      <td>{{ $product->locale }}</td>
 		      <td>
 		      	<div class="row">
@@ -52,6 +54,6 @@
 		  @endforeach
 		  </tbody>
 		</table>
-		{{ $products->links() }}
+		
 	</div>
 @stop
