@@ -7,7 +7,7 @@
 		    <p class="lead">{{ $articulo->description }}</p>
 		  </div>
 		</div>
-		<div class="row">
+		<div class="row" id="appProducts">
 			<div class="col-md-6">
 				<p align="justify">{{ $articulo->content }}</p>
 				<h1>Agregar complementos</h1>
@@ -17,8 +17,9 @@
 				            <div class="complement">
 				              <img width="100px" height="100px" src="{{ $accessorie->image }}" class="img-fluid" alt="">
 				              <h4>{{ $accessorie->name }}</h4>
+				              <input  type="hidden" :name="$accessorie->name" >
 				              <p class="description-complement">{{ $accessorie->description }}</p>
-				              <a href="#" class="btn rounder">+ add </a>
+				              <button v-on:click="AgregarProducto" class="btn rounder">+ add</button>
 				            </div>
 			          	</div>
 					@endforeach
@@ -41,7 +42,9 @@
 						</div>
 						<div class="form-group">
 						    <label for="description">Tus productos</label> 
-						    <textarea class="form-control" id="description" name="description" rows="10"></textarea>
+						    <textarea class="form-control" id="description" name="description" rows="10">
+						 
+						    </textarea>
 						</div>
 						<button type="submit" class="btn btn-secondary btn-lg btn-block">Enviar cotización</button>
 					</form>

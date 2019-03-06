@@ -21,7 +21,6 @@ class CreateProductsTable extends Migration
             $table->string('description');
             $table->float('price');
             $table->smallInteger('available');
-            $table->string('category');
             $table->string('locale');
             $table->timestamps();
         });

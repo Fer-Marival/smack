@@ -1,30 +1,27 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Frontend;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Product;
-use App\Category;
-
-class ProductController extends Controller
+class TourController extends Controller
 {
-    protected $product;
-    protected $category;
 
-    function __construct(Product $product, Category $category){
-        $this->product = $product;
-        $this->category = $category;
+    protected $tour:
+
+    function __construct(Product $tour){
+        $this->tour = $tour;
     }
-
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
-        $products_total = $this->product->all();
-        $total = count($products_total);
-        $products = $this->product->paginate(10);
-        $categories = $this->category->all();
-        //dd($products);
-        return view('admin.products.index', compact('products', 'total', 'categories'));
-        //dd($products);
+        $tours = $this->tour->where('category', 2);
+        return 
     }
 
     /**
@@ -34,7 +31,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        
+        //
     }
 
     /**
@@ -45,9 +42,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $products = $this->product->all();
-        Product::create($product);
-        return back()->with('success', 'Producto creado!');
+        //
     }
 
     /**
@@ -69,10 +64,7 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-
-        $product = Product::findOrFail($id);
-
-        return view('admin.products.edit', compact('product'));
+        //
     }
 
     /**
@@ -84,10 +76,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //dd($request->all());
-        $product = Product::find($id);
-        $product->update($request->all());
-        return back();
+        //
     }
 
     /**
@@ -98,9 +87,6 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        $product = Product::findOrFail($id);
-        $product->destroy();
-        return back();
-        
+        //
     }
 }

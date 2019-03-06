@@ -10,7 +10,7 @@ $factory->define(App\Product::class, function (Faker $faker) {
         'description' => $faker->text(120),
         'price' => $faker->numberBetween($min = 300, $max = 1000),
         'available' => $faker->numberBetween($min = 0, $max = 10),
-        'category' => $faker->name,
+        'category_id' => $faker->numberBetween($min = 1, $max = 100),
        	'locale' => $faker->realText(rand(10,20))
     ];
 });
