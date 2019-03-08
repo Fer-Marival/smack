@@ -3,23 +3,27 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use App\Product;
+use App\Category;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    protected $product;
+    protected $category;
+
+    function __construct(Product $product, Category $category){
+        $this->product = $product;
+        $this->category = $category;
+    }
+
     public function index()
     {
-        $products_total = Product::all();
+        $products_total = $this->product->all();
         $total = count($products_total);
-        $products = Product::paginate(10);
+        $products = $this->product->all();
         //dd($products);
         return view('admin.products.index', compact('products', 'total'));
-        //dd($products);
     }
 
     /**
@@ -40,8 +44,20 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $product = $request->all();
-        Product::create($product);
+        $file = $request->file('image');
+        $name = $file->getClientOriginalName();
+        $path = public_path('/img/uploads/').$name;
+        $fileStorage = $file->move(public_path().'/img/uploads/', $name);
+        $this->product->create([
+            'name' => $request->name,
+            'path' => $path,
+            'content' => $request->content,
+            'description' => $request->description,
+            'price' => $request->price,
+            'available' => $request->available,
+            'locale' => $request->locale,
+            'category_id' => $request->category_id
+        ]);
         return back()->with('success', 'Producto creado!');
     }
 
