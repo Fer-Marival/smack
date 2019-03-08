@@ -1,20 +1,37 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Frontend;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Product;
+use App\Accessories;
 
-class PageController extends Controller
+class ArticlesController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
+    protected $product;
+    protected $accessories;
+
+    function __construct(Product $product, Accessories $accessories){
+        $this->product = $product;
+        $this->accessories = $accessories;
+    }
+
+
     public function index()
     {
-         return view('frontend.home'); 
+
+         $articulos = $this->product->paginate(10);
+         $complements = $this->accessories->all();
+         //dd($articulos);
+         return view('frontend.cameras.index', compact('articulos', 'complements'));
     }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -22,7 +39,7 @@ class PageController extends Controller
      */
     public function create()
     {
-        return "crear";
+        //
     }
 
     /**
@@ -44,7 +61,9 @@ class PageController extends Controller
      */
     public function show($id)
     {
-        //
+        $articulo = $this->product->findOrFail($id);
+        return view('frontend.cameras.show', compact('articulo'));
+        //dd($articulo);
     }
 
     /**
