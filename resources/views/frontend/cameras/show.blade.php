@@ -7,7 +7,7 @@
 		    <p class="lead">{{ $articulo->description }}</p>
 		  </div>
 		</div>
-		<div class="row">
+		<div class="row" id="appProduct">
 			<div class="col-md-6">
 				<p align="justify">{{ $articulo->content }}</p>
 				<h1>Agregar complementos</h1>
@@ -17,6 +17,8 @@
 				            <div class="complement">
 				              <img width="100px" height="100px" src="{{ $accessorie->image }}" class="img-fluid" alt="">
 				              <h4>{{ $accessorie->name }}</h4>
+				              <input type="text" name="name" v-bind="{{ $accessorie->name }}">
+				              <button v-on:clickt></button>
 				              <p class="description-complement">{{ $accessorie->description }}</p>
 				              <a href="#" class="btn rounder">+ add </a>
 				            </div>
@@ -24,6 +26,7 @@
 					@endforeach
 				</div>
 			</div>
+			
 			<div class="col-md-6">
 					<h1 class="form-title">Cotizar Artículos</h1>
 					<form action="" method="post">
@@ -41,14 +44,14 @@
 						</div>
 						<div class="form-group">
 						    <label for="description">Tus productos</label> 
-						    <textarea class="form-control" id="description" name="description" rows="10"></textarea>
+						    <textarea class="form-control" id="description" name="description" rows="10" v-model="newKeep"></textarea>
 						</div>
 						<button type="submit" class="btn btn-secondary btn-lg btn-block">Enviar cotización</button>
 					</form>
 					<div class="clear"></div>
 			</div>
+		
 		</div>
 	</div>
 	
-
 @stop
