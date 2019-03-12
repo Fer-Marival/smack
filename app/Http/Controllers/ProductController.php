@@ -46,6 +46,7 @@ class ProductController extends Controller
     {
         $file = $request->file('image');
         $name = $file->getClientOriginalName();
+        $path = 
         $path = public_path('/img/uploads/').$name;
         $fileStorage = $file->move(public_path().'/img/uploads/', $name);
         $this->product->create([
