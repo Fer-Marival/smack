@@ -16,26 +16,22 @@
    </div>
   </div>
   <div class="clear"></div>
-<div class="container-fluid">
-    <div id="products">
-      @foreach($articulos as $articulo)
-      <div class="col shadow-flow">
-          <div class="content">
-           <img src="{{ asset($articulo->image) }}" class="img-fluid" alt="">
-            {{ $articulo->name }}<br />
-             <p>{{ $articulo->description }}</p><br />
-            <a href="{{ route('cameras.show', $articulo->id) }}" class="rounder">Ver Más</a>
+
+  <div class="container-fluid">
+      <div id="products">
+         @foreach($articulos as $articulo)
+          <div class="col shadow-flow">
+              <div class="content">
+                <img src="{{ asset($articulo->image) }}" class="img-fluid" alt="">
+                {{ $articulo->name }}<br />
+                {{ $articulo->description }}<br />
+                <a href="{{ route('cameras.show', $articulo->id) }}" class="rounder">Add to my adveture</a>
+              </div>
           </div>
+          @endforeach
       </div>
-      @endforeach
   </div>
-   <div class="row">
-    <ul>
-      <p>Ver Más</p> </span>{{ $articulos->links() }}
-    </ul>
-  </div>
-</div>
-  {{-- <div class="container">
+  <div class="container">
       <div class="row" id="products">
         @foreach($articulos as $articulo)
           <div class="col-md-4 col-sm-6 shadow">
@@ -56,7 +52,12 @@
           </div>
         @endforeach
       </div>
-  </div> --}}
+      <div class="row">
+        <ul>
+          <p>Ver Más</p> </span>{{ $articulos->links() }}
+        </ul>
+      </div>
+  </div>
 
 <section class="complements">
   <div class="container">
