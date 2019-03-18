@@ -28,8 +28,8 @@
 			</div>
 			<div class="col">
 				<strong>Information:</strong> <br>
-				<p>Contact us to : <a href="tel:">322-123-4567</a></p>
-				<p>Email us to <a href="#">aloha@okalasurfschool.com</a></p>
+				<p>Contact us to : <a href="tel:">322-168-4772</a></p>
+				<p>Email us to <a href="mailto:hola@vdtrips.com">hola@vdtrips.com</a></p>
 			</div>
 			<div class="col">
 				
