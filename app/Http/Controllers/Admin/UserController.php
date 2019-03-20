@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use GuzzleHttp\Middleware;
 use App\User;
 
 class UserController extends Controller
@@ -14,13 +15,19 @@ class UserController extends Controller
     function __construct(User $user)
     {
         $this->user = $user;
+        //$this->middleware('auth');
+    }
+
+    public function vista()
+    {
+        return view('admin.users.index');
     }
 
     public function index()
     {
-        $users = $this->user->all();
+       return $this->user->all();
         //return $users;
-        return view('admin.users.index', compact('users'));
+        //return view('admin.users.index');
     }
 
     /**

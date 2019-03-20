@@ -42,7 +42,8 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::group(['prefix' => 'admin',  'middleware' => 'auth'], function()
 {
 
-	Route::resource('users', 'Admin\UserController');
+	Route::resource('/users', 'Admin\UserController');
+	Route::get('/list-users', 'Admin\UserController@vista')->name('list.users');
 	Route::resource('/products', 'ProductController');
 
 });
