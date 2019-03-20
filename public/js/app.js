@@ -13900,6 +13900,10 @@ __webpack_require__(38);
 
 window.Vue = __webpack_require__(39);
 
+//import axios from 'axios'
+
+//let token = document.head.querySelector('meta[name="csrf-token"]');
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -13923,7 +13927,23 @@ Vue.component('example-component', __webpack_require__(42));
  */
 
 var app = new Vue({
-  el: '#app'
+  el: '#crud',
+  created: function created() {
+    this.getUser();
+  },
+  data: {
+    users: []
+  },
+  methods: {
+    getUser: function getUser() {
+      var _this = this;
+
+      var urlUsers = '/admin/users';
+      axios.get(urlUsers).then(function (response) {
+        _this.users = response.data;
+      });
+    }
+  }
 });
 
 /***/ }),

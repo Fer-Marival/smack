@@ -7,7 +7,8 @@
 		    <p class="lead">{{ $articulo->description }}</p>
 		  </div>
 		</div>
-		<div class="row" id="appProduct">
+
+		<div class="row" id="appProducts">
 			<div class="col-md-6">
 				<p align="justify">{{ $articulo->content }}</p>
 				<h1>Agregar complementos</h1>
@@ -20,7 +21,7 @@
 				              <input type="text" name="name" v-bind="{{ $accessorie->name }}">
 				              <button v-on:clickt></button>
 				              <p class="description-complement">{{ $accessorie->description }}</p>
-				              <a href="#" class="btn rounder">+ add </a>
+				              <button v-on:click="AgregarProducto" class="btn rounder">+ add</button>
 				            </div>
 			          	</div>
 					@endforeach

@@ -42,7 +42,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::group(['prefix' => 'admin',  'middleware' => 'auth'], function()
 {
 
-
+	Route::resource('users', 'Admin\UserController');
 	Route::resource('/products', 'ProductController');
 
 });

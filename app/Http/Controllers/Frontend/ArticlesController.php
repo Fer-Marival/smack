@@ -26,7 +26,7 @@ class ArticlesController extends Controller
     public function index()
     {
 
-         $articulos = $this->product->paginate(10);
+         $articulos = $this->product->paginate(10)->where('category_id', 1);
          $complements = $this->accessories->all();
          //dd($articulos);
          return view('frontend.cameras.index', compact('articulos', 'complements'));
