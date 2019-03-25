@@ -44,7 +44,8 @@
 					      <td>{{ $product->locale }}</td>
 					      <td >
 						    <a href="{{ route('products.edit', $product->id) }}" type="button" class="btn btn-primary"><i class="far fa-edit"></i></a>
-						    <a href="{{ route('products.destroy', $product->id) }}" type="button" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
+						    
+						    {{-- <a href="{{ route('products.destroy', $product->id) }}" type="button" class="btn btn-danger"><i class="far fa-trash-alt"></i></a> --}}
 					      </td>
 					    </tr>
 					  @endforeach

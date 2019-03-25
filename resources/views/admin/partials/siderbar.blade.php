@@ -38,7 +38,7 @@
 						<li id="menu-academico" ><a href="#"><i class="fas fa-shopping-cart"></i> <span> Products &amp; Categories</span> <span class="fa fa-angle-right" style="float: right"></span></a>
 						<ul id="menu-academico-sub" >
 							<li id="menu-academico-avaliacoes" ><a href="{{ route('products.index') }}"> Products</a></li>
-							<li id="menu-academico-boletim" ><a href="widget.html">Categories</a></li>
+							<li id="menu-academico-boletim" ><a href="{{ route('categories.index') }}">Categories</a></li>
 							<li id="menu-academico-avaliacoes" ><a href="calender.html">Permisos</a></li>
 						</ul>
 						</li>

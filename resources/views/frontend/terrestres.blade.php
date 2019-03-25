@@ -17,49 +17,11 @@
   </div>
   <div class="clear"></div>
   <div class="clear"></div>
-  <div class="container-fluid">
-      <div class="row" id="products">
-          <div class="col shadow">
-              <div class="content">
-                <img src="{!!asset('img/snorkel.png')!!}" class="img-fluid" alt="">
-                One of three columns <br />
-                <a href="#" class="btn rounder">Add to my adveture</a>
-              </div>
-          </div>
-          <div class="col shadow">
-            <div class="content">
-              <img src="{!!asset('img/snorkel2.png')!!}" class="img-fluid" alt="">
-              One of three columns <br />
-              <a href="#" class="btn rounder">Add to my adveture</a>
-            </div>
-          </div>
-          <div class="col shadow">
-            <div class="content">
-              <img src="{!!asset('img/kayak1.jpeg')!!}" class="img-fluid" alt="">
-              One of three columns <br />
-              <a href="#" class="btn rounder">Add to my adventure</a>
-            </div>
-          </div>
-          <div class="col shadow">
-            <div class="content">
-                <img src="{!!asset('img/kayak2.jpg')!!}" class="img-fluid" alt="">One of three columns <br />
-                <a href="#" class="btn rounder">Add to my adveture</a>
-            </div>
-          </div>
-          <div class="col shadow">
-            <div class="content">
-                <img src="{!!asset('img/paddle.png')!!}" class="img-fluid" alt="">One of three columns <br />
-                <a href="#" class="btn rounder">Add to my adveture</a>
-            </div>
-          </div>
-          <div class="col shadow">
-            <div class="content">
-                <img src="{!!asset('img/paddle2.png')!!}" class="img-fluid" alt="">One of three columns <br />
-                <a href="#" class="btn rounder">Add to my adveture</a>
-            </div>
-          </div>
-      </div>
+
+  <div id="product">
+    <tour-component></tour-component>
   </div>
+
   <div class="clear"></div>
   <div class="section tour hiking">
     <div class="gradient-left">

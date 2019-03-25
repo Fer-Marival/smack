@@ -8,10 +8,10 @@ use App\Product;
 class TourController extends Controller
 {
 
-    protected $tour:
+    protected $product:
 
-    function __construct(Product $tour){
-        $this->tour = $tour;
+    function __construct(Product $product){
+        $this->product = $product;
     }
     /**
      * Display a listing of the resource.
@@ -20,8 +20,8 @@ class TourController extends Controller
      */
     public function index()
     {
-        $tours = $this->tour->where('category', 2);
-        return 
+        $tour = $this->product->where('category_id', 3)->get();
+        return $tour;
     }
 
     /**

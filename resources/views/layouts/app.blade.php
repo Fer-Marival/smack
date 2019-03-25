@@ -29,8 +29,8 @@
     <script src="{{ asset('admin/js/amcharts.js') }}"></script>  
     <script src="{{ asset('admin/js/serial.js') }}"></script>    
     <script src="{{ asset('admin/js/light.js') }}"></script> 
-    <script src="{{ asset('admin/js/radar.js') }}"></script>  --}}
-    {{-- <link href="{{ asset('admin/css/barChart.css') }}" rel='stylesheet' type='text/css' />
+    <script src="{{ asset('admin/js/radar.js') }}"></script>
+    <link href="{{ asset('admin/css/barChart.css') }}" rel='stylesheet' type='text/css' />
     <link href="{{ asset('admin/css/fabochart.css') }}" rel='stylesheet' type='text/css' />
     <!--clock init-->
     <script src="{{ asset('admin/js/css3clock.js') }}"></script>
@@ -38,7 +38,7 @@
     <!--skycons-icons-->
     <script src="{{ asset('admin/js/skycons.js') }}"></script>
 
-    {{-- <script src="{{ asset('admin/js/jquery.easydropdown.js') }}"></script>  --}}
+     <script src="{{ asset('admin/js/jquery.easydropdown.js') }}"></script> 
     
     <script src="{{ asset('admin/js/app.js') }}"></script>
     
@@ -67,7 +67,7 @@
     
 
     <!--js -->
-<script src="{{ asset('js/app.js') }}"></script>
+ <script src="{{ asset('js/app.js') }}"></script> 
 
 <link rel="stylesheet" href="{{ asset('admin/css/vroom.css') }}">
 <script type="text/javascript" src="{{ asset('admin/js/vroom.js') }}"></script>
