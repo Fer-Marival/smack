@@ -16,6 +16,7 @@
    </div>
   </div>
   <div class="clear"></div>
+<<<<<<< HEAD
 
   <div class="container-fluid">
       <div id="products">
@@ -58,22 +59,15 @@
         </ul>
       </div>
   </div>
+=======
+    <div id="product">
+      <product-component></product-component>
+      
+      <div class="clear"></div>
+>>>>>>> dev
 
-<section class="complements">
-  <div class="container">
-    <h1 class="complements">Complementos</h1>
-    <div class="row">
-        @foreach($complements as $complement)
-          <div class="col">
-            <div class="complement">
-              <img src="{{ $complement->image }} " class="img-fluid" alt="">
-              <p> {{ $complement->name }} </p>
-              <a href="#" class="btn rounder">+ add complements</a>
-            </div>
-          </div>
-        @endforeach 
+      <complements-component></complements-component> 
     </div>
   </div>
-</section>
 
 @endsection

@@ -1,0 +1,47 @@
+.card-title-article{
+	text-align: center;
+	padding-top: 5px;
+}
+.shadow{
+	margin-top: 10px;
+}
+
+.links-items{
+	position: static;
+}
+.display-4{
+	color: #ffffff;
+}
+
+h1.complements{
+	text-align: center;
+}
+
+span.price {
+	font-size: 35px;
+}
+
+p.price{
+	font-size: 50px;
+}
+
+p.lead {
+	color: #fff;
+}
+
+div.dates-product{
+	margin-top: 15px;
+}
+
+h1.form-title{
+	text-align: center;
+}
+
+p.description-complement{
+	font-size: 16px;
+	
+}
+
+img.img-fluid {
+	height: 200px;
+}

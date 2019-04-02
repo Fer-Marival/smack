@@ -25,6 +25,7 @@
         <title>Vdtrips -  renta de cámaras </title>
         <meta name="description" content="renta de cámaras, paseos a la playa colomitos, las  animas,  cerro del mono, renta de equipo de snorkel y kayaks renta de bicicletas, host para tus vacaciones, traslados al aeropuerto o al hotel en puerto vallarta y riviera nayarit.">
 
+<<<<<<< HEAD
         <link rel="dns-prefetch" href="https://www.gstatic.com" />
         <link rel="dns-prefetch" href="https://www.facebook.com" />
         <link rel="dns-prefetch" href="https://www.gtrk.s3.amazonaws.com" />
@@ -110,11 +111,22 @@
           }
         }
     </script>
+=======
+        <!-- Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+        
+        
+>>>>>>> dev
     </head>
     <body>
+        
     		@include('components.header')
     	  	@yield('content')
     	  	@include('components.footer')
+<<<<<<< HEAD
 
         <script src="{!!asset('js/app.js')!!}" type="text/javascript"></script>
         <!-- Load Facebook SDK for JavaScript -->
@@ -141,5 +153,10 @@
           page_id="256994298532128">
         </div>
 
+=======
+			
+        <script src="{{ asset('js/script.js') }}" type="text/javascript"></script>
+        <script src="{{ asset('js/frontend/app.js') }}" type="text/javascript"></script>
+>>>>>>> dev
     </body>
 </html>
