@@ -41,8 +41,8 @@
        <div class="container-fluid bg-1">
         <h2 class="title m4">Servicios de Calidad</h2>
           <div class="row" id="services">
-              <div class="col shadow-flow">
-                <div class="card">
+              <div class="col">
+                <div class="card shadow-flow">
                    <picture>
                      <img src="{!!asset('img/camara.jpg')!!}" class="img-fluid" alt="">
                   </picture>
