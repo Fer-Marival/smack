@@ -22,14 +22,31 @@ class ArticlesController extends Controller
         $this->accessories = $accessories;
     }
 
+    public function getProducts()
+    {
+        $articulos = $this->product->where('category_id', 1)->get();
+         return $articulos;
+    }
+
+    public function getComplements()
+    {
+        $complements = $this->product->where('category_id', 2)->get();
+        return $complements;
+    }
+
+    public function getTour()
+    {
+        $tour = $this->product->where('category_id', 3)->get();
+        return $tour;
+    }
 
     public function index()
     {
 
-         $articulos = $this->product->paginate(10);
-         $complements = $this->accessories->all();
-         //dd($articulos);
-         return view('frontend.cameras.index', compact('articulos', 'complements'));
+         return view('frontend.cameras.index');
+         //$articulos = $this->product->paginate(10)->where('category_id', 1);
+         //$complements = $this->accessories->all();
+         //return view(, compact('articulos', 'complements'));
     }
 
     /**
