@@ -1,0 +1,55 @@
+@extends('layouts.app')
+
+@section('content')
+
+<div class="container">
+		
+		@if(session()->has('success'))
+		    <div class="alert alert-success">
+		        {{ session()->get('success') }}
+		    </div>
+		@endif
+
+	<div class="graph-visual tables-main">
+		<h2 class="inner-tittle">List Categories</h2>
+			<div class="graph">
+				<div class="tables">
+					<table class="table">
+					  <thead>
+					  	<div class="row">
+						  	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCategory">
+							  + Categories
+							</button>
+						  	<!--<a href="{{ route('products.create') }}" type="button" class="btn btn-primary" id="myModal"> + Product</a> -->
+					  	</div>
+					    <tr>
+					      <th ><strong>#<strong></th>
+					      <th><strong>Name<strong></th>
+					      <th colspan="4">Aciones<strong></th>
+					    </tr>
+					  </thead>
+					  <tbody>
+					  @foreach($categories as $category)
+					    <tr>
+					      <th>{{ $category->id }}</th>
+					      <td>{{ $category->name }}</td>
+					      <td >
+						    <a href="{{ route('categories.edit', $category->id) }}" type="button" class="btn btn-primary"><i class="far fa-edit"></i></a>
+
+						    <form action="{{ route('categories.destroy', $category->id) }}" method="post">
+								
+								@csrf
+                    			@method('DELETE')
+						    	<button type="submit" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
+						    </form>
+						    {{-- <a href="{{ route('categories.destroy', $category->id) }}" type="button" class="btn btn-danger"><i class="far fa-trash-alt"></i></a> --}}
+					      </td>
+					    </tr>
+					  @endforeach
+					  </tbody>
+					</table>
+			</div>								
+		</div>
+	</div>
+</div>
+@stop

@@ -39,8 +39,9 @@
 		      <label for="category_id">Category</label>
 			      <select id="category_id" name="category_id" class="form-control">
 			        <option value="1" selected>Productos</option>
-			        <option value="2">Tours</option>
-			        <option value="3">Traslados</option>
+			        <option value="2">Complement</option>
+			        <option value="3">Tours</option>
+			        <option value="4">Traslados</option>
 			      </select>
 		      </div>
 		      <div class="form-group">
