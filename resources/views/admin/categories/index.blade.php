@@ -3,61 +3,50 @@
 @section('content')
 
 <div class="container">
-		@include('admin.products.create')
+		@include('admin.categories.create')
 		
 		@if(session()->has('success'))
 		    <div class="alert alert-success">
 		        {{ session()->get('success') }}
 		    </div>
 		@endif
-
 		@if(session()->has('delete'))
 		    <div class="alert alert-danger">
 		        {{ session()->get('delete') }}
 		    </div>
 		@endif
 	<div class="graph-visual tables-main">
-		<h2 class="inner-tittle">List Users</h2>
+		<h2 class="inner-tittle">Categories</h2>
 			<div class="graph">
 				<div class="tables">
 					<table class="table">
 					  <thead>
 					  	<div class="row">
-						  	<h3>Products: {{ $total }}</h3>
-						  	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addProduct">
-							  + product
+						  	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCategory">
+							  + Categories
 							</button>
 						  	<!--<a href="{{ route('products.create') }}" type="button" class="btn btn-primary" id="myModal"> + Product</a> -->
 					  	</div>
 					    <tr>
-					      <th ><strong>#<strong></th>
+					      <th><strong>#<strong></th>
 					      <th><strong>Name<strong></th>
-					      <th>Image</th>
-					      <th>Category</th>
-					      <th>Locale</th>
-					      <th>Editar</th>
-					      <th>Eliminar</th>
+					      <th><strong>Acciones<strong></th>
 					    </tr>
 					  </thead>
 					  <tbody>
-					  @foreach($products as $product)
+					  @foreach($categories as $category)
 					    <tr>
-					      <th>{{ $product->id }}</th>
-					      <td>{{ $product->name }}</td>
+					      <th>{{ $category->id }}</th>
+					      <td>{{ $category->name }}</td>
 					      <td>
-					      	<img width="100px" height="50px" src="{{ asset($product->image) }}" alt="">
-					      </td>
-					      <td>{{ $product->category_id }}</td>
-					      <td>{{ $product->locale }}</td>
-					      <td >
-						    <a href="{{ route('products.edit', $product->id) }}" type="button" class="btn btn-primary"><i class="far fa-edit"></i></a>
-					      </td>
-					      <td>
-					      	<form action="{{ route('products.destroy', $product->id) }}" method="post">
+					      	<div class="row">
+						    <a href="{{ route('categories.edit', $category->id) }}" type="button" class="btn btn-primary"><i class="far fa-edit"></i></a>
+					      	<form action="{{ route('categories.destroy', $category->id) }}" method="post">
 				                  @csrf
 				                  @method('DELETE')
 				                  <button class="btn btn-danger" type="submit"><span class="glyphicon glyphicon-trash"></span></button>
 				            </form>
+				            </div>
 					      </td>
 					    </tr>
 					  @endforeach

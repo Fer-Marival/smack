@@ -8,9 +8,9 @@
 			<div style="border-top:1px solid rgba(69, 74, 84, 0.7)"></div>
 			<!--/down-->
 				<div class="down">	
-					<a href="index.html"><img src="{{ asset('admin/images/admin.jpg') }}"></a>
-					<a href="index.html"><span class=" name-caret">Gilberto Paredes</span></a>
-					<p>System Administrator in Company</p>
+					<a href="index.html"><img src="{{ Auth::user()->path }}" width="100px" height="100px"></a>
+					<a href="index.html"><span class=" name-caret">{{ Auth::user()->name }}</span></a>
+					{{-- <p>{{ Auth::user()->email }}</p> --}}
 					<ul>
 						<li><a class="tooltips" href="index.html"><span>Profile</span><i class="lnr lnr-user"></i></a></li>
 						<li><a class="tooltips" href="index.html"><span>Settings</span><i class="lnr lnr-cog"></i></a></li>
@@ -38,7 +38,7 @@
 						<li id="menu-academico" ><a href="#"><i class="fas fa-shopping-cart"></i> <span> Products &amp; Categories</span> <span class="fa fa-angle-right" style="float: right"></span></a>
 						<ul id="menu-academico-sub" >
 							<li id="menu-academico-avaliacoes" ><a href="{{ route('products.index') }}"> Products</a></li>
-							<li id="menu-academico-boletim" ><a href="widget.html">Categories</a></li>
+							<li id="menu-academico-boletim" ><a href="{{ route('categories.index') }}">Categories</a></li>
 							<li id="menu-academico-avaliacoes" ><a href="calender.html">Permisos</a></li>
 						</ul>
 						</li>

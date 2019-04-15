@@ -22,7 +22,7 @@
           <div class="col-md-4 col-sm-6 shadow">
               <div class="content">
                 <h4 class="card-title-article">{{ $articulo->name }}</h4>
-                <img src="{{ asset($articulo->image) }}" height="300px" class="img-fluid" alt="">
+                <img src="{{ asset($articulo->path) }}" height="300px" class="img-fluid" alt="">
                 <div class="row container dates-product">
                   <span class="badge badge-light col-6">Price: ${{ $articulo->price }}</span>
                   <span class="badge badge-warning col-6">Disponibles: {{ $articulo->available }}</span>

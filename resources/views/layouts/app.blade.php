@@ -67,7 +67,7 @@
     
 
     <!--js -->
-<script src="{{ asset('js/app.js') }}"></script>
+<script src="{{ asset('admin/js/all.js') }}"></script>
 
 <link rel="stylesheet" href="{{ asset('admin/css/vroom.css') }}">
 <script type="text/javascript" src="{{ asset('admin/js/vroom.js') }}"></script>
