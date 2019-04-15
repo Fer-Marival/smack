@@ -9,16 +9,13 @@
 			<div class="col-md-8">
 				<ul class="nav justify-content-end">
 					  <li class="nav-item">
-					    <a class="nav-link active" href="#">Home</a>
+					    <a class="nav-link active" href="/">Home</a>
 					  </li>
 					  <li class="nav-item">
-					    <a class="nav-link" href="#">Experiencias</a>
+					    <a class="nav-link" href="/trips">Experiencias</a>
 					  </li>
 					  <li class="nav-item">
-					    <a class="nav-link" href="#">Camaras</a>
-					  </li>
-					  <li class="nav-item">
-					    <a class="nav-link" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+					    <a class="nav-link" href="/cameras">Camaras</a>
 					  </li>
 					</ul>
 			</div>

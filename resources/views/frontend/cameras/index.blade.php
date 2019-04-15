@@ -19,8 +19,8 @@
   <div class="container-fluid">
       <div id="products">
          @foreach($articulos as $articulo)
-          <div class="col shadow-flow">
-              <div class="content">
+          <div class="col">
+              <div class="content shadow-flow">
                 <img src="{{ asset($articulo->image) }}" class="img-fluid" alt="">
                 {{ $articulo->name }}<br />
                 {{ $articulo->description }}<br />
