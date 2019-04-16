@@ -35,8 +35,9 @@
 			  	<label for="category">Category</label>
 			      <select id="category" name="category" class="form-control">
 			        <option value="1" selected>Artículos</option>
-			        <option value="2">Tour Acuaticos</option>
-			        <option value="3">Tour Terrestre</option>
+			        <option value="2">Complement</option>
+			        <option value="4">Tour Acuaticos</option>
+			        <option value="5">Tour Terrestre</option>
 			      </select>
 		      </div>
 		      <div class="form-group col-md-6">

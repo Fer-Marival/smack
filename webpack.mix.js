@@ -10,12 +10,19 @@ const mix = require('laravel-mix');
  | file for the application as well as bundling up all the JS files.
  |
  */
+//frontend
+mix.js('resources/js/frontend/app.js', 'public/js/frontend/app.js');
+   //.sass('resources/sass/app.scss', 'public/css/frontend');
 
 
+<<<<<<< HEAD
 // Backend
 mix.js('resources/js/Backend/all.js', 'public/admin/js');
 
 
 //frontend
+=======
+// admin
+>>>>>>> 5bf8c54af38c0c3c8f282faa832ace7de8979e78
 mix.js('resources/js/app.js', 'public/js')
    .sass('resources/sass/app.scss', 'public/css');

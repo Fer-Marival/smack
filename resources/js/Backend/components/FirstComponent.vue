@@ -1,5 +1,7 @@
 <template>
+    
     <div class="graph-visual tables-main">
+        
     <h2 class="inner-tittle">List Users</h2>
         <div class="graph">
             <div class="tables">                                        
@@ -24,7 +26,11 @@
                 </table>
             </div>                              
         </div>
+        <div class="col-xs-12">
+            <form-component @newUser="addUser"></form-component>
+        </div>
     </div>
+
 </template>
 
 <script>
@@ -43,7 +49,7 @@
             addUser(user){
                 this.user.push(user)
             },
-            updateUser(index){
+            updateUser(index, user){
                 this.user[index] = user
             },
             deleteUser(index){

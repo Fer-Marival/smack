@@ -51,6 +51,7 @@
 					      <td>{{ $product->locale }}</td>
 					      <td >
 						    <a href="{{ route('products.edit', $product->id) }}" type="button" class="btn btn-primary"><i class="far fa-edit"></i></a>
+<<<<<<< HEAD
 					      </td>
 					      <td>
 					      	<form action="{{ route('products.destroy', $product->id) }}" method="post">
@@ -58,6 +59,10 @@
 				                  @method('DELETE')
 				                  <button class="btn btn-danger" type="submit"><span class="glyphicon glyphicon-trash"></span></button>
 				            </form>
+=======
+						    
+						    {{-- <a href="{{ route('products.destroy', $product->id) }}" type="button" class="btn btn-danger"><i class="far fa-trash-alt"></i></a> --}}
+>>>>>>> 5bf8c54af38c0c3c8f282faa832ace7de8979e78
 					      </td>
 					    </tr>
 					  @endforeach

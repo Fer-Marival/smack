@@ -27,49 +27,38 @@
           </div>
        </div>
      </div>      
-     <!--   <div class="gradient-home">
-           <div class="row align-items-end">
-                <div class="col">
-                  <div class="container text-center">
-                    <h1 class="title">VDtrips</h1>
-                    <p>Rent cameras and share beautifull moments </p>
-                     <img src="{!!asset('img/bg2.png')!!}" alt="" class="img-fluid animated delay-1s fadeInUp">
-                  </div>
-                </div>
-           </div>
-       </div> -->
-       <div class="container-fluid bg-1">
-        <h2 class="title m4">Servicios de Calidad</h2>
+    <div class="container-fluid bg-1">
+        <h2 class="title m4">Our services</h2>
           <div class="row" id="services">
-              <div class="col shadow-flow">
-                <div class="card">
+              <div class="col col-md-4">
+                <div class="service">
                    <picture>
                      <img src="{!!asset('img/camara.jpg')!!}" class="img-fluid" alt="">
                   </picture>
                   <div class="content gradient-up">
-                    <p>Cámaras</p>
+                    <p>Rent a Camera</p>
                     <a href="{{ route('cameras.index') }}" class="btn rounder">Ver Modelos</a>
                   </div>
                 </div>
               </div>
-              <div class="col shadow-flow">
-                <div class="card">
+              <div class="col col-md-4">
+                <div class="service">
                    <picture>
                     <img src="{!!asset('img/snorkel.jpg')!!}" class="img-fluid" alt="">
                   </picture>
-                  <div class="content">   
+                  <div class="content gradient-up">   
                     <p>Trips</p>
-                    <a href="/tours-acuaticos" class="btn rounder">See details</a>
+                    <a href="/tours-acuaticos" class="btn rounder">Know our trips</a>
                   </div>
                 </div>
               </div>
-              <div class="col shadow-flow">
-                <div class="card">
+              <div class="col col-md-4">
+                <div class="service">
                   <picture >
                     <img src="{!!asset('img/transport.jpg')!!}" class="img-fluid" alt="">
                   </picture>
                   <div class="content gradient-up">
-                      <p>Traslados</p> 
+                      <p>Personal Host</p> 
                       <a href="#" class="btn rounder">See details</a>
                   </div>
                 </div>
@@ -141,7 +130,7 @@
         </div>
       </div>
       <div id="destiny">
-          <div class="title">Conoce nuestros destinos</div>
+          <div class="title">Our Destiny</div>
             <div class="slider" id="destiny-slide">
               <div class="sp-slides">
                 <div class="sp-slide">

@@ -22,6 +22,10 @@ Route::get('/tours-terrestres', function () {
 });
 
 Route::resource('/cameras', 'Frontend\ArticlesController');
+Route::get('/getcameras', 'Frontend\ArticlesController@getProducts')->name('get.cameras');
+Route::get('/getcomplements', 'Frontend\ArticlesController@getComplements')->name('get.complements');
+Route::get('/gettours','Frontend\ArticlesController@getTour')->name('get.tours');
+
 
 Route::resource('/newslater', 'Frontend\NewSlaterController');
 

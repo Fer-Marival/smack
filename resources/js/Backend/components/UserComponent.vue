@@ -1,11 +1,23 @@
 <template>
     <tr>
         <td>{{ user.id }}</td>
-        <td>{{ user.name}}</td>
-        <td>{{ user.email }}</td>
         <td>
-            <button type="button" class="btn btn-primary">Editar</button>
-            <button type="submit" class="btn btn-danger" v-on:click="onclickDelete()">Eliminar</button>
+            <input v-if="editstatus" type="text" class="form-control" v-model="user.name">
+            {{ user.name }}
+        </td>
+        <td>
+            <input v-if="editstatus" type="text" class="form-control" v-model="user.email">
+            {{ user.email}}
+        </td>
+        <td v-if="editstatus">
+            <input placeholder="password" type="password" class="form-control" v-model="user.password">
+        </td>
+        <td>
+            <button v-if="editstatus" class="btn btn-success" v-on:click="onClickUpdate()">
+                Guardar
+            </button>
+            <button type="button" class="btn btn-primary" @click="onClickEdit()">Editar</button>
+            <button type="submit" class="btn btn-danger"  @click="onclickDelete()">Eliminar</button>
         </td>
     </tr>
 </template>
@@ -31,11 +43,12 @@
         		this.editstatus = true;
         	},
         	onClickUpdate(){
-        		const args = {
+        		const params = {
         			name: this.user.name,
-        			email: this.user.email
+        			email: this.user.email,
+                    password: this.user.password
         		};
-        		axios.put('/admin/users/'+this.user.id, args).then((response) => {
+        		axios.put('/admin/users/'+this.user.id, params).then((response) => {
         			this.editstatus = false,
         			this.user = response.data;
         			this.$emit('update', user);

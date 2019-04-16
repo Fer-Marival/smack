@@ -48,12 +48,13 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $this->user->create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password)
-        ]);
-        return back();
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = bcrypt($request->password);
+        $user->save();
+
+        return $user;
     }
 
     /**
@@ -87,7 +88,13 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $user = User::find($id);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = bcrypt($request->password);
+        $user->save();
+
+        return $user;
     }
 
     /**
@@ -98,6 +105,8 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        // this data is a component user by vue js and axios
+        $user = $this->user->find($id);
+        $user->delete();
     }
 }
