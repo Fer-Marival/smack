@@ -10,6 +10,12 @@
 		        {{ session()->get('success') }}
 		    </div>
 		@endif
+
+		@if(session()->has('delete'))
+		    <div class="alert alert-danger">
+		        {{ session()->get('delete') }}
+		    </div>
+		@endif
 	<div class="graph-visual tables-main">
 		<h2 class="inner-tittle">List Users</h2>
 			<div class="graph">
@@ -26,10 +32,11 @@
 					    <tr>
 					      <th ><strong>#<strong></th>
 					      <th><strong>Name<strong></th>
-					      <th><strong>Image<strong></th>
-					      <th><strong>Category<strong></th>
-					      <th><strong>Locale<strong></th>
-					      <th colspan="4">Aciones<strong></th>
+					      <th>Image</th>
+					      <th>Category</th>
+					      <th>Locale</th>
+					      <th>Editar</th>
+					      <th>Eliminar</th>
 					    </tr>
 					  </thead>
 					  <tbody>
@@ -44,8 +51,18 @@
 					      <td>{{ $product->locale }}</td>
 					      <td >
 						    <a href="{{ route('products.edit', $product->id) }}" type="button" class="btn btn-primary"><i class="far fa-edit"></i></a>
+<<<<<<< HEAD
+					      </td>
+					      <td>
+					      	<form action="{{ route('products.destroy', $product->id) }}" method="post">
+				                  @csrf
+				                  @method('DELETE')
+				                  <button class="btn btn-danger" type="submit"><span class="glyphicon glyphicon-trash"></span></button>
+				            </form>
+=======
 						    
 						    {{-- <a href="{{ route('products.destroy', $product->id) }}" type="button" class="btn btn-danger"><i class="far fa-trash-alt"></i></a> --}}
+>>>>>>> 5bf8c54af38c0c3c8f282faa832ace7de8979e78
 					      </td>
 					    </tr>
 					  @endforeach

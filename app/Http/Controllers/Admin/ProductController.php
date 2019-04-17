@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\UploadedFile;
 use App\Product;
 use App\Category;
 
@@ -23,8 +22,9 @@ class ProductController extends Controller
         $products_total = $this->product->all();
         $total = count($products_total);
         $products = $this->product->all();
-        //dd($products);
-        return view('admin.products.index', compact('products', 'total'));
+        $categories = $this->category->all();
+
+        return view('admin.products.index', compact('products', 'total', 'categories'));
     }
 
     /**
@@ -46,10 +46,10 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $file = $request->file('image');
-        $name = $file->getClientOriginalName();
-        $path = 
-        $path = public_path('/img/uploads/').$name;
-        $fileStorage = $file->move(public_path().'/img/uploads/', $name);
+        $fileName = $file->getClientOriginalName();
+        $path = '/img/uploads/'.$fileName;
+        
+        $fileStorage = $file->move(public_path().'/img/uploads/', $fileName);
         $this->product->create([
             'name' => $request->name,
             'path' => $path,
@@ -83,8 +83,7 @@ class ProductController extends Controller
     public function edit($id)
     {
 
-        $product = Product::findOrFail($id);
-
+        $product = $this->product->find($id);
         return view('admin.products.edit', compact('product'));
     }
 
@@ -100,7 +99,7 @@ class ProductController extends Controller
         //dd($request->all());
         $product = Product::find($id);
         $product->update($request->all());
-        return back();
+        return redirect()->route('products.index')->with('success', 'Product Update!');
     }
 
     /**
@@ -111,9 +110,9 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        $product = Product::findOrFail($id);
-        $product->destroy();
-        return back();
+        $product = $this->product->find($id);
+        $product->delete();
+        return redirect()->route('products.index')->with('delete', 'Category Delete');
         
     }
 }
