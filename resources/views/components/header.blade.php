@@ -9,13 +9,16 @@
 			<div class="col-md-8">
 				<ul class="nav justify-content-end">
 					  <li class="nav-item">
-					    <a class="nav-link active" href="/">Home</a>
+					    <a class="nav-link active" href="{{url('/')}}">Home</a>
 					  </li>
 					  <li class="nav-item">
-					    <a class="nav-link" href="/trips">Experiencias</a>
+					    <a class="nav-link" href="{{url('/trips')}}">Trips</a>
 					  </li>
 					  <li class="nav-item">
-					    <a class="nav-link" href="/cameras">Camaras</a>
+					    <a class="nav-link" href="{{url('/cameras')}}">Camaras</a>
+					  </li>
+					  <li class="nav-item">
+					    <a class="nav-link" href="#">Contact</a>
 					  </li>
 					</ul>
 			</div>
