@@ -1,5 +1,9 @@
 {
-    "/js/app.js": "/js/app.js",
+<<<<<<< HEAD
+    "/admin/js/all.js": "/admin/js/all.js",
+=======
     "/js/frontend/app.js": "/js/frontend/app.js",
-    "/css/app.css": "/css/app.css"
+>>>>>>> 5bf8c54af38c0c3c8f282faa832ace7de8979e78
+    "/css/app.css": "/css/app.css",
+    "/js/app.js": "/js/app.js"
 }

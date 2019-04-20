@@ -79,8 +79,9 @@ class ArticlesController extends Controller
     public function show($id)
     {
         $articulo = $this->product->findOrFail($id);
-        return view('frontend.cameras.show', compact('articulo'));
         //dd($articulo);
+        return view('frontend.cameras.show', compact('articulo'));
+
     }
 
     /**
