@@ -78,29 +78,29 @@
        </div>
         <div class="container-fluid">
           <div id="products">
-              <div class="col shadow-flow">
-                  <div class="content">
+              <div class="col-md-3">
+                  <div class="product">
                     <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">
-                    One of three columns <br />
+                    Go pro 7 Black <br />
                     <a href="#" class="rounder">Add to my adveture</a>
                   </div>
               </div>
-              <div class="col shadow-flow">
-                <div class="content">
+              <div class="col-md-3">
+                <div class="product">
                   <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">
-                  One of three columns <br />
+                  Go pro 7 Silver <br />
                   <a href="#" class="rounder">Add to my adveture</a>
                 </div>
               </div>
-              <div class="col shadow-flow">
-                <div class="content">
+              <div class="col-md-3">
+                <div class="product">
                   <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">
-                  One of three columns <br />
+                  Go pro 6 Black <br />
                   <a href="#" class="rounder">Add to my adventure</a>
                 </div>
               </div>
-              <div class="col shadow-flow">
-                <div class="content">
+              <div class="col-md-3">
+                <div class="product">
                     <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">One of three columns <br />
                     <a href="#" class="rounder">Add to my adveture</a>
                 </div>

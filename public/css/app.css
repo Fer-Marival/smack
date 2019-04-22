@@ -15593,13 +15593,13 @@ html {
   background-color: white;
   text-align: center;
   border-radius: 4px;
+  margin: 1em auto;
 }
 
-#products .product .content,
-.trips .product .content {
-  color: #232323;
-  font-size: 14pt;
-  height: 80%;
+#products .product img,
+.trips .product img {
+  display: block;
+  text-align: center;
 }
 
 #products .product .row,
@@ -15752,6 +15752,7 @@ html {
   bottom: 50%;
   width: 100%;
   margin: auto;
+  overflow: hidden;
 }
 
 #acuatics #video .video-container span {
