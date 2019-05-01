@@ -443,10 +443,7 @@ class ComposerStaticInit0ed8e8313cbdf0ec66b21488bdca3508
         'App\\Category' => __DIR__ . '/../..' . '/app/Category.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
-<<<<<<< HEAD
-=======
         'App\\Http\\Controllers\\Admin\\CategoryController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/CategoryController.php',
->>>>>>> 5bf8c54af38c0c3c8f282faa832ace7de8979e78
         'App\\Http\\Controllers\\Admin\\ProductController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/ProductController.php',
         'App\\Http\\Controllers\\Admin\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/UserController.php',
         'App\\Http\\Controllers\\Auth\\ForgotPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ForgotPasswordController.php',
@@ -459,7 +456,6 @@ class ComposerStaticInit0ed8e8313cbdf0ec66b21488bdca3508
         'App\\Http\\Controllers\\Frontend\\NewSlaterController' => __DIR__ . '/../..' . '/app/Http/Controllers/Frontend/NewSlaterController.php',
         'App\\Http\\Controllers\\Frontend\\TourController' => __DIR__ . '/../..' . '/app/Http/Controllers/Frontend/TourController.php',
         'App\\Http\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/HomeController.php',
-        'App\\Http\\Controllers\\TourController' => __DIR__ . '/../..' . '/app/Http/Controllers/TourController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
         'App\\Http\\Middleware\\CheckForMaintenanceMode' => __DIR__ . '/../..' . '/app/Http/Middleware/CheckForMaintenanceMode.php',

@@ -18,7 +18,7 @@
   <div class="clear"></div>
   <div class="container-fluid">
       <div id="products">
-         @foreach($articulos as $articulo)
+      {{--    @foreach($articulos as $articulo)
           <div class="col">
               <div class="content shadow-flow">
                 <img src="{{ asset($articulo->image) }}" class="img-fluid" alt="">
@@ -27,12 +27,12 @@
                 <a href="{{ route('cameras.show', $articulo->id) }}" class="rounder">Add to my adveture</a>
               </div>
           </div>
-          @endforeach
+          @endforeach --}}
       </div>
   </div>
   <div class="container">
       <div class="row" id="products">
-        @foreach($articulos as $articulo)
+        {{-- @foreach($articulos as $articulo)
           <div class="col-md-4 col-sm-6 shadow">
               <div class="content">
                 <h4 class="card-title-article">{{ $articulo->name }}</h4>
@@ -49,7 +49,7 @@
                 </div>
               </div>
           </div>
-        @endforeach
+        @endforeach --}}
       </div>
   </div>
     <div id="product">

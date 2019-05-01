@@ -1,9 +1,6 @@
 {
-<<<<<<< HEAD
-    "/admin/js/all.js": "/admin/js/all.js",
-=======
     "/js/frontend/app.js": "/js/frontend/app.js",
->>>>>>> 5bf8c54af38c0c3c8f282faa832ace7de8979e78
     "/css/app.css": "/css/app.css",
+    "/admin/js/all.js": "/admin/js/all.js",
     "/js/app.js": "/js/app.js"
 }

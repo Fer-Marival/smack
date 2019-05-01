@@ -78,31 +78,39 @@
        </div>
         <div class="container-fluid">
           <div id="products">
-              <div class="col shadow-flow">
+              <div class="col">
+                <div class="product">
                   <div class="content">
                     <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">
-                    One of three columns <br />
+                    GoPro 7 Black<br />
                     <a href="#" class="rounder">Add to my adveture</a>
+                    </div>
                   </div>
               </div>
-              <div class="col shadow-flow">
-                <div class="content">
-                  <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">
-                  One of three columns <br />
-                  <a href="#" class="rounder">Add to my adveture</a>
-                </div>
-              </div>
-              <div class="col shadow-flow">
-                <div class="content">
-                  <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">
-                  One of three columns <br />
-                  <a href="#" class="rounder">Add to my adventure</a>
-                </div>
-              </div>
-              <div class="col shadow-flow">
-                <div class="content">
-                    <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">One of three columns <br />
+              <div class="col">
+                <div class="product">
+                  <div class="content">
+                    <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">
+                    GoPro 7 Silver <br />
                     <a href="#" class="rounder">Add to my adveture</a>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="product">
+                  <div class="content">
+                    <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">
+                    GoPro 6 Black <br />
+                    <a href="#" class="rounder">Add to my adventure</a>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="product">
+                  <div class="content">
+                      <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">GoPro 7 Session <br />
+                      <a href="#" class="rounder">Add to my adveture</a>
+                  </div>
                 </div>
               </div>
           </div>
@@ -112,19 +120,19 @@
           <div class="row">
             <div class="col">
               <img src="{!!asset('img/icons/1.svg')!!}" class="img-fluid" alt="">
-              <p class="text-center">Staff capacitado</p>
+              <p class="text-center">Professional Staff</p>
             </div>
             <div class="col">
               <img src="{!!asset('img/icons/2.svg')!!}" class="img-fluid" alt="">
-              <p class="text-center">Amabilidad y amigables</p>
+              <p class="text-center">Kindness and friendly</p>
             </div>
             <div class="col">
               <img src="{!!asset('img/icons/3.svg')!!}" class="img-fluid" alt="">
-              <p class="text-center">Traslado incluido</p>
+              <p class="text-center">Transfer included</p>
             </div>
             <div class="col">
               <img src="{!!asset('img/icons/4.svg')!!}" class="img-fluid" alt="">
-              <p class="text-center">Calidad en el servicio</p>
+              <p class="text-center">Quality in the service</p>
             </div>
           </div>
         </div>
@@ -149,22 +157,22 @@
             </div>
       </div>
       <div class="reviews">
-        <div class="title">Clientes satisfechos</div>
+        <div class="title">what people say?</div>
         <hr>
         <div class="slider">
           <div class="sp-slides">
             <div class="sp-slide">
               <div class="row">
                 <div class="col-2"><div class="title">"</div></div>
-                <div class="col"><img class="shadow-flow" src="{!!asset('img/reviews/1.jpg')!!}" alt=""> <h3>La mejor experiencia que pude vivir en puerto vallarta,   servicio muy bueno y muy amable...</h3>
-              <p>Diana Rosas  -  Peru</p></div>
+                <div class="col"><img class="shadow-flow" src="{!!asset('img/reviews/1.jpg')!!}" alt=""> <h3>best experience I could live in puerto vallarta, very good and very friendly service ...</h3>
+              <p>Diana Rosas  -  USA</p></div>
                 <div class="col-2"><div class="title">"</div></div>
               </div>
             </div>
             <div class="sp-slide">
              <div class="row">
                 <div class="col-2"><div class="title">"</div></div>
-                <div class="col"> <img class="shadow-flow" src="{!!asset('img/reviews/2.jpg')!!}" alt=""> <h3>La pasamos increible con los organizadores y todo my profesional </h3>
+                <div class="col"> <img class="shadow-flow" src="{!!asset('img/reviews/2.jpg')!!}" alt=""> <h3>We had an incredible time with the organizers and all my professional </h3>
               <p>Edith - Canada</p></div>
                 <div class="col-2"><div class="title">"</div></div>
               </div>
@@ -174,7 +182,7 @@
                 <div class="col-2"><div class="title">"</div></div>
                 <div class="col">
                   <img  class="shadow-flow"src="{!!asset('img/reviews/82.jpg')!!}" alt="">
-                  <h3>Experiencia increible con nuestros amigos y la pasamos genial todo fue  muy bien y el traslado excelente,  comodo y esncial</h3>
+                  <h3>Amazing experience with our friends and we had a great time everything was very good and the transfer excellent, comfortable and essential</h3>
                   <p>Mark  - USA</p>
                 </div>
                 <div class="col-2"><div class="title">"</div></div>
