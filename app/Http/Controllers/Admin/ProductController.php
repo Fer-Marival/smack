@@ -11,19 +11,21 @@ class ProductController extends Controller
 {
     protected $product;
     protected $category;
+    public $lang;
 
     function __construct(Product $product, Category $category){
         $this->product = $product;
         $this->category = $category;
+        $this->lang = \App::getLocale();
     }
 
     public function index()
     {
         $products_total = $this->product->all();
         $total = count($products_total);
-        $products = $this->product->all();
+        $products = $this->product->with('categories')->get();
+        //->where('locale', $this->lang)->get();
         $categories = $this->category->all();
-
         return view('admin.products.index', compact('products', 'total', 'categories'));
     }
 
@@ -84,7 +86,8 @@ class ProductController extends Controller
     {
 
         $product = $this->product->find($id);
-        return view('admin.products.edit', compact('product'));
+        $categories = $this->category->all();
+        return view('admin.products.edit', compact('product', 'categories'));
     }
 
     /**

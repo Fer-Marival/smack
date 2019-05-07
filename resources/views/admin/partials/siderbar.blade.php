@@ -22,6 +22,8 @@
                             @csrf
                         </form>
                         </a></li>
+                        <li><a href="{{ url('lang', ['en']) }}">En</a></li>
+				  		<li><a href="{{ url('lang', ['es']) }}">Es</a></li>
 					</ul>
 				</div>
 				<!--//down-->

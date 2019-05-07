@@ -1,19 +1,17 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+/* Variable de idioma global */
 
-Route::get('/', function () {
-    return view('frontend.home');
-});
+Route::get('lang/{lang}', function ($lang) {
+    session(['lang' => $lang]);
+    return \Redirect::back();
+})->where([
+    'lang' => 'en|es'
+]);
+
+
+Route::get('/{lang}', 'Frontend\HomeController@index');
+
 Route::get('/tours-acuaticos', function () {
     return view('frontend.acuaticos');
 });
@@ -21,11 +19,7 @@ Route::get('/tours-terrestres', function () {
     return view('frontend.terrestres');
 });
 
-Route::resource('/cameras', 'Frontend\ArticlesController');
-Route::get('/getcameras', 'Frontend\ArticlesController@getProducts')->name('get.cameras');
-Route::get('/getcomplements', 'Frontend\ArticlesController@getComplements')->name('get.complements');
-Route::get('/gettours','Frontend\ArticlesController@getTour')->name('get.tours');
-
+Route::resource('/{lang}/cameras', 'Frontend\ArticlesController');
 
 Route::resource('/newslater', 'Frontend\NewSlaterController');
 
