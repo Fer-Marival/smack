@@ -8,10 +8,24 @@ use App\Product;
 
 class HomeController extends Controller
 {
-    public function index($lang)
+	protected $lang;
+
+	function __construct()
+	{
+		//$this->lang = \App::getLocale();
+	}
+    public function index()
     {
+    	$locale = \App::getLocale();
+
+    	if (\App::isLocale('es')) {
+    		$this->lang = 'es';
+    	}else{
+    		$this->lang = 'en';
+    	}
+    	$language = $this->lang;
     	$products = Product::where('category_id', 1)->get();
-    	//dd($products);
-    	return view('frontend.home', compact('products'));
+    	
+    	return view('frontend.home', compact('products', 'language'));
     }
 }

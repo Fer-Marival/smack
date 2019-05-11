@@ -10,7 +10,7 @@ Route::get('lang/{lang}', function ($lang) {
 ]);
 
 
-Route::get('/{lang}', 'Frontend\HomeController@index');
+Route::get('/', 'Frontend\HomeController@index');
 
 Route::get('/tours-acuaticos', function () {
     return view('frontend.acuaticos');
@@ -19,7 +19,7 @@ Route::get('/tours-terrestres', function () {
     return view('frontend.terrestres');
 });
 
-Route::resource('/{lang}/cameras', 'Frontend\ArticlesController');
+Route::resource('/cameras', 'Frontend\ArticlesController');
 
 Route::resource('/newslater', 'Frontend\NewSlaterController');
 

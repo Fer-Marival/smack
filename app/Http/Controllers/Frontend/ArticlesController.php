@@ -26,6 +26,7 @@ class ArticlesController extends Controller
    
     public function index()
     {
+       //dd($this->lang);
          $articulos = $this->product->where('category_id', 1)
             ->where('locale', $this->lang)->get();
             //dd($articulos);

@@ -1,5 +1,6 @@
 	@extends('layout')
 	@section('content') 
+  <h1>{{$language}}</h1>
       <div id="acuatics">
           <div id="video">
             <video autoplay loop muted autoplay id="video-background" plays-inline>
@@ -29,6 +30,7 @@
      </div>      
     <div class="container-fluid bg-1">
         <h2 class="title m4">@lang('global.OurServices')</h2>
+
           <div class="row" id="services">
               <div class="col col-md-4">
                 <div class="service">
