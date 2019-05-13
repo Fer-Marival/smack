@@ -16,19 +16,33 @@ class ArticlesController extends Controller
      */
     protected $product;
     protected $accessories;
-    public $lang;
+    protected $lang;
 
     function __construct(Product $product, Accessories $accessories){
         $this->product = $product;
         $this->accessories = $accessories;
-        $this->lang = \App::getLocale();
+        // $this->lang = \App::getLocale();
+        
+    }
+
+    public function language()
+    {
+        $locale = \App::getLocale();
+
+        if (\App::isLocale('es')) {
+            $this->lang = 'es';
+        }else{
+            $this->lang = 'en';
+        }
+        return $this->lang;
     }
    
     public function index()
     {
+        
        //dd($this->lang);
          $articulos = $this->product->where('category_id', 1)
-            ->where('locale', $this->lang)->get();
+            ->where('locale', $this->language())->get();
             //dd($articulos);
          return view('frontend.cameras.index', compact('articulos'));
     }
@@ -60,7 +74,7 @@ class ArticlesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($lang, $id)
+    public function show($id)
     {
         $articulo = $this->product->findOrFail($id);
         //dd($articulo);

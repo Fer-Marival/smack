@@ -17,6 +17,9 @@
 				  <li class="nav-item">
 				    <a class="nav-link" href="/cameras">@lang('global.cameras')</a>
 				  </li>
+				  <li class="nav-item">
+				    <a class="nav-link" href="#">@lang('global.contact')</a>
+				  </li>
 				  <li><a href="{{ url('lang', ['en']) }}">En</a></li>
 				  <li><a href="{{ url('lang', ['es']) }}">Es</a></li>
 				</ul>

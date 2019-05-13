@@ -8,6 +8,7 @@ return [
 	'home' => 'Home',
 	'experiences' => 'Experiences',
 	'cameras' => 'Cameras',
+	'contact' => 'Contact',
 
 	/* texto de video */
 	'rent' => 'Rent',
@@ -21,8 +22,11 @@ return [
 	'yourTraslate' => 'your traslate',
 
 	/* seección de cuerpo */
-	'OurServices' => 'Our services',
+	'OurServices' => 'Our Services',
 	'rentAcamera' => 'RENT A CAMERA',
 	'trips' => 'TRIPS',
-	'personalHost' => 'PERSONAL HOST'
+	'personalHost' => 'PERSONAL HOST',
+
+	/* Sección de destinos */
+	'ourDestiny' => 'Our Destiny',
 ];

@@ -8,6 +8,7 @@ return [
 	'home' => 'Inicio',
 	'experiences' => 'Experiencias',
 	'cameras' => 'Camaras',
+	'contact' => 'Contacto',
 
 	/* texto de video */
 	'rent' => 'Renta',
@@ -21,9 +22,12 @@ return [
 	'yourTraslate' => 'tu traductor',
 
 	/* seección de cuerpo */
-	'OurServices' => 'Nuestros servicios',
+	'OurServices' => 'Nuestros Servicios',
 	'rentAcamera' => 'RENTA UNA CAMARA',
 	'trips' => 'EXCURCIONES',
-	'personalHost' => 'ANFITRIÓN PERSONAL'
+	'personalHost' => 'ANFITRIÓN PERSONAL',
+
+	/* Seeción de destinos */
+	'ourDestiny' => 'Nuestros Destinos',
 
 ];

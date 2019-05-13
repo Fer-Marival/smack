@@ -198,6 +198,7 @@ class RedirectableUrlMatcherTest extends UrlMatcherTest
         $this->assertEquals(['_route' => 'a', 'a' => '123'], $matcher->match('/123/'));
     }
 
+<<<<<<< HEAD
     public function testTrailingRequirementWithDefault_A()
     {
         $coll = new RouteCollection();
@@ -209,6 +210,8 @@ class RedirectableUrlMatcherTest extends UrlMatcherTest
         $this->assertEquals(['_route' => 'a', 'a' => 'aaa'], $matcher->match('/fr-fr/'));
     }
 
+=======
+>>>>>>> 41dd626237f2942a500c20ecdfb0c4fd55117f41
     protected function getUrlMatcher(RouteCollection $routes, RequestContext $context = null)
     {
         return $this->getMockForAbstractClass('Symfony\Component\Routing\Matcher\RedirectableUrlMatcher', [$routes, $context ?: new RequestContext()]);

@@ -1,6 +1,5 @@
 	@extends('layout')
 	@section('content') 
-  <h1>{{$language}}</h1>
       <div id="acuatics">
           <div id="video">
             <video autoplay loop muted autoplay id="video-background" plays-inline>
@@ -84,8 +83,8 @@
               <div class="col shadow-flow">
                   <div class="content">
                     <img src="{{ $product->path }}" class="img-fluid" alt="">
-                    One of three columns <br />
-                    <a href="#" class="rounder">Add to my adveture</a>
+                    {{ $product->description }} <br />
+                    <a href="{{ route('cameras.show', $product->id) }}" class="rounder">Ver Más</a>
                   </div>
               </div>
             @endforeach
@@ -114,7 +113,7 @@
         </div>
       </div>
       <div id="destiny">
-          <div class="title">Our Destiny</div>
+          <div class="title">@lang('global.ourDestiny')</div>
             <div class="slider" id="destiny-slide">
               <div class="sp-slides">
                 <div class="sp-slide">
