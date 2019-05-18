@@ -87,10 +87,10 @@ body, html{
 		background-color: white;
 		text-align: center;
 		border-radius: 4px;
-		.content{
-			color: #232323;
-			font-size: 14pt;
-			height: 80%;
+		margin: 1em auto;
+		img{
+			display: block;
+			text-align: center;
 		}
 		.row{
 			margin:0!important;
@@ -145,6 +145,7 @@ body, html{
 	  	bottom: 50%;
 	  	width: 100%;
 	  	margin:auto;
+	  	overflow: hidden;
 	  	span{
 	  		font-size: 30pt;
 	  		color:white;
