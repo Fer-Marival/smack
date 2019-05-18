@@ -35,14 +35,9 @@
 			    <label for="available">Available</label>
 			    <input type="text" class="form-control" id="available" name="available" placeholder="Price">
 			  </div>
-			  <div class="form-group col-md-4">
-		      <label for="category_id">Category</label>
-			      <select id="category_id" name="category_id" class="form-control">
-			        <option value="1" selected>Productos</option>
-			        <option value="2">Complement</option>
-			        <option value="3">Tours</option>
-			        <option value="4">Traslados</option>
-			      </select>
+			  <div class="form-group">
+				<label for="category_id">Category</label>
+			  	{!!Form::select('category_id', $categories->pluck('name','id'), ['class' => 'form-control'])!!}
 		      </div>
 		      <div class="form-group">
 		      <label for="locale">Idioma</label>
