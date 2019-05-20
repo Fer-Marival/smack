@@ -93,22 +93,12 @@
       <div class="gradient-bar" id="brages">
         <div class="container">
           <div class="row">
+            @foreach($services as $service)
             <div class="col">
-              <img src="{!!asset('img/icons/1.svg')!!}" class="img-fluid" alt="">
-              <p class="text-center">Staff capacitado</p>
+              <img src="{{ $service->path }}" class="img-fluid" alt="">
+              <p class="text-center">{{ $service->name }}</p>
             </div>
-            <div class="col">
-              <img src="{!!asset('img/icons/2.svg')!!}" class="img-fluid" alt="">
-              <p class="text-center">Amabilidad y amigables</p>
-            </div>
-            <div class="col">
-              <img src="{!!asset('img/icons/3.svg')!!}" class="img-fluid" alt="">
-              <p class="text-center">Traslado incluido</p>
-            </div>
-            <div class="col">
-              <img src="{!!asset('img/icons/4.svg')!!}" class="img-fluid" alt="">
-              <p class="text-center">Calidad en el servicio</p>
-            </div>
+            @endforeach
           </div>
         </div>
       </div>

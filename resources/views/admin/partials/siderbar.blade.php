@@ -44,6 +44,7 @@
 							<li id="menu-academico-avaliacoes" ><a href="calender.html">Permisos</a></li>
 						</ul>
 						</li>
+						<li><a href="{{ route('services.index') }}"><i class="fa fa-tachometer"></i> <span>Services</span></a></li>
 					</ul>
 				</div>
 			</div>

@@ -5,15 +5,18 @@ namespace App\Http\Controllers\Frontend;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Product;
+use App\Services;
 
 class HomeController extends Controller
 {
     protected $products;
+    protected $services;
 	protected $lang;
 
-	function __construct(Product $product)
+	function __construct(Product $product, Services $service)
 	{
         $this->products = $product;
+        $this->services = $service;
 		//$this->lang = \App::getLocale();
 	}
 
@@ -34,7 +37,8 @@ class HomeController extends Controller
     	
     	//$language = $this->lang;
     	$products = $this->products->where('category_id', 1)->where('locale', $this->language())->get();
-    	//dd($products);
-    	return view('frontend.home', compact('products'));
+        $services = $this->services->where('locale', $this->language())->get();
+
+        return view('frontend.home', compact('products', 'services'));
     }
 }

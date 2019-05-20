@@ -44,6 +44,7 @@ Route::group(['prefix' => 'admin',  'middleware' => 'auth'], function()
 	Route::get('/list-users', 'Admin\UserController@vista')->name('list.users');
 	Route::resource('/products', 'Admin\ProductController');
 	Route::resource('/categories', 'Admin\CategoryController');
+    Route::resource('/services', 'Admin\ServicesController');
 
 });
 
