@@ -12,9 +12,7 @@ Route::get('lang/{lang}', function ($lang) {
 
 Route::get('/', 'Frontend\HomeController@index');
 
-Route::get('/tours-acuaticos', function () {
-    return view('frontend.acuaticos');
-});
+Route::resource('/tours-acuaticos', 'Frontend\TourController');
 Route::get('/tours-terrestres', function () {
     return view('frontend.terrestres');
 });
@@ -45,6 +43,8 @@ Route::group(['prefix' => 'admin',  'middleware' => 'auth'], function()
 	Route::resource('/products', 'Admin\ProductController');
 	Route::resource('/categories', 'Admin\CategoryController');
     Route::resource('/services', 'Admin\ServicesController');
+    Route::resource('/destinos', 'Admin\DestinosController');
+    Route::resource('/tours', 'Admin\ToursController');
 
 });
 

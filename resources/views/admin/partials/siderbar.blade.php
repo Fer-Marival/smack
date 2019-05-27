@@ -44,6 +44,12 @@
 							<li id="menu-academico-avaliacoes" ><a href="calender.html">Permisos</a></li>
 						</ul>
 						</li>
+						<li id="menu-academico" ><a href="#"><i class="lnr lnr-user"></i> <span> Tours &amp; Destinos</span> <span class="fa fa-angle-right" style="float: right"></span></a>
+						<ul id="menu-academico-sub" >
+							<li id="menu-academico-avaliacoes" ><a href="{{ route('tours.index') }}">Tours</a></li>
+							<li id="menu-academico-boletim" ><a href="{{ route('destinos.index') }}">Destinos</a></li>
+						</ul>
+						</li>
 						<li><a href="{{ route('services.index') }}"><i class="fa fa-tachometer"></i> <span>Services</span></a></li>
 					</ul>
 				</div>
