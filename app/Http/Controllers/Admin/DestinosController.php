@@ -1,32 +1,27 @@
 <?php
 
-namespace App\Http\Controllers\Frontend;
+namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Tour;
-use App\Product;
-
-class TourController extends Controller
+use App\Destino;
+class DestinosController extends Controller
 {
-
-    protected $tour;
-    protected $product;
-
-    function __construct(Product $product, Tour $tour){
-        $this->product = $product;
-        $this->tour = $tour;
-    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
+    protected $destinos;
+
+    function __construct(Destino $destino)
+    {
+        $this->destinos = $destino;
+    }
     public function index()
     {
-        $tours = $this->tour->all();
-        //dd($tours);
-        return view('frontend.acuaticos', compact('tours'));
+        $destinos = $this->destinos->all();
+        return view('admin.destinos.index', compact('destinos'));
     }
 
     /**
@@ -47,7 +42,10 @@ class TourController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //dd($request->all());
+
+        $this->destinos->create($request->all());
+        return back();
     }
 
     /**

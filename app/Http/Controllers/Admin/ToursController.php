@@ -1,32 +1,31 @@
 <?php
 
-namespace App\Http\Controllers\Frontend;
+namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Tour;
-use App\Product;
-
-class TourController extends Controller
+use App\Destino;
+class ToursController extends Controller
 {
-
-    protected $tour;
-    protected $product;
-
-    function __construct(Product $product, Tour $tour){
-        $this->product = $product;
-        $this->tour = $tour;
-    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
+    protected $tours;
+    protected $destinos;
+    function __construct(Tour $tour, Destino $destino)
+    {
+        $this->tours = $tour;
+        $this->destinos = $destino;
+    }
+
     public function index()
     {
-        $tours = $this->tour->all();
-        //dd($tours);
-        return view('frontend.acuaticos', compact('tours'));
+        $tours = $this->tours->all();
+        $destinos = $this->destinos->all();
+        return view('admin.tours.index', compact('tours', 'destinos'));
     }
 
     /**
@@ -36,7 +35,8 @@ class TourController extends Controller
      */
     public function create()
     {
-        //
+        $destinos = $this->destinos->all();
+        return view('admin.tours.create', compact('destinos'));
     }
 
     /**
@@ -47,7 +47,24 @@ class TourController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $file = $request->file('image');
+        $fileName = $file->getClientOriginalName();
+        $path = '/img/uploads/tours/'.$fileName;
+        
+        $fileStorage = $file->move(public_path().'/img/uploads/tours/', $fileName);
+        //dd($path);
+        $json = json_encode($request->destinos);
+        //dd($json);
+       $this->tours->create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'image' => $path,
+            'duracion' => $request->duracion,
+            'locale' => $request->locale,
+            'destinos' => $json
+        ]);
+        //dd('tour creado');
+        return back()->with('success', 'Tour Creado!');
     }
 
     /**
