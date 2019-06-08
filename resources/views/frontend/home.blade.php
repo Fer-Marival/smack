@@ -9,18 +9,18 @@
              <div class="row justify-content-center align-items-center">
                  <div class="col-md-6">
                      <div id="slider">
-                        <div><section class="title">Rent<section></div>
-                        <div><section class="title">Enjoy<section></div>
-                        <div><section class="title">Know</section></div>
-                        <div><section class="title">Confort</section></div>
+                        <div><section class="title">@lang('global.rent')<section></div>
+                        <div><section class="title">@lang('global.enjoy')<section></div>
+                        <div><section class="title">@lang('global.know')</section></div>
+                        <div><section class="title">@lang('global.confort')</section></div>
                     </div>
                  </div>
                   <div class="col-md-6">
                      <div id="slider-right">
-                        <div><p>a camera</p></div>
-                        <div><p>beautifull moments</p></div>
-                        <div><p>best place </p></div>
-                        <div><p>your traslate</p></div>
+                        <div><p>@lang('global.rentCamera')</p></div>
+                        <div><p>@lang('global.beautifullMoment')</p></div>
+                        <div><p>@lang('global.bestPlace') </p></div>
+                        <div><p>@lang('global.yourTraslate')</p></div>
                     </div>
                  </div>
              </div>
@@ -28,7 +28,7 @@
        </div>
      </div>      
     <div class="container-fluid bg-1">
-        <h2 class="title m4">Our services</h2>
+        <h2 class="title m4">@lang('global.OurServices')</h2>
           <div class="row" id="services">
               <div class="col-md-4">
                 <div class="service">
@@ -36,8 +36,8 @@
                      <img src="{!!asset('img/camara.jpg')!!}" class="img-fluid" alt="">
                   </picture>
                   <div class="content gradient-up">
-                    <p>Rent a Camera</p>
-                    <a href="{{ route('cameras.index') }}" class="btn rounder">Ver Modelos</a>
+                    <p>@lang('global.home')</p>
+                    <a href="{{ route('cameras.index') }}" class="btn rounder">@lang('global.seeModel')</a>
                   </div>
                 </div>
               </div>
@@ -47,8 +47,8 @@
                     <img src="{!!asset('img/snorkel.jpg')!!}" class="img-fluid" alt="">
                   </picture>
                   <div class="content gradient-up">   
-                    <p>Trips</p>
-                    <a href="/tours-acuaticos" class="btn rounder">Know our trips</a>
+                    <p>@lang('global.trips')</p>
+                    <a href="/tours-acuaticos" class="btn rounder">@lang('global.seeMore')</a>
                   </div>
                 </div>
               </div>
@@ -58,8 +58,8 @@
                     <img src="{!!asset('img/transport.jpg')!!}" class="img-fluid" alt="">
                   </picture>
                   <div class="content gradient-up">
-                      <p>Personal Host</p> 
-                      <a href="#" class="btn rounder">See details</a>
+                      <p>@lang('global.personalHost')</p> 
+                      <a href="#" class="btn rounder">@lang('global.seeMore')</a>
                   </div>
                 </div>
               </div>
@@ -70,8 +70,8 @@
           <div class="container">
              <div class="row align-items-center">
                <div class="col-md-6">
-                 <span class="title">Capture a beautifull moments</span>
-                 <p>Rent a Camera,</p>
+                 <span class="title">@lang('global.capture')</span>
+                 <p>@lang('global.rent') @lang('global.rentCamera')</p>
                </div>
              </div>
           </div>
@@ -83,7 +83,7 @@
                   <div class="content">
                     <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">
                     GoPro 7 Black<br />
-                    <a href="#" class="rounder">Add to my adveture</a>
+                    <a href="{{ route('cameras.index') }}" class="rounder">@lang('global.addTo')</a>
                     </div>
                   </div>
               </div>
@@ -92,7 +92,7 @@
                   <div class="content">
                     <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">
                     GoPro 7 Silver <br />
-                    <a href="#" class="rounder">Add to my adveture</a>
+                    <a href="{{ route('cameras.index') }}" class="rounder">@lang('global.addTo')</a>
                   </div>
                 </div>
               </div>
@@ -101,7 +101,7 @@
                   <div class="content">
                     <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">
                     GoPro 6 Black <br />
-                    <a href="#" class="rounder">Add to my adventure</a>
+                    <a href="{{ route('cameras.index') }}" class="rounder">@lang('global.addTo')</a>
                   </div>
                 </div>
               </div>
@@ -109,7 +109,7 @@
                 <div class="product">
                   <div class="content">
                       <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">GoPro 7 Session <br />
-                      <a href="#" class="rounder">Add to my adveture</a>
+                      <a href="{{ route('cameras.index') }}" class="rounder">@lang('global.addTo')</a>
                   </div>
                 </div>
               </div>
@@ -120,25 +120,25 @@
           <div class="row">
             <div class="col">
               <img src="{!!asset('img/icons/1.svg')!!}" class="img-fluid" alt="">
-              <p class="text-center">Professional Staff</p>
+              <p class="text-center">@lang('global.staff')</p>
             </div>
             <div class="col">
               <img src="{!!asset('img/icons/2.svg')!!}" class="img-fluid" alt="">
-              <p class="text-center">Kindness and friendly</p>
+              <p class="text-center">@lang('global.friendly')</p>
             </div>
             <div class="col">
               <img src="{!!asset('img/icons/3.svg')!!}" class="img-fluid" alt="">
-              <p class="text-center">Transfer included</p>
+              <p class="text-center">@lang('global.transferIncluded')</p>
             </div>
             <div class="col">
               <img src="{!!asset('img/icons/4.svg')!!}" class="img-fluid" alt="">
-              <p class="text-center">Quality in the service</p>
+              <p class="text-center">@lang('global.quality')</p>
             </div>
           </div>
         </div>
       </div>
       <div id="destiny">
-          <div class="title">Our Destiny</div>
+          <div class="title">@lang('global.ourDestiny')</div>
             <div class="slider" id="destiny-slide">
               <div class="sp-slides">
                 <div class="sp-slide">
@@ -157,7 +157,7 @@
             </div>
       </div>
       <div class="reviews">
-        <div class="title">what people say?</div>
+        <div class="title">@lang('global.opinion')</div>
         <hr>
         <div class="slider">
           <div class="sp-slides">
