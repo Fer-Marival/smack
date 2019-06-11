@@ -4,14 +4,14 @@
 		<div class="jumbotron jumbotron-fluid" style="background-image: url({{ $articulo->path }}); background-repeat: no-repeat;">
 		  <div class="container">
 		    <h1 class="display-4">{{ $articulo->name }}</h1>
-		    <p class="lead">{{ $articulo->description }}</p>
+		    {{-- <p class="lead">{{ $articulo->description }}</p> --}}
 		  </div>
 		</div>
 
 		<div class="row" id="appProducts">
 			<div class="col-md-6">
 				<p align="justify">{{ $articulo->content }}</p>
-				<h1>Complementos</h1>
+				<h1>Más Accesorios</h1>
 				<div class="row">
 					@foreach($articulo->accessories as $accessorie)
 						<div class="col">
