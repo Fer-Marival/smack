@@ -16295,6 +16295,86 @@ footer {
   height: 40px;
 }
 
+@media (max-width: 414px) {
+  .logo {
+    width: 200px;
+    margin: 1em auto;
+  }
+
+  #video {
+    height: 230px !important;
+  }
+
+  #services .col,
+  #services #products .product .row a,
+  #products .product .row #services a,
+  #services .trips .product .row a,
+  .trips .product .row #services a,
+  #services #products .product #products a,
+  #products .product #products #services a,
+  #services .trips .product #products a,
+  .trips .product #products #services a,
+  #services #products .product .trips a,
+  #products .product .trips #services a,
+  #services .trips .product .trips a,
+  .trips .product .trips #services a,
+  #services #products .product .include ul a,
+  #products .product .include ul #services a,
+  #services .include #products .product ul a,
+  .include #products .product ul #services a,
+  #services .trips .product .include ul a,
+  .trips .product .include ul #services a,
+  #services .include .trips .product ul a,
+  .include .trips .product ul #services a,
+  #services #sin-exp .exp-gallery a,
+  #sin-exp .exp-gallery #services a,
+  #services .include ul li,
+  .include ul #services li {
+    min-width: 350px;
+  }
+
+  .title,
+  .include h6:before {
+    font-size: 6vmin;
+    margin: 1em auto !important;
+  }
+
+  .suscribe form .col,
+  .suscribe form #products .product .row a,
+  #products .product .row .suscribe form a,
+  .suscribe form .trips .product .row a,
+  .trips .product .row .suscribe form a,
+  .suscribe form #products .product #products a,
+  #products .product #products .suscribe form a,
+  .suscribe form .trips .product #products a,
+  .trips .product #products .suscribe form a,
+  .suscribe form #products .product .trips a,
+  #products .product .trips .suscribe form a,
+  .suscribe form .trips .product .trips a,
+  .trips .product .trips .suscribe form a,
+  .suscribe form #products .product .include ul a,
+  #products .product .include ul .suscribe form a,
+  .suscribe form .include #products .product ul a,
+  .include #products .product ul .suscribe form a,
+  .suscribe form .trips .product .include ul a,
+  .trips .product .include ul .suscribe form a,
+  .suscribe form .include .trips .product ul a,
+  .include .trips .product ul .suscribe form a,
+  .suscribe form #sin-exp .exp-gallery a,
+  #sin-exp .exp-gallery .suscribe form a,
+  .suscribe form .include ul li,
+  .include ul .suscribe form li {
+    width: 100%;
+    display: block;
+    -ms-flex-preferred-size: auto;
+        flex-basis: auto;
+    -webkit-box-flex: 0;
+    -ms-flex-positive: 1;
+    flex-grow: 0;
+    max-width: 100%;
+  }
+}
+
 header {
   background-color: #fff;
   -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
