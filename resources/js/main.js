@@ -1,10 +1,11 @@
+
 $( '#exp-slider' ).sliderPro({
-			width: "100%",
-			height: 500,
-			arrows: true,
-			buttons: false,
-			
-		});
+	width: "100%",
+	height: 500,
+	arrows: true,
+	buttons: false,
+	
+});
 
 $( '.slider' ).sliderPro({
 	width: "100%",

@@ -31,7 +31,7 @@
         <h2 class="title m4">@lang('global.OurServices')</h2>
 
           <div class="row" id="services">
-              <div class="col col-md-4">
+              <div class="col-md-4">
                 <div class="service">
                    <picture>
                      <img src="{!!asset('img/camara.jpg')!!}" class="img-fluid" alt="">
@@ -42,7 +42,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col col-md-4">
+              <div class="col-md-4">
                 <div class="service">
                    <picture>
                     <img src="{!!asset('img/snorkel.jpg')!!}" class="img-fluid" alt="">
@@ -53,7 +53,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col col-md-4">
+              <div class="col-md-4">
                 <div class="service">
                   <picture >
                     <img src="{!!asset('img/transport.jpg')!!}" class="img-fluid" alt="">
