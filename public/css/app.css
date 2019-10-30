@@ -15280,6 +15280,15 @@ html {
   line-height: 1.5;
 }
 
+.show {
+  display: block;
+  padding-top: 8px;
+}
+
+.hidden {
+  display: none;
+}
+
 .bg-1 {
   background-image: url("/img/bg-1.jpg");
   background-repeat: no-repeat;
@@ -15838,24 +15847,7 @@ html {
           box-shadow: 0px 0px 114px 0px rgba(0, 0, 0, 0.08), 0px 30px 25px 0px rgba(0, 0, 0, 0.05);
   -webkit-transform: translateY(-5px);
           transform: translateY(-5px);
-}
-
-.rounder:hover a,
-#products .product .row a:hover a,
-.trips .product .row a:hover a,
-#products .product #products a:hover a,
-.trips .product #products a:hover a,
-#products .product .trips a:hover a,
-.trips .product .trips a:hover a,
-#products .product #sin-exp .exp-gallery a:hover a,
-#sin-exp #products .product .exp-gallery a:hover a,
-.trips .product #sin-exp .exp-gallery a:hover a,
-#sin-exp .trips .product .exp-gallery a:hover a,
-#products .product .include ul a:hover a,
-.include #products .product ul a:hover a,
-.trips .product .include ul a:hover a,
-.include .trips .product ul a:hover a {
-  color: white;
+  color: white !important;
   text-decoration: none;
 }
 

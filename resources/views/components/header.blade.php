@@ -20,17 +20,8 @@
 				  <li class="nav-item">
 				    <a class="nav-link" href="#">@lang('global.contact')</a>
 				  </li>
-				  {{--  @if($lang == 'en')
-			            <a href="{{ url('lang', ['es']) }}" class="nav-top-link">
-			                <i class="fas fa-globe-americas"></i> Español
-			            </a>
-			        @else
-			            <a href="{{ url('lang', ['en']) }}" class="nav-top-link">
-			                <i class="fas fa-globe-americas"></i> English
-			            </a>
-			        @endif --}}
-				  <li><a href="{{ url('lang', ['en']) }}">En</a></li>
-				  <li><a href="{{ url('lang', ['es']) }}">Es</a></li>
+				  <li class="nav-item"><a href="{{ url('lang', ['en']) }}" class="@lang('global.show-ing')"><i class="fas fa-globe-americas"></i>En</a></li>
+				  <li class="nav-item"><a href="{{ url('lang', ['es']) }}" class="@lang('global.show-esp')"><i class="fas fa-globe-americas"></i>Es</a></li>
 				</ul>
 			</div>
 			<nav id="mobile__menu">

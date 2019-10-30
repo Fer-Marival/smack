@@ -9,6 +9,8 @@ return [
 	'experiences' => 'Experiences',
 	'cameras' => 'Cameras',
 	'contact' => 'Contact',
+	'show-ing' => 'hidden',
+	'show-esp' => 'show',
 
 	/* texto de video */
 	'rent' => 'Rent',

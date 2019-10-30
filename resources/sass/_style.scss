@@ -3,6 +3,11 @@ body, html{
 	font-size: 14pt;
 	line-height: 1.5;
 }
+.show { 
+	display: block; 
+    padding-top: 8px;
+}
+.hidden { display: none;}
 .bg-1{
 	background-image: url('/img/bg-1.jpg');
 	background-repeat: no-repeat;
@@ -191,10 +196,8 @@ body, html{
 	&:hover{
 		box-shadow: 0px 0px 114px 0px rgba(0, 0, 0, 0.08), 0px 30px 25px 0px rgba(0, 0, 0, 0.05);
     	transform: translateY(-5px);
-    	a{
-    		color: white;
-    		text-decoration: none;
-    	}
+    	color: white!important;
+    	text-decoration: none;
     }
 }
 footer{
