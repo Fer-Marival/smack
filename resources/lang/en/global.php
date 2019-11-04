@@ -31,4 +31,7 @@ return [
 
 	/* Sección de destinos */
 	'ourDestiny' => 'Our Destiny',
+
+return [
+    'welcome' => 'Welcome to our application'
 ];

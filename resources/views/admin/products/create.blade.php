@@ -8,8 +8,7 @@
 	        </button>
 	      </div>
 	      <div class="modal-body">
-
-	        <form action="{{ route('products.store') }}" method="post" enctype="multipart/form-data">
+	        <form action="{{ route('products.store') }}" method="post">
 	        	@csrf
 	          <div class="form-group">
 			    <label for="name">Name</label>
@@ -22,10 +21,6 @@
 			  <div class="form-group">
 			    <label for="description">Description</label> 
 			    <textarea class="form-control" id="description" name="description" rows="3"></textarea>
-			  </div>
-			  <div class="form-group">
-			    <label for="content">Content</label> 
-			    <textarea class="form-control" id="content" name="content" rows="5"></textarea>
 			  </div>
 			  <div class="form-group">
 			    <label for="price">Price</label>

@@ -7,7 +7,7 @@
             </video>
             <div class="video-container">
              <div class="row justify-content-center align-items-center">
-                 <div class="col-md-6">
+                 <div class="col">
                      <div id="slider">
                         <div><section class="title">@lang('global.rent')<section></div>
                         <div><section class="title">@lang('global.enjoy')<section></div>
@@ -15,7 +15,7 @@
                         <div><section class="title">@lang('global.confort')</section></div>
                     </div>
                  </div>
-                  <div class="col-md-6">
+                  <div class="col">
                      <div id="slider-right">
                         <div><p>@lang('global.rentCamera')</p></div>
                         <div><p>@lang('global.beautifullMoment')</p></div>
@@ -29,7 +29,6 @@
      </div>      
     <div class="container-fluid bg-1">
         <h2 class="title m4">@lang('global.OurServices')</h2>
-
           <div class="row" id="services">
               <div class="col-md-4">
                 <div class="service">
@@ -108,7 +107,7 @@
               <div class="sp-slides">
                 <div class="sp-slide">
                   <a data-fancybox="gallery" href="{!!asset('img/destiny/1.jpg')!!}"><img class="img-fluid" src="{!!asset('img/destiny/1.jpg')!!}"/></a>
-                  <div class="title">Las Animas </div>     
+                  <div class="title">Las Ánimas </div>     
                 </div>
                 <div class="sp-slide">
                   <a data-fancybox="gallery" href="{!!asset('img/destiny/2.jpg')!!}"><img class="img-fluid" src="{!!asset('img/destiny/2.jpg')!!}"/></a>
@@ -116,7 +115,7 @@
                 </div>
                 <div class="sp-slide">
                   <a data-fancybox="gallery" href="{!!asset('img/destiny/3.jpg')!!}"><img class="img-fluid" src="{!!asset('img/destiny/3.jpg')!!}"/></a>
-                  <div class="title">Palo Maria</div>    
+                  <div class="title">Palo María</div>    
                 </div>
               </div>
             </div>

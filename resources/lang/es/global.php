@@ -1,3 +1,4 @@
+
 <?php
 /**
  * Variables de traducción globales  generales en Español
@@ -33,3 +34,4 @@ return [
 	'ourDestiny' => 'Nuestros Destinos',
 
 ];
+

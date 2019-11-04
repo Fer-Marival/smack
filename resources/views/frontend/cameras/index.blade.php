@@ -16,26 +16,23 @@
    </div>
   </div>
   <div class="clear"></div>
-  <div class="container">
-      <div class="row" id="products">
-        @foreach($articulos as $articulo)
-          <div class="col-md-4 col-sm-6 shadow">
+  <div class="container-fluid">
+      <div id="products">
+         @foreach($articulos as $articulo)
+          <div class="col shadow-flow">
               <div class="content">
-                <h4 class="card-title-article">{{ $articulo->name }}</h4>
-                <img src="{{ asset($articulo->path) }}" height="300px" class="img-fluid" alt="">
-                <div class="row container dates-product">
-                  <span class="badge badge-light col-6">Price: $ {{ $articulo->price }}</span>
-                  <span class="badge badge-warning col-6">Disponibles: {{ $articulo->available }}</span>
-                </div>
-                <br>
-                <p>{{ $articulo->description }}</p>
-                <div class="links-items">
-                  <a href="{{ route('cameras.show', $articulo->id) }}" class="btn rounder">Ver Más</a>
-                  <!--<a href="#" class="btn rounder">Add to my adveture</a>-->
-                </div>
+                <img src="{{ asset($articulo->image) }}" class="img-fluid" alt="">
+                {{ $articulo->name }}<br />
+                {{ $articulo->description }}<br />
+                <a href="{{ route('cameras.show', $articulo->id) }}" class="rounder">Add to my adveture</a>
               </div>
           </div>
-        @endforeach
+          @endforeach
       </div>
+  </div>
+    <div id="product">
+      <product-component></product-component>
+      
+      <div class="clear"></div>
   </div>
 @endsection
