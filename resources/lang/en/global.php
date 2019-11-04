@@ -30,8 +30,5 @@ return [
 	'personalHost' => 'PERSONAL HOST',
 
 	/* Sección de destinos */
-	'ourDestiny' => 'Our Destiny',
-
-return [
-    'welcome' => 'Welcome to our application'
+	'ourDestiny' => 'Our Destiny'
 ];

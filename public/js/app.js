@@ -43372,7 +43372,7 @@ var app = new Vue({
 
 try {
   window.Popper = __webpack_require__(3).default;
-  //window.$ = window.jQuery = require('jquery');
+  window.$ = window.jQuery = __webpack_require__(11);
 
   __webpack_require__(10);
   window.sliderPro = __webpack_require__(12).default;
