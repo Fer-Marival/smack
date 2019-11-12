@@ -12,9 +12,8 @@ Route::get('lang/{lang}', function ($lang) {
 
 Route::get('/', 'Frontend\HomeController@index');
 
-Route::get('/tours-acuaticos', function () {
-    return view('frontend.acuaticos');
-});
+Route::resource('/trips', 'Frontend\TourController');
+
 Route::get('/tours-terrestres', function () {
     return view('frontend.terrestres');
 });
@@ -26,9 +25,6 @@ Route::resource('/newslater', 'Frontend\NewSlaterController');
 
 Route::get('/trips/snorkel', function () {
     return view('frontend.single-experience');
-});
-Route::get('/trips', function () {
-    return view('frontend.trips');
 });
 
 //Route::get('/articulos', 'Frontend\ArticlesController@index');
@@ -44,6 +40,9 @@ Route::group(['prefix' => 'admin',  'middleware' => 'auth'], function()
 	Route::get('/list-users', 'Admin\UserController@vista')->name('list.users');
 	Route::resource('/products', 'Admin\ProductController');
 	Route::resource('/categories', 'Admin\CategoryController');
+    Route::resource('/services', 'Admin\ServicesController');
+    Route::resource('/destinos', 'Admin\DestinosController');
+    Route::resource('/tours', 'Admin\ToursController');
 
 });
 

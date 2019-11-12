@@ -56,6 +56,37 @@ body, html{
     	transform: translateY(-5px);
     }
 }
+#home{
+	#video{
+	  width:100%;
+	  height:80vh;
+	  overflow: hidden;
+	  background: $vd-gradient;
+	  .video-container{
+	  	max-width: 1400px;
+	  	position: absolute;
+	  	bottom: 50%;
+	  	width: 100%;
+	  	margin:auto;
+	  	overflow: hidden;
+	  	span{
+	  		font-size: 30pt;
+	  		color:white;
+	  	}
+	  	p{
+	  		color: white;
+			font-size: 14pt;
+	  	}
+	  }
+	}
+	#video-background{
+	  min-width:100%;
+	  width:100%;
+	  height:auto;
+	  opacity: .38;
+	}
+}
+
 #services{
 	@extend .container;
 	margin: 1em auto;
@@ -136,7 +167,7 @@ body, html{
 	background-color: white;
 	#video{
 	  width:100%;
-	  height:80vh;
+	  height:40vh;
 	  overflow: hidden;
 	  background: $vd-gradient;
 	  .video-container{
@@ -503,4 +534,118 @@ footer{
 		width: 100%;
 		height: 40px;
 	}
+}
+#mobile__menu {
+  position: relative;
+  display: none;
+}
+
+#menu__open,
+#menu__close {
+  width: 42px;
+  height: 34px;
+  position: fixed;
+  top: 1em;
+  left: 1em;
+  z-index: 20;
+}
+
+#menu__open {
+  visibility: visible;
+  opacity: 1;
+  transition: visibility 0s, opacity 0.3s linear;
+}
+#menu__open:before, #menu__open:after {
+  content: '';
+  position: absolute;
+  width: 38px;
+  height: 4px;
+  border-radius: 2px;
+  top: 0;
+  box-shadow: 4px 5px $blue, 4px 15px $blue, 4px 25px $blue;
+}
+#menu__open:target {
+  visibility: hidden;
+  opacity: 0;
+}
+#menu__open:target ~ #menu__close {
+  visibility: visible;
+  opacity: 1;
+  transition: visibility 0s, opacity 0.3s linear;
+}
+#menu__open:target ~ .panel {
+  left: 0;
+}
+
+#menu__close {
+  visibility: hidden;
+  opacity: 0;
+}
+#menu__close:before, #menu__close:after {
+  content: '';
+  position: absolute;
+  width: 38px;
+  height: 4px;
+  background-color: $blue;
+  border-radius: 2px;
+  top: 16px;
+}
+#menu__close:before {
+  transform: rotate(45deg);
+  left: 2px;
+}
+#menu__close:after {
+  transform: rotate(-45deg);
+  right: 2px;
+}
+#menu__close:target {
+  visibility: hidden;
+}
+#menu__close:target ~ #menu__open {
+  visibility: visible;
+  opacity: 1;
+}
+#menu__close:target ~ .panel {
+  left: -100%;
+}
+
+.panel {
+  background: #393939;
+  position: fixed;
+  left: -100%;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  padding-top: 5em;
+  z-index: 10;
+  transition: all .5s;
+}
+.panel__item {
+  border-bottom: 1px solid rgba(238, 238, 238, 0.1);
+}
+.panel__item:first-child {
+  border-top: 1px solid rgba(238, 238, 238, 0.1);
+}
+.panel__href {
+  display: block;
+  line-height: 3.3;
+  padding-left: 1em;
+  transition: all .3s;
+  color: #eaeaea;
+}
+.panel__href:hover {
+  background: #DDD;
+  color: #393939;
+}
+.bg2{
+	background-image: url(/img/camera.jpeg);
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center center;
+	h1{
+		color: white;
+	}
+}
+#appProducts{
+	background-color: white;
 }

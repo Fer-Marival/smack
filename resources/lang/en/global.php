@@ -1,6 +1,6 @@
 <?php
 /**
- * Variables de traducción globales  generales en Inglés
+ * Variables de traducci車n globales  generales en Ingl谷s
  */
 return [
 
@@ -21,14 +21,14 @@ return [
 	'bestPlace' => 'best place',
 	'yourTraslate' => 'your traslate',
 
-	/* seección de cuerpo */
+	/* seecci車n de cuerpo */
 	'OurServices' => 'Our Services',
 	'rentAcamera' => 'RENT A CAMERA',
 	'trips' => 'Trips',
 	'personalHost' => 'PERSONAL HOST',
 	'capture' => 'Capture a beautifull moments',
 
-	/* Sección de destinos */
+	/* Secci車n de destinos */
 	'ourDestiny' => 'Our Destiny',
 
 	/* Botones */
@@ -36,6 +36,8 @@ return [
 	'enter' => 'Enter',
 	'seeModel' => 'See Models',
 	'addTo' => 'Add to my adventure ',
+	'book' => 'Book my adventure ',
+
 
 	/* brages */
 	'staff' => 'Professional Staff',
@@ -50,5 +52,16 @@ return [
 	'newsbtn' => 'Susbcribe',
 	'social' => 'Follow us',
 	'copy' => 'All rights reserved for Vallarta Daniels Trips Puerto Vallarta and Banderas Bay',
+	
+	/* Formulario */
+	'name' => 'Full Name',
+	'email' => 'Email',
+	'telephone' => 'Telephone',
+	'something' => 'Something more?',
+	'send' => 'Send request',
+
+	/*Camaras*/
+	'cam-enjoy' => 'Enjoy the places',
+	'capture' =>'and capture every moments'
 
 ];

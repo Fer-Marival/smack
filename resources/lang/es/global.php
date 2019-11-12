@@ -37,6 +37,7 @@ return [
 	'enter' => 'Entrar',
 	'seeModel' => 'Ver modelos',
 	'addTo' => 'Llevar a la aventura ',
+	'book' => 'Reservar mi aventura',
 
 	/* brages */
 	'staff' => 'Staff Capacitado',
@@ -51,6 +52,17 @@ return [
 	'newsbtn' => 'Suscribirme',
 	'social' => 'Síguenos en nuestras redes sociales',
 	'copy' => 'Todos los derechos reservados para Vallarta Daniel´s Trips Puerto Vallarta y Bah&iacute;a de Banderas',
+	
+	/* Formulario */
+	'name' => 'Nombre Completo',
+	'email' => 'Email',
+	'telephone' => 'Teléfono',
+	'something' => '¿Algo más?',
+	'send' => 'Enviar cotización',
+
+	/*Camaras*/
+	'cam-enjoy' => 'Disfruta los destinos. ',
+	'capture' =>'capturando cada momento'
 
 
 ];

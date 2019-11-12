@@ -12,10 +12,23 @@ class TourController extends Controller
 
     protected $tour;
     protected $product;
+    protected $lang;
 
     function __construct(Product $product, Tour $tour){
         $this->product = $product;
         $this->tour = $tour;
+    }
+
+     public function language()
+    {
+        $locale = \App::getLocale();
+
+        if (\App::isLocale('es')) {
+            $this->lang = 'es';
+        }else{
+            $this->lang = 'en';
+        }
+        return $this->lang;
     }
     /**
      * Display a listing of the resource.
@@ -25,8 +38,9 @@ class TourController extends Controller
     public function index()
     {
         $tours = $this->tour->all();
+        $product = $this->product->where('category_id', 1)->where('locale', $this->language())->get();
         //dd($tours);
-        return view('frontend.acuaticos', compact('tours'));
+        return view('frontend.acuaticos', compact('tours', 'product'));
     }
 
     /**
@@ -58,7 +72,9 @@ class TourController extends Controller
      */
     public function show($id)
     {
-        //
+        $tours = $this->tour->findOrFail($id);
+        //dd($articulo);
+        return view('frontend.trips.show', compact('tours'));
     }
 
     /**

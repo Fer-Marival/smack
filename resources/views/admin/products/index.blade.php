@@ -47,7 +47,7 @@
 					      <td>
 					      	<img width="100px" height="50px" src="{{ asset($product->image) }}" alt="">
 					      </td>
-					      <td>{{ $product->category_id }}</td>
+					      <td>{{ $product->categories->name }}</td>
 					      <td>{{ $product->locale }}</td>
 					      <td >
 						    <a href="{{ route('products.edit', $product->id) }}" type="button" class="btn btn-primary"><i class="far fa-edit"></i></a>
@@ -58,8 +58,6 @@
 				                  @method('DELETE')
 				                  <button class="btn btn-danger" type="submit"><span class="glyphicon glyphicon-trash"></span></button>
 				            </form>
-						    
-						    {{-- <a href="{{ route('products.destroy', $product->id) }}" type="button" class="btn btn-danger"><i class="far fa-trash-alt"></i></a> --}}
 					      </td>
 					    </tr>
 					  @endforeach

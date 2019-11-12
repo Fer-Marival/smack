@@ -10,8 +10,6 @@ namespace Lcobucci\JWT;
 /**
  * Class that wraps validation values
  *
- * @deprecated This class will be removed on v4, new validation API should be used
- *
  * @author Luís Otávio Cobucci Oblonczyk <lcobucci@gmail.com>
  * @since 2.0.0
  */
@@ -25,30 +23,23 @@ class ValidationData
     private $items;
 
     /**
-     * The leeway (in seconds) to use when validating time claims
-     * @var int
-     */
-    private $leeway;
-
-    /**
      * Initializes the object
      *
      * @param int $currentTime
-     * @param int $leeway
      */
-    public function __construct($currentTime = null, $leeway = 0)
+    public function __construct($currentTime = null)
     {
-        $currentTime  = $currentTime ?: time();
-        $this->leeway = (int) $leeway;
+        $currentTime = $currentTime ?: time();
 
         $this->items = [
             'jti' => null,
             'iss' => null,
             'aud' => null,
-            'sub' => null
+            'sub' => null,
+            'iat' => $currentTime,
+            'nbf' => $currentTime,
+            'exp' => $currentTime
         ];
-
-        $this->setCurrentTime($currentTime);
     }
 
     /**
@@ -98,11 +89,9 @@ class ValidationData
      */
     public function setCurrentTime($currentTime)
     {
-        $currentTime  = (int) $currentTime;
-
-        $this->items['iat'] = $currentTime + $this->leeway;
-        $this->items['nbf'] = $currentTime + $this->leeway;
-        $this->items['exp'] = $currentTime - $this->leeway;
+        $this->items['iat'] = (int) $currentTime;
+        $this->items['nbf'] = (int) $currentTime;
+        $this->items['exp'] = (int) $currentTime;
     }
 
     /**

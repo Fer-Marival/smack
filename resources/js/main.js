@@ -1,10 +1,11 @@
+
 $( '#exp-slider' ).sliderPro({
-			width: "100%",
-			height: 500,
-			arrows: true,
-			buttons: false,
-			
-		});
+	width: "100%",
+	height: 500,
+	arrows: true,
+	buttons: false,
+	
+});
 
 $( '.slider' ).sliderPro({
 	width: "100%",
@@ -23,6 +24,11 @@ $( '#destiny-slide' ).sliderPro({
 	slideDistance: 50,
     visibleSize: '100%',
     autoplay: true,
+    breakpoints: {
+		414: {
+			height: 300,
+		}
+	}
 });
 
 $(function(){

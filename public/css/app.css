@@ -15562,6 +15562,39 @@ html {
           transform: translateY(-5px);
 }
 
+#home #video {
+  width: 100%;
+  height: 80vh;
+  overflow: hidden;
+  background: linear-gradient(135deg, #93278f 0%, #2e3192 50%, #00ffff 100%);
+}
+
+#home #video .video-container {
+  max-width: 1400px;
+  position: absolute;
+  bottom: 50%;
+  width: 100%;
+  margin: auto;
+  overflow: hidden;
+}
+
+#home #video .video-container span {
+  font-size: 30pt;
+  color: white;
+}
+
+#home #video .video-container p {
+  color: white;
+  font-size: 14pt;
+}
+
+#home #video-background {
+  min-width: 100%;
+  width: 100%;
+  height: auto;
+  opacity: .38;
+}
+
 #services {
   margin: 1em auto;
 }
@@ -15741,7 +15774,7 @@ html {
 
 #acuatics #video {
   width: 100%;
-  height: 80vh;
+  height: 40vh;
   overflow: hidden;
   background: linear-gradient(135deg, #93278f 0%, #2e3192 50%, #00ffff 100%);
 }
@@ -16293,6 +16326,264 @@ footer {
   display: block;
   width: 100%;
   height: 40px;
+}
+
+#mobile__menu {
+  position: relative;
+  display: none;
+}
+
+#menu__open,
+#menu__close {
+  width: 42px;
+  height: 34px;
+  position: fixed;
+  top: 1em;
+  left: 1em;
+  z-index: 20;
+}
+
+#menu__open {
+  visibility: visible;
+  opacity: 1;
+  -webkit-transition: visibility 0s, opacity 0.3s linear;
+  transition: visibility 0s, opacity 0.3s linear;
+}
+
+#menu__open:before,
+#menu__open:after {
+  content: '';
+  position: absolute;
+  width: 38px;
+  height: 4px;
+  border-radius: 2px;
+  top: 0;
+  -webkit-box-shadow: 4px 5px #3490dc, 4px 15px #3490dc, 4px 25px #3490dc;
+          box-shadow: 4px 5px #3490dc, 4px 15px #3490dc, 4px 25px #3490dc;
+}
+
+#menu__open:target {
+  visibility: hidden;
+  opacity: 0;
+}
+
+#menu__open:target ~ #menu__close {
+  visibility: visible;
+  opacity: 1;
+  -webkit-transition: visibility 0s, opacity 0.3s linear;
+  transition: visibility 0s, opacity 0.3s linear;
+}
+
+#menu__open:target ~ .panel {
+  left: 0;
+}
+
+#menu__close {
+  visibility: hidden;
+  opacity: 0;
+}
+
+#menu__close:before,
+#menu__close:after {
+  content: '';
+  position: absolute;
+  width: 38px;
+  height: 4px;
+  background-color: #3490dc;
+  border-radius: 2px;
+  top: 16px;
+}
+
+#menu__close:before {
+  -webkit-transform: rotate(45deg);
+          transform: rotate(45deg);
+  left: 2px;
+}
+
+#menu__close:after {
+  -webkit-transform: rotate(-45deg);
+          transform: rotate(-45deg);
+  right: 2px;
+}
+
+#menu__close:target {
+  visibility: hidden;
+}
+
+#menu__close:target ~ #menu__open {
+  visibility: visible;
+  opacity: 1;
+}
+
+#menu__close:target ~ .panel {
+  left: -100%;
+}
+
+.panel {
+  background: #393939;
+  position: fixed;
+  left: -100%;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  padding-top: 5em;
+  z-index: 10;
+  -webkit-transition: all .5s;
+  transition: all .5s;
+}
+
+.panel__item {
+  border-bottom: 1px solid rgba(238, 238, 238, 0.1);
+}
+
+.panel__item:first-child {
+  border-top: 1px solid rgba(238, 238, 238, 0.1);
+}
+
+.panel__href {
+  display: block;
+  line-height: 3.3;
+  padding-left: 1em;
+  -webkit-transition: all .3s;
+  transition: all .3s;
+  color: #eaeaea;
+}
+
+.panel__href:hover {
+  background: #DDD;
+  color: #393939;
+}
+
+.bg2 {
+  background-image: url(/img/camera.jpeg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.bg2 h1 {
+  color: white;
+}
+
+#appProducts {
+  background-color: white;
+}
+
+@media (max-width: 414px) {
+  #mobile__menu {
+    display: block !important;
+  }
+
+  #mobile__menu .panel li {
+    list-style: none;
+  }
+
+  header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1;
+  }
+
+  #menu {
+    display: none;
+  }
+
+  .logo {
+    width: 200px;
+    margin: 1em auto;
+  }
+
+  #video {
+    display: none !important;
+  }
+
+  #services .col,
+  #services #products .product .row a,
+  #products .product .row #services a,
+  #services .trips .product .row a,
+  .trips .product .row #services a,
+  #services #products .product #products a,
+  #products .product #products #services a,
+  #services .trips .product #products a,
+  .trips .product #products #services a,
+  #services #products .product .trips a,
+  #products .product .trips #services a,
+  #services .trips .product .trips a,
+  .trips .product .trips #services a,
+  #services #products .product .include ul a,
+  #products .product .include ul #services a,
+  #services .include #products .product ul a,
+  .include #products .product ul #services a,
+  #services .trips .product .include ul a,
+  .trips .product .include ul #services a,
+  #services .include .trips .product ul a,
+  .include .trips .product ul #services a,
+  #services #sin-exp .exp-gallery a,
+  #sin-exp .exp-gallery #services a,
+  #services .include ul li,
+  .include ul #services li {
+    min-width: 350px;
+  }
+
+  .title,
+  .include h6:before {
+    font-size: 6vmin;
+    margin: 1em auto !important;
+  }
+
+  .suscribe form .col,
+  .suscribe form #products .product .row a,
+  #products .product .row .suscribe form a,
+  .suscribe form .trips .product .row a,
+  .trips .product .row .suscribe form a,
+  .suscribe form #products .product #products a,
+  #products .product #products .suscribe form a,
+  .suscribe form .trips .product #products a,
+  .trips .product #products .suscribe form a,
+  .suscribe form #products .product .trips a,
+  #products .product .trips .suscribe form a,
+  .suscribe form .trips .product .trips a,
+  .trips .product .trips .suscribe form a,
+  .suscribe form #products .product .include ul a,
+  #products .product .include ul .suscribe form a,
+  .suscribe form .include #products .product ul a,
+  .include #products .product ul .suscribe form a,
+  .suscribe form .trips .product .include ul a,
+  .trips .product .include ul .suscribe form a,
+  .suscribe form .include .trips .product ul a,
+  .include .trips .product ul .suscribe form a,
+  .suscribe form #sin-exp .exp-gallery a,
+  #sin-exp .exp-gallery .suscribe form a,
+  .suscribe form .include ul li,
+  .include ul .suscribe form li {
+    width: 100%;
+    display: block;
+    -ms-flex-preferred-size: auto;
+        flex-basis: auto;
+    -webkit-box-flex: 0;
+    -ms-flex-positive: 1;
+    flex-grow: 0;
+    max-width: 100%;
+  }
+
+  #home {
+    height: 100vh;
+    background-image: url(/img/header-mobile.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+
+  #services .col-md-4 {
+    margin: 1em auto;
+  }
+
+  #destiny-slide .title,
+  #destiny-slide .include h6:before,
+  .include #destiny-slide h6:before {
+    bottom: 180px !important;
+  }
 }
 
 header {

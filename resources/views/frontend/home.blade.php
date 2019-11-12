@@ -1,34 +1,35 @@
 	@extends('layout')
 	@section('content') 
-      <div id="acuatics">
-          <div id="video">
-            <video autoplay loop muted autoplay id="video-background" plays-inline>
-                <source src="{!!asset('video/diving.mp4')!!}" type="video/mp4">
-            </video>
-            <div class="video-container">
-             <div class="row justify-content-center align-items-center">
-                 <div class="col-md-6">
-                     <div id="slider">
-                        <div><section class="title">@lang('global.rent')<section></div>
-                        <div><section class="title">@lang('global.enjoy')<section></div>
-                        <div><section class="title">@lang('global.know')</section></div>
-                        <div><section class="title">@lang('global.confort')</section></div>
-                    </div>
-                 </div>
-                  <div class="col-md-6">
-                     <div id="slider-right">
-                        <div><p>@lang('global.rentCamera')</p></div>
-                        <div><p>@lang('global.beautifullMoment')</p></div>
-                        <div><p>@lang('global.bestPlace') </p></div>
-                        <div><p>@lang('global.yourTraslate')</p></div>
-                    </div>
-                 </div>
-             </div>
+    <div id="home">
+        <div id="video">
+          <video autoplay loop muted autoplay id="video-background" plays-inline>
+              <source src="{!!asset('video/diving.mp4')!!}" type="video/mp4">
+          </video>
+          <div class="video-container">
+            <div class="row justify-content-center align-items-center">
+               <div class="col-md-6">
+                   <div id="slider">
+                      <div><section class="title">@lang('global.rent')<section></div>
+                      <div><section class="title">@lang('global.enjoy')<section></div>
+                      <div><section class="title">@lang('global.know')</section></div>
+                      <div><section class="title">@lang('global.confort')</section></div>
+                  </div>
+               </div>
+                <div class="col-md-6">
+                   <div id="slider-right">
+                      <div><p>@lang('global.rentCamera')</p></div>
+                      <div><p>@lang('global.beautifullMoment')</p></div>
+                      <div><p>@lang('global.bestPlace')</p></div>
+                      <div><p>@lang('global.yourTraslate')</p></div>
+                  </div>
+               </div>
+            </div>
           </div>
-       </div>
-     </div>      
+        </div>
+    </div>      
     <div class="container-fluid bg-1">
         <h2 class="title m4">@lang('global.OurServices')</h2>
+
           <div class="row" id="services">
               <div class="col-md-4">
                 <div class="service">
@@ -36,8 +37,8 @@
                      <img src="{!!asset('img/camara.jpg')!!}" class="img-fluid" alt="">
                   </picture>
                   <div class="content gradient-up">
-                    <p>@lang('global.home')</p>
-                    <a href="{{ route('cameras.index') }}" class="btn rounder">@lang('global.seeModel')</a>
+                    <p>@lang('global.rentAcamera')</p>
+                    <a href="{{ route('cameras.index') }}" class="btn rounder">Ver Modelos</a>
                   </div>
                 </div>
               </div>
@@ -48,7 +49,7 @@
                   </picture>
                   <div class="content gradient-up">   
                     <p>@lang('global.trips')</p>
-                    <a href="/tours-acuaticos" class="btn rounder">@lang('global.seeMore')</a>
+                    <a href="/tours-acuaticos" class="btn rounder">Know our trips</a>
                   </div>
                 </div>
               </div>
@@ -59,7 +60,7 @@
                   </picture>
                   <div class="content gradient-up">
                       <p>@lang('global.personalHost')</p> 
-                      <a href="#" class="btn rounder">@lang('global.seeMore')</a>
+                      <a href="#" class="btn rounder">See details</a>
                   </div>
                 </div>
               </div>
@@ -70,70 +71,37 @@
           <div class="container">
              <div class="row align-items-center">
                <div class="col-md-6">
-                 <span class="title">@lang('global.capture')</span>
-                 <p>@lang('global.rent') @lang('global.rentCamera')</p>
+                 <span class="title">Capture a beautifull moments</span>
+                 <p>Rent a Camera,</p>
                </div>
              </div>
           </div>
        </div>
         <div class="container-fluid">
           <div id="products">
-              <div class="col">
-                <div class="product">
-                  <div class="content">
-                    <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">
-                    GoPro 7 Black<br />
-                    <a href="{{ route('cameras.index') }}" class="rounder">@lang('global.addTo')</a>
+            @foreach($products as $product)
+               <div class="col-12 col-md-3">
+                  <div class="product">
+                       <img src="{{ $product->path }}" class="img-fluid" alt="">
+                    <div class="container">
+                        <div class="title">{{ $product->name }}</div>
+                        <p>{{ $product->description }} </p>
+                        <a href="{{ route('cameras.show', $product->id) }}" class="rounder">@lang('global.addTo')</a>
                     </div>
                   </div>
               </div>
-              <div class="col">
-                <div class="product">
-                  <div class="content">
-                    <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">
-                    GoPro 7 Silver <br />
-                    <a href="{{ route('cameras.index') }}" class="rounder">@lang('global.addTo')</a>
-                  </div>
-                </div>
-              </div>
-              <div class="col">
-                <div class="product">
-                  <div class="content">
-                    <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">
-                    GoPro 6 Black <br />
-                    <a href="{{ route('cameras.index') }}" class="rounder">@lang('global.addTo')</a>
-                  </div>
-                </div>
-              </div>
-              <div class="col">
-                <div class="product">
-                  <div class="content">
-                      <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">GoPro 7 Session <br />
-                      <a href="{{ route('cameras.index') }}" class="rounder">@lang('global.addTo')</a>
-                  </div>
-                </div>
-              </div>
+            @endforeach
           </div>
        </div>
       <div class="gradient-bar" id="brages">
         <div class="container">
           <div class="row">
+            @foreach($services as $service)
             <div class="col">
-              <img src="{!!asset('img/icons/1.svg')!!}" class="img-fluid" alt="">
-              <p class="text-center">@lang('global.staff')</p>
+              <img src="{{ $service->path }}" class="img-fluid" alt="">
+              <p class="text-center">{{ $service->name }}</p>
             </div>
-            <div class="col">
-              <img src="{!!asset('img/icons/2.svg')!!}" class="img-fluid" alt="">
-              <p class="text-center">@lang('global.friendly')</p>
-            </div>
-            <div class="col">
-              <img src="{!!asset('img/icons/3.svg')!!}" class="img-fluid" alt="">
-              <p class="text-center">@lang('global.transferIncluded')</p>
-            </div>
-            <div class="col">
-              <img src="{!!asset('img/icons/4.svg')!!}" class="img-fluid" alt="">
-              <p class="text-center">@lang('global.quality')</p>
-            </div>
+            @endforeach
           </div>
         </div>
       </div>
@@ -157,22 +125,22 @@
             </div>
       </div>
       <div class="reviews">
-        <div class="title">@lang('global.opinion')</div>
+        <div class="title">Clientes satisfechos</div>
         <hr>
         <div class="slider">
           <div class="sp-slides">
             <div class="sp-slide">
               <div class="row">
                 <div class="col-2"><div class="title">"</div></div>
-                <div class="col"><img class="shadow-flow" src="{!!asset('img/reviews/1.jpg')!!}" alt=""> <h3>best experience I could live in puerto vallarta, very good and very friendly service ...</h3>
-              <p>Diana Rosas  -  USA</p></div>
+                <div class="col"><img class="shadow-flow" src="{!!asset('img/reviews/1.jpg')!!}" alt=""> <h3>La mejor experiencia que pude vivir en puerto vallarta,   servicio muy bueno y muy amable...</h3>
+              <p>Diana Rosas  -  Peru</p></div>
                 <div class="col-2"><div class="title">"</div></div>
               </div>
             </div>
             <div class="sp-slide">
              <div class="row">
                 <div class="col-2"><div class="title">"</div></div>
-                <div class="col"> <img class="shadow-flow" src="{!!asset('img/reviews/2.jpg')!!}" alt=""> <h3>We had an incredible time with the organizers and all my professional </h3>
+                <div class="col"> <img class="shadow-flow" src="{!!asset('img/reviews/2.jpg')!!}" alt=""> <h3>La pasamos increible con los organizadores y todo my profesional </h3>
               <p>Edith - Canada</p></div>
                 <div class="col-2"><div class="title">"</div></div>
               </div>
@@ -182,7 +150,7 @@
                 <div class="col-2"><div class="title">"</div></div>
                 <div class="col">
                   <img  class="shadow-flow"src="{!!asset('img/reviews/82.jpg')!!}" alt="">
-                  <h3>Amazing experience with our friends and we had a great time everything was very good and the transfer excellent, comfortable and essential</h3>
+                  <h3>Experiencia increible con nuestros amigos y la pasamos genial todo fue  muy bien y el traslado excelente,  comodo y esncial</h3>
                   <p>Mark  - USA</p>
                 </div>
                 <div class="col-2"><div class="title">"</div></div>

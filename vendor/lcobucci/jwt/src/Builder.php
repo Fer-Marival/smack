@@ -25,14 +25,14 @@ class Builder
      *
      * @var array
      */
-    private $headers = ['typ'=> 'JWT', 'alg' => 'none'];
+    private $headers;
 
     /**
      * The token claim set
      *
      * @var array
      */
-    private $claims = [];
+    private $claims;
 
     /**
      * The token signature
@@ -67,27 +67,12 @@ class Builder
     ) {
         $this->encoder = $encoder ?: new Encoder();
         $this->claimFactory = $claimFactory ?: new ClaimFactory();
-        $this->headers;
-        $this->claims;
+        $this->headers = ['typ'=> 'JWT', 'alg' => 'none'];
+        $this->claims = [];
     }
 
     /**
      * Configures the audience
-     *
-     * @param string $audience
-     * @param bool $replicateAsHeader
-     *
-     * @return Builder
-     */
-    public function canOnlyBeUsedBy($audience, $replicateAsHeader = false)
-    {
-        return $this->setRegisteredClaim('aud', (string) $audience, $replicateAsHeader);
-    }
-
-    /**
-     * Configures the audience
-     *
-     * @deprecated This method will be removed on v4, use canOnlyBeUsedBy() instead
      *
      * @param string $audience
      * @param boolean $replicateAsHeader
@@ -107,21 +92,6 @@ class Builder
      *
      * @return Builder
      */
-    public function expiresAt($expiration, $replicateAsHeader = false)
-    {
-        return $this->setRegisteredClaim('exp', (int) $expiration, $replicateAsHeader);
-    }
-
-    /**
-     * Configures the expiration time
-     *
-     * @deprecated This method will be removed on v4, use expiresAt() instead
-     *
-     * @param int $expiration
-     * @param boolean $replicateAsHeader
-     *
-     * @return Builder
-     */
     public function setExpiration($expiration, $replicateAsHeader = false)
     {
         return $this->setRegisteredClaim('exp', (int) $expiration, $replicateAsHeader);
@@ -135,43 +105,13 @@ class Builder
      *
      * @return Builder
      */
-    public function identifiedBy($id, $replicateAsHeader = false)
+    public function setId($id, $replicateAsHeader = false)
     {
         return $this->setRegisteredClaim('jti', (string) $id, $replicateAsHeader);
     }
 
     /**
-     * Configures the token id
-     *
-     * @deprecated This method will be removed on v4, use identifiedBy() instead
-     *
-     * @param string $id
-     * @param boolean $replicateAsHeader
-     *
-     * @return Builder
-     */
-    public function setId($id, $replicateAsHeader = false)
-    {
-        return $this->identifiedBy($id, $replicateAsHeader);
-    }
-
-    /**
      * Configures the time that the token was issued
-     *
-     * @param int $issuedAt
-     * @param boolean $replicateAsHeader
-     *
-     * @return Builder
-     */
-    public function issuedAt($issuedAt, $replicateAsHeader = false)
-    {
-        return $this->setRegisteredClaim('iat', (int) $issuedAt, $replicateAsHeader);
-    }
-
-    /**
-     * Configures the time that the token was issued
-     *
-     * @deprecated This method will be removed on v4, use issuedAt() instead
      *
      * @param int $issuedAt
      * @param boolean $replicateAsHeader
@@ -180,26 +120,11 @@ class Builder
      */
     public function setIssuedAt($issuedAt, $replicateAsHeader = false)
     {
-        return $this->issuedAt($issuedAt, $replicateAsHeader);
+        return $this->setRegisteredClaim('iat', (int) $issuedAt, $replicateAsHeader);
     }
 
     /**
      * Configures the issuer
-     *
-     * @param string $issuer
-     * @param boolean $replicateAsHeader
-     *
-     * @return Builder
-     */
-    public function issuedBy($issuer, $replicateAsHeader = false)
-    {
-        return $this->setRegisteredClaim('iss', (string) $issuer, $replicateAsHeader);
-    }
-
-    /**
-     * Configures the issuer
-     *
-     * @deprecated This method will be removed on v4, use issuedBy() instead
      *
      * @param string $issuer
      * @param boolean $replicateAsHeader
@@ -208,26 +133,11 @@ class Builder
      */
     public function setIssuer($issuer, $replicateAsHeader = false)
     {
-        return $this->issuedBy($issuer, $replicateAsHeader);
+        return $this->setRegisteredClaim('iss', (string) $issuer, $replicateAsHeader);
     }
 
     /**
      * Configures the time before which the token cannot be accepted
-     *
-     * @param int $notBefore
-     * @param boolean $replicateAsHeader
-     *
-     * @return Builder
-     */
-    public function canOnlyBeUsedAfter($notBefore, $replicateAsHeader = false)
-    {
-        return $this->setRegisteredClaim('nbf', (int) $notBefore, $replicateAsHeader);
-    }
-
-    /**
-     * Configures the time before which the token cannot be accepted
-     *
-     * @deprecated This method will be removed on v4, use canOnlyBeUsedAfter() instead
      *
      * @param int $notBefore
      * @param boolean $replicateAsHeader
@@ -236,26 +146,11 @@ class Builder
      */
     public function setNotBefore($notBefore, $replicateAsHeader = false)
     {
-        return $this->canOnlyBeUsedAfter($notBefore, $replicateAsHeader);
+        return $this->setRegisteredClaim('nbf', (int) $notBefore, $replicateAsHeader);
     }
 
     /**
      * Configures the subject
-     *
-     * @param string $subject
-     * @param boolean $replicateAsHeader
-     *
-     * @return Builder
-     */
-    public function relatedTo($subject, $replicateAsHeader = false)
-    {
-        return $this->setRegisteredClaim('sub', (string) $subject, $replicateAsHeader);
-    }
-
-    /**
-     * Configures the subject
-     *
-     * @deprecated This method will be removed on v4, use relatedTo() instead
      *
      * @param string $subject
      * @param boolean $replicateAsHeader
@@ -264,11 +159,11 @@ class Builder
      */
     public function setSubject($subject, $replicateAsHeader = false)
     {
-        return $this->relatedTo($subject, $replicateAsHeader);
+        return $this->setRegisteredClaim('sub', (string) $subject, $replicateAsHeader);
     }
 
     /**
-     * Configures a registered claim
+     * Configures a registed claim
      *
      * @param string $name
      * @param mixed $value
@@ -278,7 +173,7 @@ class Builder
      */
     protected function setRegisteredClaim($name, $value, $replicate)
     {
-        $this->with($name, $value);
+        $this->set($name, $value);
 
         if ($replicate) {
             $this->headers[$name] = $this->claims[$name];
@@ -297,7 +192,7 @@ class Builder
      *
      * @throws BadMethodCallException When data has been already signed
      */
-    public function withHeader($name, $value)
+    public function setHeader($name, $value)
     {
         if ($this->signature) {
             throw new BadMethodCallException('You must unsign before make changes');
@@ -309,23 +204,6 @@ class Builder
     }
 
     /**
-     * Configures a header item
-     *
-     * @deprecated This method will be removed on v4, use withHeader() instead
-     *
-     * @param string $name
-     * @param mixed $value
-     *
-     * @return Builder
-     *
-     * @throws BadMethodCallException When data has been already signed
-     */
-    public function setHeader($name, $value)
-    {
-        return $this->withHeader($name, $value);
-    }
-
-    /**
      * Configures a claim item
      *
      * @param string $name
@@ -335,7 +213,7 @@ class Builder
      *
      * @throws BadMethodCallException When data has been already signed
      */
-    public function with($name, $value)
+    public function set($name, $value)
     {
         if ($this->signature) {
             throw new BadMethodCallException('You must unsign before making changes');
@@ -347,26 +225,7 @@ class Builder
     }
 
     /**
-     * Configures a claim item
-     *
-     * @deprecated This method will be removed on v4, use with() instead
-     *
-     * @param string $name
-     * @param mixed $value
-     *
-     * @return Builder
-     *
-     * @throws BadMethodCallException When data has been already signed
-     */
-    public function set($name, $value)
-    {
-        return $this->with($name, $value);
-    }
-
-    /**
      * Signs the data
-     *
-     * @deprecated This method will be removed on v4, signature will be created on the getToken() method
      *
      * @param Signer $signer
      * @param Key|string $key
@@ -387,8 +246,6 @@ class Builder
 
     /**
      * Removes the signature from the builder
-     *
-     * @deprecated This method will be removed on v4, signature will be created on the getToken() method
      *
      * @return Builder
      */
