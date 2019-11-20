@@ -12,6 +12,8 @@ try {
     window.$ = window.jQuery = require('jquery');
 
     require('bootstrap');
+    
+    require('waypoints/lib/jquery.waypoints.js');
     window.sliderPro = require('slider-pro').default;
     window.fancyBox = require('@fancyapps/fancybox').default;
 

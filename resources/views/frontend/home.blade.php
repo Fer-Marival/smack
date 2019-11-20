@@ -7,21 +7,10 @@
           </video>
           <div class="video-container">
             <div class="row justify-content-center align-items-center">
-              <div class="col">
-                <div id="slider">
-                    <div><section class="title">@lang('global.rent')<section></div>
-                    <div><section class="title">@lang('global.enjoy')<section></div>
-                    <div><section class="title">@lang('global.know')</section></div>
-                    <div><section class="title">@lang('global.confort')</section></div>
-                </div>
-              </div>
-              <div class="col">
-                  <div id="slider-right">
-                    <div><p>@lang('global.rentCamera')</p></div>
-                    <div><p>@lang('global.beautifullMoment')</p></div>
-                    <div><p>@lang('global.bestPlace')</p></div>
-                    <div><p>@lang('global.yourTraslate')</p></div>
-                 </div>
+              <div class="col animated fadeInDown">
+                  <div class="logo">
+                    <a href="/"><img src="{!!asset('img/logo.svg')!!}" alt="" class="img-fluid"></a>
+                  </div>
               </div>
             </div>
           </div>
@@ -29,6 +18,7 @@
     </div>    
     <div class="container-fluid bg-1">
       <h2 class="title m4">@lang('global.OurServices')</h2>
+      <span class="big-t">@lang('global.OurServices')</span>
       <div class="row" id="services">
           <div class="col-md-4">
             <div class="service">
@@ -79,6 +69,7 @@
     <div class="container-fluid">
       <div id="products">
         @foreach($products as $product)
+          @dd(( $product ))
           <div class="col shadow-flow">
               <div class="content">
                 <img src="{{ $product->path }}" class="img-fluid" alt="">
@@ -102,7 +93,8 @@
       </div>
     </div>
     <div id="destiny">
-      <div class="title">@lang('global.ourDestiny')</div>
+      <div class="title m4">@lang('global.ourDestiny')</div>
+      <span class="big-t">@lang('global.ourDestiny')</span>
       <div class="slider" id="destiny-slide">
         <div class="sp-slides">
           <div class="sp-slide">
