@@ -15290,6 +15290,8 @@ header {
   z-index: 100;
   background: none !important;
   background-color: none !important;
+  -webkit-transition: all .5s ease-in-out;
+  transition: all .5s ease-in-out;
 }
 
 header #menu .nav-item a {
@@ -15340,7 +15342,6 @@ header #menu .nav-item a:hover:before {
 
 .show {
   display: block;
-  padding-top: 5px;
 }
 
 .hidden {
@@ -15675,8 +15676,21 @@ footer .include .gradient-home ul .social-icons p,
   margin: 1em auto;
 }
 
-#services .service img {
-  height: auto;
+#services .services {
+  height: 500px;
+}
+
+#services .service {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 100%;
+  height: 100%;
+}
+
+#services .service:hover {
+  -webkit-animation: changebg 2s linear 2s infinite alternate;
+          animation: changebg 2s linear 2s infinite alternate;
 }
 
 #services .service .content {
@@ -15690,6 +15704,27 @@ footer .include .gradient-home ul .social-icons p,
   height: 131px;
   width: 100%;
   text-align: center;
+  -webkit-transition: all .3s ease-in-out;
+  transition: all .3s ease-in-out;
+}
+
+#services .service .content:hover {
+  font-size: 22pt;
+  letter-spacing: 1;
+  padding-bottom: 10px;
+  height: 140px;
+}
+
+#services .s-camera {
+  background-image: url("/img/camara.jpg");
+}
+
+#services .s-trips {
+  background-image: url("/img/snorkel.jpg");
+}
+
+#services .s-host {
+  background-image: url("/img/transport.jpg");
 }
 
 #products,
@@ -15864,7 +15899,10 @@ footer .include .gradient-home ul .social-icons p,
 }
 
 #acuatics #video .video-container span {
-  font-size: 30pt;
+  font-weight: 100;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 6px;
   color: white;
 }
 
@@ -16076,26 +16114,6 @@ footer a:hover {
 
 .tour .description {
   color: white;
-}
-
-.hiking {
-  background-image: url("/img/hiking.jpeg");
-}
-
-.bicycle {
-  background-image: url("/img/bicycle.jpeg");
-}
-
-.paddle {
-  background-image: url("/img/paddle.jpeg");
-}
-
-.snorkel {
-  background-image: url("/img/snorkel2.jpeg");
-}
-
-.kayak {
-  background-image: url("/img/kayak.jpeg");
 }
 
 .gradient-left {
@@ -16561,13 +16579,15 @@ footer .trips .social-icons .content,
 }
 
 #services {
-  display: none;
+  opacity: 0;
+  -webkit-transition: all .3s ease;
+  transition: all .3s ease;
 }
 
 .visible {
-  display: -webkit-box !important;
-  display: -ms-flexbox !important;
-  display: flex !important;
+  -webkit-transition: all .3s ease-in-out;
+  transition: all .3s ease-in-out;
+  opacity: 1 !important;
 }
 
 .big-t {
@@ -16598,6 +16618,7 @@ footer .trips .social-icons .content,
 }
 
 .top-bar .phone {
+  font-size: 14px;
   border-right: 0.5px solid rgba(255, 255, 255, 0.3);
 }
 
@@ -16606,12 +16627,281 @@ footer .trips .social-icons .content,
   -webkit-transition: all .5s ease-in-out;
   transition: all .5s ease-in-out;
   font-weight: 100;
-  line-height: 20px;
+  line-height: 40px;
 }
 
 .top-bar a:hover {
   color: #00ffff;
   text-decoration: none;
+}
+
+.bg-white #menu .nav-item a,
+.bg-white .top-bar a {
+  color: #666;
+}
+
+.bg-white #menu .nav-item a:hover,
+.bg-white .top-bar a:hover {
+  color: #00ffff;
+}
+
+.bg-white .top-bar {
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);
+}
+
+.bounce {
+  -webkit-animation: bounce 2s infinite;
+  animation: bounce 2s infinite;
+  margin: 2em auto;
+}
+
+.bounce a {
+  text-decoration: none;
+}
+
+@-webkit-keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
+  }
+
+  40% {
+    -webkit-transform: translateY(-30px);
+            transform: translateY(-30px);
+  }
+
+  60% {
+    -webkit-transform: translateY(-15px);
+            transform: translateY(-15px);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
+  }
+
+  40% {
+    -webkit-transform: translateY(-30px);
+            transform: translateY(-30px);
+  }
+
+  60% {
+    -webkit-transform: translateY(-15px);
+            transform: translateY(-15px);
+  }
+}
+
+@-webkit-keyframes changebg {
+  0%, 100% {
+    background-image: url("/img/transport.jpg");
+  }
+
+  40% {
+    background-image: url("/img/snorkel.jpg");
+  }
+
+  80% {
+    background-image: url("/img/camara.jpg");
+  }
+}
+
+@keyframes changebg {
+  0%, 100% {
+    background-image: url("/img/transport.jpg");
+  }
+
+  40% {
+    background-image: url("/img/snorkel.jpg");
+  }
+
+  80% {
+    background-image: url("/img/camara.jpg");
+  }
+}
+
+#slideToOpen {
+  position: absolute;
+  top: 75%;
+  height: 10px;
+  left: 40%;
+  right: 40%;
+}
+
+#slideToOpen .ui-slider-handle {
+  display: block;
+  width: 70px;
+  height: 70px;
+  border: 1px solid white;
+  position: absolute;
+  top: 0;
+  margin-top: -35px;
+  margin-left: -35px;
+  left: 0;
+  border-radius: 100%;
+}
+
+#slideToOpen .ui-slider-handle:before {
+  content: '';
+  position: absolute;
+  display: block;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  margin-top: -3px;
+  margin-left: -3px;
+  -webkit-transform: rotate(45deg);
+          transform: rotate(45deg);
+  border-top: 2px solid black;
+  border-right: 2px solid black;
+  z-index: 2;
+  opacity: 1;
+}
+
+#slideToOpen .ui-slider-handle:after {
+  content: '';
+  position: absolute;
+  display: block;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  background: white;
+  border-radius: 100%;
+  -webkit-transition: .25s;
+  transition: .25s;
+}
+
+#slideToOpen .ui-slider-handle:hover {
+  cursor: pointer;
+}
+
+#slideToOpen .ui-slider-handle:hover:after {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+#slideToOpen #cache {
+  position: fixed;
+  top: 75%;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  margin-left: -8px;
+  border: 1px solid white;
+  z-index: 88;
+  border-radius: 100%;
+  -webkit-transition: 1s;
+  transition: 1s;
+}
+
+#slideToOpen #cache:after {
+  content: '';
+  position: absolute;
+  display: block;
+  top: 6px;
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+  background: white;
+  border-radius: 100%;
+}
+
+#slideToOpen #close {
+  position: fixed;
+  top: 0;
+  right: -100px;
+  height: 100px;
+  width: 100px;
+  display: block;
+  z-index: 99;
+  background: black;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+}
+
+#slideToOpen #close:after,
+#slideToOpen #close:before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 2px;
+  margin-top: -1px;
+  margin-left: -5px;
+  background: white;
+  content: '';
+  display: block;
+}
+
+#slideToOpen #close:after {
+  -webkit-transform: rotate(45deg);
+          transform: rotate(45deg);
+}
+
+#slideToOpen #close:before {
+  -webkit-transform: rotate(-45deg);
+          transform: rotate(-45deg);
+}
+
+@-webkit-keyframes dotGoRight {
+  from {
+    margin-left: 0;
+  }
+
+  to {
+    margin-left: 20px;
+  }
+}
+
+@keyframes dotGoRight {
+  from {
+    margin-left: 0;
+  }
+
+  to {
+    margin-left: 20px;
+  }
+}
+
+#dot {
+  display: block;
+  height: 1px;
+  background-image: -webkit-gradient(linear, left top, right top, color-stop(10%, white), color-stop(0%, rgba(255, 255, 255, 0)));
+  background-image: linear-gradient(to right, white 10%, rgba(255, 255, 255, 0) 0%);
+  background-position: bottom;
+  background-size: 10px 1px;
+  background-repeat: repeat-x;
+  position: absolute;
+  top: 50%;
+  margin-top: -5px;
+  left: 35px;
+  right: 15px;
+  -webkit-animation: dotGoRight 0.5s infinite linear;
+          animation: dotGoRight 0.5s infinite linear;
+}
+
+#slideToOpen.open #cache {
+  background: white;
+  width: 12000px;
+  height: 12000px;
+  margin-top: -6000px;
+  margin-left: -6000px;
+  border-radius: 0;
+}
+
+#slideToOpen.open > .ui-slider-handle:before {
+  opacity: 0;
+}
+
+#slideToOpen.open #close {
+  right: 0;
+  -webkit-transition-delay: 1s;
+          transition-delay: 1s;
 }
 
 @media (max-width: 414px) {

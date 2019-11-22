@@ -6,9 +6,18 @@
 						<a href="tel:013222243171"><i class="fas fa-phone-alt"></i> 322-289-9180</a>
 					</div>
 					<div class="col-md-8"></div>
-					<div class="col-md-2 languaje">
-						<a href="{{ url('lang', ['en']) }}" class="@lang('global.show-ing')"><i class="fas fa-globe-americas"></i> En</a>
-						<a href="{{ url('lang', ['es']) }}" class="@lang('global.show-esp')"><i class="fas fa-globe-americas"></i> Es</a>
+					<div class="col-md-2">
+						<div class="row justify-content-between">
+							<div class="col-md-6 languaje">
+								<a href="fb"><i class="fab fa-facebook-square"></i></a>
+								<a href="insta"><i class="fab fa-instagram"></i></a>
+								<a href="trip"><i class="fab fa-tripadvisor"></i></a>
+							</div>
+							<div class="col-md-6 languaje">
+								<a href="{{ url('lang', ['en']) }}" class="@lang('global.show-ing')"><i class="fas fa-globe-americas"></i> En</a>
+								<a href="{{ url('lang', ['es']) }}" class="@lang('global.show-esp')"><i class="fas fa-globe-americas"></i> Es</a>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>		

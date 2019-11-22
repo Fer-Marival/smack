@@ -7,9 +7,18 @@
           </video>
           <div class="video-container">
             <div class="row justify-content-center align-items-center">
-              <div class="col animated fadeInDown">
+              <div class="col animated fadeInDown text-center">
                   <div class="logo">
                     <a href="/"><img src="{!!asset('img/logo.svg')!!}" alt="" class="img-fluid"></a>
+                  </div>
+                  <span>trips, rent a camera & personal host</span>
+                  {{-- <div id="slideToOpen">
+                      <div id="dot"></div>
+                      <div id="cache"></div> 
+                      <a href="#" id="close"></a>
+                  </div> --}}
+                  <div class="bounce">
+                    <a class="fa fa-arrow-down fa-2x" href="#"></a>
                   </div>
               </div>
             </div>
@@ -21,35 +30,41 @@
       <span class="big-t">@lang('global.OurServices')</span>
       <div class="row" id="services">
           <div class="col-md-4">
-            <div class="service">
-               <picture>
-                 <img src="{!!asset('img/camara.jpg')!!}" class="img-fluid" alt="">
-              </picture>
-              <div class="content gradient-up">
-                <p>@lang('global.rentAcamera')</p>
-                <a href="{{ route('cameras.index') }}" class="btn rounder">Ver Modelos</a>
+            <div class="services">
+              <div class="service s-camera">
+                {{-- <picture>
+                  <img src="{!!asset('img/camara.jpg')!!}" class="img-fluid" alt="">
+                </picture> --}}
+                <div class="content gradient-up">
+                  <p>@lang('global.rentAcamera')</p>
+                  <a href="{{ route('cameras.index') }}" class="btn rounder">Ver Modelos</a>
+                </div>
               </div>
             </div>
           </div>
           <div class="col-md-4">
-            <div class="service">
-               <picture>
-                <img src="{!!asset('img/snorkel.jpg')!!}" class="img-fluid" alt="">
-              </picture>
-              <div class="content gradient-up">   
-                <p>@lang('global.trips')</p>
-                <a href="/tours-acuaticos" class="btn rounder">Know our trips</a>
+            <div class="services">
+              <div class="service s-trips">
+                {{-- <picture>
+                  <img src="{!!asset('img/snorkel.jpg')!!}" class="img-fluid" alt="">
+                </picture> --}}
+                <div class="content gradient-up">   
+                  <p>@lang('global.trips')</p>
+                  <a href="/tours-acuaticos" class="btn rounder">Know our trips</a>
+                </div>
               </div>
             </div>
           </div>
           <div class="col-md-4">
-            <div class="service">
-              <picture >
-                <img src="{!!asset('img/transport.jpg')!!}" class="img-fluid" alt="">
-              </picture>
-              <div class="content gradient-up">
-                  <p>@lang('global.personalHost')</p> 
-                  <a href="#" class="btn rounder">See details</a>
+            <div class="services">
+              <div class="service s-host">
+                {{-- <picture >
+                  <img src="{!!asset('img/transport.jpg')!!}" class="img-fluid" alt="">
+                </picture> --}}
+                <div class="content gradient-up">
+                    <p>@lang('global.personalHost')</p> 
+                    <a href="#" class="btn rounder">See details</a>
+                </div>
               </div>
             </div>
           </div>
