@@ -1,9 +1,10 @@
+
 # Created by https://www.gitignore.io/api/laravel
 # Edit at https://www.gitignore.io/?templates=laravel
 
 ### Laravel ###
 /vendor/
-/node_modules/
+node_modules/
 npm-debug.log
 yarn-error.log
 
