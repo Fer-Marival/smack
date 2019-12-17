@@ -16328,6 +16328,7 @@ footer {
   height: 40px;
 }
 
+<<<<<<< Updated upstream
 #mobile__menu {
   position: relative;
   display: none;
@@ -16489,13 +16490,20 @@ footer {
     display: none;
   }
 
+=======
+@media (max-width: 414px) {
+>>>>>>> Stashed changes
   .logo {
     width: 200px;
     margin: 1em auto;
   }
 
   #video {
+<<<<<<< Updated upstream
     display: none !important;
+=======
+    height: 230px !important;
+>>>>>>> Stashed changes
   }
 
   #services .col,
@@ -16566,6 +16574,7 @@ footer {
     flex-grow: 0;
     max-width: 100%;
   }
+<<<<<<< Updated upstream
 
   #home {
     height: 100vh;
@@ -16584,6 +16593,8 @@ footer {
   .include #destiny-slide h6:before {
     bottom: 180px !important;
   }
+=======
+>>>>>>> Stashed changes
 }
 
 header {
