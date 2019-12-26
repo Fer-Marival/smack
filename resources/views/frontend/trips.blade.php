@@ -81,13 +81,13 @@
         <div class="trips">
             <div class="col bicycle">
                 <div class="content">
-                  <p>One of three columns</p>
+                  <p>Bicycle tour on city</p>
                   <a href="#" class="rounder">Add to my adveture</a>
                 </div>
             </div>
             <div class="col hiking">
                 <div class="content">     
-                  <p>One of three columns</p>
+                  <p>Hiking trip</p>
                   <a href="#" class="rounder">Add to my adveture</a>
                 </div>
             </div>
@@ -100,45 +100,51 @@
         </div>
       </div>
     </div>
-  </div>
-<div class="container-fluid bg-2">
-     <div id="products" class="justify-content-center ">
+ <div class="container-flow bg-2">
+    <div id="products" class="justify-content-center">
           <div class="col-md-12">
              <h3 class="title">Your best complements for you trips</h3>
           </div>
-          <div class="col">
-              <div class="content">
-                <picture>
-                  <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">
-                </picture>
-                <p>One of three columns</p>
-              </div>
-              <div class="row">
-                <a href="#" class="">+ Add</a>
-                <a href="#" class="btn-info">See Details</a>
-              </div>  
-          </div>
-          <div class="col">
-            <div class="content">
-              <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">
-              One of three columns <br />
-            </div>
-            <div class="row">
-                <a href="#" class="">+ Add</a>
-                <a href="#" class="btn-info">See Details</a>
-              </div> 
-          </div>
-          <div class="col">
-              <div class="content">
-                <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">
-                One of three columns <br />
-              </div>
-              <div class="row">
+          <div class="col col-md-4">
+            <div class="product">
+                <div class="content">
+                    <picture>
+                      <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">
+                    </picture>
+                  </div>
+                  <p>One of three columns</p>
+                <div class="row">
                   <a href="#" class="">+ Add</a>
                   <a href="#" class="btn-info">See Details</a>
-              </div> 
+                </div>
+            </div>  
+          </div>
+          <div class="col col-md-4">
+            <div class="product">
+              <div class="content">
+                <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">
+              </div>
+              <p>One of three columns</p>
+              <div class="row">
+                <a href="#" class="">+ Add</a>
+                <a href="#" class="btn-info">See Details</a>
+              </div>
+            </div>   
+          </div>
+          <div class="col col-md-4">
+            <div class="product">
+                <div class="content">
+                  <img src="{!!asset('img/product1.png')!!}" class="img-fluid" alt="">                
+                </div>
+                <p>One of three columns</p>
+                <div class="row">
+                    <a href="#" class="">+ Add</a>
+                    <a href="#" class="btn-info">See Details</a>
+                </div>
+            </div>     
           </div>
     </div>
+  </div>   
 </div>
 <div id="destiny">
     <div class="title">Conoce nuestros destinos</div>

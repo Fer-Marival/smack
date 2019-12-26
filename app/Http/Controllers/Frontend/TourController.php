@@ -4,14 +4,18 @@ namespace App\Http\Controllers\Frontend;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Tour;
 use App\Product;
+
 class TourController extends Controller
 {
 
-    protected $product:
+    protected $tour;
+    protected $product;
 
-    function __construct(Product $product){
+    function __construct(Product $product, Tour $tour){
         $this->product = $product;
+        $this->tour = $tour;
     }
     /**
      * Display a listing of the resource.
@@ -20,8 +24,9 @@ class TourController extends Controller
      */
     public function index()
     {
-        $tour = $this->product->where('category_id', 3)->get();
-        return $tour;
+        $tours = $this->tour->all();
+        //dd($tours);
+        return view('frontend.acuaticos', compact('tours'));
     }
 
     /**

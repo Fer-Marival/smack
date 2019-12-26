@@ -28,7 +28,7 @@
 		      <th scope="col"><strong>Available<strong></th>
 		      <th scope="col"><strong>Category<strong></th>
 		      <th scope="col"><strong>Locale<strong></th>
-		      <th scope="col" width="100px">Aciones<strong></th>
+		      <th scope="col" width="100px">Acciones<strong></th>
 		    </tr>
 		  </thead>
 		  <tbody>

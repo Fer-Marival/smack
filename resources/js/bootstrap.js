@@ -9,9 +9,12 @@
 
 try {
     window.Popper = require('popper.js').default;
-    //window.$ = window.jQuery = require('jquery');
+    window.$ = window.jQuery = require('jquery');
+    require('jquery-ui');
 
     require('bootstrap');
+    
+    require('waypoints/lib/jquery.waypoints.js');
     window.sliderPro = require('slider-pro').default;
     window.fancyBox = require('@fancyapps/fancybox').default;
 

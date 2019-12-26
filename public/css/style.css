@@ -45,3 +45,7 @@ p.description-complement{
 img.img-fluid {
 	height: 200px;
 }
+
+.form-control {
+	padding: padding: 0px 0px; !important;
+}

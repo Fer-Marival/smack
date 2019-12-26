@@ -15,6 +15,6 @@ class ProductsTableSeeder extends Seeder
         /*factory(App\User::class, 2)->create()->each(function($u) {
     		$u->issues()->save(factory(App\Issues::class)->make());
   		});*/
-		factory(\App\Product::class, 50)->create();
+		factory(\App\Product::class, 15)->create();
     }
 }

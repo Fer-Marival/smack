@@ -1,0 +1,39 @@
+$main: #e84c3d
+$context: #333b46
+
+body, html
+	height: 100%
+.wrapper
+	height: 100%
+	display: flex
+	justify-content: center
+	align-items: center
+	background: linear-gradient(135deg, #e1e1e1 0%, white 50%, #e1e1e1 100%)
+.mnu__btn
+	background: transparent
+	border: 0
+	width: 100px
+	height: 100px
+	outline-color: lighten($main, 10%)
+	transition: all .3s ease
+	cursor: pointer
+	span
+		margin: auto
+		display: block
+		width: 90%
+		height: 7px
+		border-radius: 4px
+		background: $main
+		margin-top: 25px
+		transition: all .3s ease
+		&:first-child
+			margin-top: 0
+	&.active
+		transition: all .3s ease
+		transform: rotate(90deg)
+		outline-color: lighten($context, 10%)
+		span
+			width: 7px
+			transition: all .3s ease
+			background: $context
+			

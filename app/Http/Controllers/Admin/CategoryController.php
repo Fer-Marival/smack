@@ -8,14 +8,17 @@ use App\Category;
 
 class CategoryController extends Controller
 {
-
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     protected $category;
 
-    function __construct(Category $category) {
-
+    function __construct(Category $category)
+    {
         $this->category = $category;
     }
-
     public function index()
     {
         $categories = $this->category->all();
@@ -40,7 +43,8 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->category->create($request->all());
+        return back()->with('success', 'Category Create!');
     }
 
     /**
@@ -62,8 +66,8 @@ class CategoryController extends Controller
      */
     public function edit($id)
     {
-        $category = Category::find($id);
 
+        $category = $this->category->find($id);
         return view('admin.categories.edit', compact('category'));
     }
 
@@ -76,9 +80,9 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $category = Category::find($id);
+        $category = $this->category->find($id);
         $category->update($request->all());
-        return redirect('admin/categories');
+        return redirect()->route('categories.index')->with('success', 'Category Update!');
     }
 
     /**
@@ -89,9 +93,8 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        $categorys = Category::find($id);
-        $categorys->delete();
-
-        return back();
+        $category = $this->category->find($id);
+        $category->delete();
+        return redirect()->route('categories.index')->with('delete', 'Category Delete');
     }
 }
